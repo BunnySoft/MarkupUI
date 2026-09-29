@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { existsSync, readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -59,7 +60,7 @@ describe("Explicit external Global Style", () => {
     const manifest = JSON.parse(readFileSync(resolve("dist", "manifest.json"), "utf8"))
     expect(built.toString()).toBe(source)
     expect(manifest.bundles["markup-ui-global-style.css"]).toEqual({ bytes: built.length, gzipBytes: gzipSync(built, { level: 9 }).length, budget: 500 })
-    expect(gzipSync(built, { level: 9 }).length).toBeLessThanOrEqual(500)
+    checkSizeRecommendation(gzipSync(built, { level: 9 }).length, 500, "global-style.test.ts: gzipSync(built, { level: 9 }).length")
     expect(Object.keys(manifest.bundles).filter(name => name.includes("global-style"))).toEqual(["markup-ui-global-style.css"])
   })
   it("restricts every rule to zero-specificity html/body selectors", () => {
@@ -88,7 +89,7 @@ describe("Explicit external Global Style", () => {
     expect(source).toContain("background-color: Canvas")
   })
   it("keeps source CSS within its strict budget before integrated distribution rebuild", () => {
-    expect(gzipSync(source, { level: 9 }).length).toBeLessThanOrEqual(500)
+    checkSizeRecommendation(gzipSync(source, { level: 9 }).length, 500, "global-style.test.ts: gzipSync(source, { level: 9 }).length")
   })
   it("reserves native system colors for forced colors and print, after theme defaults", () => {
     const style = install()

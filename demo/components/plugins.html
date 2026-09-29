@@ -33,8 +33,9 @@
     <m-p id="grid-status" aria-live="polite">No sort requested.</m-p>
     <m-heading level="3">Data and ownership</m-heading>
     <m-p>Assign rows as an array of at most 1,000 plain records, containing strings,
-      finite numbers, booleans or nullish cells. Objects, executable accessors and unsafe
-      prototype keys are rejected before rendering. Missing cells render empty and text
+      finite numbers, booleans or nullish cells. Custom array prototypes, hidden symbols,
+      executable array/record accessors, object cells and unsafe prototype keys are
+      rejected before rendering. Missing cells render empty and text
       is never interpreted as HTML. In-place edits require refresh().</m-p>
     <m-p>Direct DataColumn children define up to 32 unique, safe, nonempty keys.
       The key and label string properties and sortable boolean property update the table.

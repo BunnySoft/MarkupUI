@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
@@ -49,7 +50,7 @@ describe("selected Upload distribution", () => {
     const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     for (const [format, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       expect(manifest.componentPayloads.upload[format].dependencies).toEqual([`markup-ui-core${suffix}`])
-      expect(manifest.componentPayloads.upload[format].runtimeGzipBytes).toBeLessThanOrEqual(11000)
+      checkSizeRecommendation(manifest.componentPayloads.upload[format].runtimeGzipBytes, 11000, "upload-distribution.test.ts: manifest.componentPayloads.upload[format].runtimeGzipBytes")
       const map = JSON.parse(readFileSync(`dist/markup-ui-upload${suffix}.map`, "utf8"))
       expect(map.sources).toContain("../src/components/upload/upload.ts")
       expect(map.sources).not.toContain("../src/components/popover/position.ts")

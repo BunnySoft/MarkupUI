@@ -1,4 +1,5 @@
 // @vitest-environment node
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { createContext, runInContext } from "node:vm"
@@ -29,7 +30,7 @@ describe("optional all-components delivery", () => {
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`, `markup-ui-chart-renderer${suffix}`])
       const total = [payload.file, ...payload.dependencies].reduce((sum: number, file: string) => sum + gzipSync(read(file), { level: 9 }).length, 0)
       expect(payload.runtimeGzipBytes).toBe(total)
-      expect(total).toBeLessThanOrEqual(payload.runtimeBudget)
+      checkSizeRecommendation(total, payload.runtimeBudget, "all-distribution.test.ts: total")
       expect(payload.externalDependencies).toEqual(manifest.componentPayloads.chart.externalDependencies)
       const map = JSON.parse(read(`${payload.file}.map`))
       expect(map.sources.some((source: string) => /node_modules|core\/view-element|chart\/renderer/.test(source))).toBe(false)

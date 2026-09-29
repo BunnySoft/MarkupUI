@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -249,7 +250,7 @@ describe("canonical Timeline ViewElement", () => {
   })
 
   it("keeps compact authored CSS within its unchanged 1500 gzip-byte ceiling", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1500, "timeline.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("includes valid stylesheet targeting m-timeline and m-timeline-item", () => {

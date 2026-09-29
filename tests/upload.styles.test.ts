@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -104,6 +105,6 @@ describe("Upload default styles", () => {
   })
 
   it("stays inside the existing 1250-byte level-nine CSS ceiling", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1250, "upload.styles.test.ts: gzipSync(css, { level: 9 }).length")
   })
 })

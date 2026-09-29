@@ -1,12 +1,21 @@
 # Binding and templates
 
-**Status: explicit scalar/model binding is implemented; structural templates are not.**
+**Status: scalar/models, Web templates, portable ListTemplate and If are implemented.**
 
 The optional state entry supports safe paths, explicit property/attribute/text channels,
 two-way model adapters, nonoverlapping root/store scopes, refresh and disposal.
-`data-if` and `data-each` currently reject use with a structural-binding error.
-Item/parent scopes, keyed reconciliation and a proving collection consumer remain
-delivery work; the template pages describe the selected design, not shipped behavior.
+Native `template` sources support Boolean `data-if` and stable-key `data-each`, nested
+item/parent/root contexts, model writes through current keys, focus fallback and retained
+instances on stop/rebind. Native templates are explicitly a Web adapter.
+The [List demo](../../demo/components/list.html) provides portable `m-list-template`
+authoring and an explicit list focus policy using the same binder.
+Root-local ID references and an explicit template Map now support reusable Web sources.
+Application-supplied [paired IDs](03-templates.md#paired-ids) have next-tree uniqueness
+and root-local label/ARIA reference checks. [Scoped action arguments](06-actions.md)
+read current data through an explicitly supplied binding; the optional root's App
+wires that connection automatically. Box's `m-if` supplies generic
+[portable conditions](03-templates.md#portable-conditions). Broader resource and human
+interaction acceptance remain separate from implementation.
 
 Binding is an optional layer over logical element properties and regions. It must not
 change the meaning of an Element Contract or add runtime cost to unbound components.
@@ -19,6 +28,10 @@ cross-platform model.
 2. [Scopes](02-scopes.md): ownership, nested contexts and writable data routes.
 3. [Templates](03-templates.md): creation, keys, reconciliation and disposal.
 4. [Element integration](04-integration.md): metadata, composition and delivery gates.
+5. [Structural delivery plan](05-delivery-plan.md): source-verified gaps, working
+   decisions, advisory size measurements, implementation order and person-day estimates.
+6. [Scoped actions](06-actions.md): typed arguments, explicit binding ownership,
+   activation errors and async limits.
 
 ## Selected model
 
@@ -32,7 +45,8 @@ cross-platform model.
 | Element | Own its public contract, placement, interactions and renderer lifecycle. |
 
 There is no expression evaluator, data-to-HTML binding, implicit ancestor data context,
-global document scan or private collection renderer per component.
+global document activation or private collection renderer per component. Explicit ID
+preflight inspects IDs in the enclosing tree only to reject collisions.
 The design does not require a List component or a new markup language.
 
 ## References

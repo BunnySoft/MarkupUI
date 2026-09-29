@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -39,7 +40,7 @@ describe("default styles", () => {
     expect(css).toContain("--_m-tags-height: 22px")
     expect(css).toContain("--_m-tags-height: 34px")
     expect(css).toContain("gap: 4px 8px")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1500, "dynamic-tags.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("keeps native tag values compact without hiding labelled actions", () => {

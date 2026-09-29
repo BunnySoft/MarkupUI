@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -472,7 +473,7 @@ describe("Templates, semantics and legacy compatibility", () => {
   it("keeps the unchanged exact composed CSS gzip ceiling without altering shared feedback", () => {
     const base = readFileSync(resolve("src", "components", "feedback", "feedback.css"), "utf8")
     const css = readFileSync(resolve("src", "components", "message", "message.css"), "utf8")
-    expect(gzipSync(`${base}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1750)
+    checkSizeRecommendation(gzipSync(`${base}\n${css}`, { level: 9 }).length, 1750, "message.test.ts: gzipSync(`${base}\\n${css}`, { level: 9 }).length")
   })
 })
 

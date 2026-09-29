@@ -25,7 +25,9 @@ export class ListItem extends ViewElement {
       this.upgradeProperties()
     }
     this.dataset.part = "item"
-    if (!this.hasAttribute("role")) this.setAttribute("role", "listitem")
+    if (this.parentElement?.matches("li[data-list-template-item]")) {
+      if (this.getAttribute("role") === "listitem") this.removeAttribute("role")
+    } else if (!this.hasAttribute("role")) this.setAttribute("role", "listitem")
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.synchronize()
   }

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { ChartDataset } from "../src/components/chart/dataset.js"
 import { ViewElement } from "../src/core/index.js"
-import { chartTable, validateSource } from "../src/components/chart/data.js"
+import { chartTable, validateSource, validateDimensions } from "../src/components/chart/data.js"
 import { bind, createStore } from "../src/state/index.js"
 
 ViewElement.register([ChartDataset])
@@ -10,6 +10,30 @@ const json = (value: unknown, status = 200) => new Response(JSON.stringify(value
 afterEach(() => { document.body.replaceChildren(); vi.unstubAllGlobals(); vi.useRealTimers() })
 
 describe("Chart dataset sources", () => {
+  it.each(["source", "row", "column", "record", "dimensions"])("rejects hidden symbol execution in %s", kind => {
+    const executed = vi.fn()
+    const value: object = kind === "record" ? { name: "A" } : kind === "dimensions" ? ["name"] : [1]
+    Object.defineProperty(value, Symbol.iterator, { get: executed })
+    const input = kind === "source" || kind === "dimensions" ? value : kind === "column" ? { name: value } : [value]
+    expect(() => kind === "dimensions" ? validateDimensions(input) : validateSource(input)).toThrow()
+    expect(executed).not.toHaveBeenCalled()
+  })
+
+  it("rejects sparse/accessor dimensions and nonplain arrays without executing them", () => {
+    const executed = vi.fn(() => "name")
+    const accessor = Object.defineProperty(["name"], "0", { get: executed })
+    expect(() => validateDimensions(accessor)).toThrow()
+    expect(executed).not.toHaveBeenCalled()
+    expect(() => validateDimensions(Array(1))).toThrow()
+    const subclass = Object.setPrototypeOf([[1]], Object.create(Array.prototype))
+    expect(() => validateSource(subclass)).toThrow()
+  })
+
+  it("never exposes inherited cells through dimension names", () => {
+    for (const name of ["__proto__", "prototype", "constructor"]) expect(() => validateDimensions([name])).toThrow()
+    expect(chartTable([{ value: 1 }], ["toString", "valueOf", "value"], false).rows).toEqual([[null, null, 1]])
+  })
+
   it.each([
     [[["month", "sales"], ["January", 120]], 1],
     [[{ month: "January", sales: 120 }], 1],

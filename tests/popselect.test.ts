@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
@@ -50,7 +51,7 @@ describe("audited Popselect context styles", () => {
       readFileSync("src/components/select/select.css", "utf8"),
       css,
     ].join("\n")
-    expect(gzipSync(composed, { level: 9 }).length).toBeLessThanOrEqual(2500)
+    checkSizeRecommendation(gzipSync(composed, { level: 9 }).length, 2500, "popselect.test.ts: gzipSync(composed, { level: 9 }).length")
   })
 })
 

@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
@@ -50,7 +51,7 @@ describe("native membership versus staging", () => {
     expect(css).not.toMatch(/appearance:\s*none/)
     expect(css).not.toMatch(/height:\s*300px/)
     expect(css).not.toContain("content:")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1250, "transfer.test.ts: gzipSync(css, { level: 9 }).length")
   })
   it("resets media defaults without overwriting public author tokens or fading forced-color disabled content", () => {
     const css = readFileSync(join("src", "components", "transfer", "transfer.css"), "utf8")

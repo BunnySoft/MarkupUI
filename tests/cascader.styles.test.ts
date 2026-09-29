@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { describe, expect, it } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
@@ -19,7 +20,7 @@ describe("Cascader retained native styles", () => {
     expect(css).toContain("var(--m-font-size-large,15px)")
     expect(css).toContain("light-dark(#333639,rgba(255,255,255,.82))")
     expect(css).toContain("light-dark(#e0e0e6,transparent)")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1250, "cascader.styles.test.ts: gzipSync(css, { level: 9 }).length")
   })
   it("uses fallbacks rather than overwriting inherited public author tokens", () => {
     expect(css).not.toMatch(/(?:^|[;{])\s*--m-cascader-[\w-]+\s*:/)

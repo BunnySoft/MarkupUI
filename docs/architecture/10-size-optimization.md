@@ -9,6 +9,11 @@ Complete and record each bounded task before claiming integrated acceptance.
 
 ## Post-plan status
 
+Later September 29 user direction makes size budgets advisory and adjustable; see
+the [current size policy](07-modules.md#size-policy). The no-increase constraints and
+budget-based sharing decisions below describe the completed S0-S6 work, not current
+hard gates. The frozen S0 baseline and historical measurements remain unchanged.
+
 September 29, 2026: the subsequent retained-root lifecycle checkpoint fixes Theme,
 Field, AccordionItem and App and removes duplicated component-family styles from root.
 It passes 5,103 tests in 146 files, 588 catalog checks and the 96-entry packed consumer.

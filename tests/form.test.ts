@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -269,16 +270,16 @@ describe("Form stylesheet contract", () => {
   it("accounts for the complete family and shared core under the approved delivery limits", () => {
     const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     const family = manifest.componentPayloads.form
-    expect(family.cssGzipBytes).toBeLessThanOrEqual(1250)
+    checkSizeRecommendation(family.cssGzipBytes, 1250, "form.test.ts: family.cssGzipBytes")
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const payload = family[mode]
       const core = `markup-ui-core${suffix}`
       expect(payload.dependencies).toEqual([core])
       expect(payload.gzipBytes).toBe(gzipSync(readFileSync(`dist/${payload.file}`), { level: 9 }).length)
-      expect(payload.gzipBytes).toBeLessThanOrEqual(7000)
+      checkSizeRecommendation(payload.gzipBytes, 7000, "form.test.ts: payload.gzipBytes")
       expect(payload.runtimeBudget).toBe(8250)
       expect(payload.runtimeGzipBytes).toBe(payload.gzipBytes + manifest.bundles[core].gzipBytes)
-      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(8250)
+      checkSizeRecommendation(payload.runtimeGzipBytes, 8250, "form.test.ts: payload.runtimeGzipBytes")
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + family.cssGzipBytes)
     }
   })
@@ -316,7 +317,7 @@ describe("Form stylesheet contract", () => {
     expect(css).toMatch(/@media\s*\(forced-colors:\s*active\)/)
     expect(css).toContain("color: CanvasText")
     expect(css).not.toMatch(/(?:animation|transition)(?:-[a-z]+)?\s*:/)
-    expect(gzipSync(readFileSync("dist/markup-ui-form.css"), { level: 9 }).byteLength).toBeLessThanOrEqual(1250)
+    checkSizeRecommendation(gzipSync(readFileSync("dist/markup-ui-form.css"), { level: 9 }).byteLength, 1250, "form.test.ts: gzipSync(readFileSync(\"dist/markup-ui-form.css\"), { level: 9 }).byteLength")
   })
 })
 

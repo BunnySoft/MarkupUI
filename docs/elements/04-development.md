@@ -88,8 +88,10 @@ Remove competing basic/alternate implementations and update their consumers.
 | Consumers | Update demos, aggregate registration and other directly affected callers. |
 
 A CSS-only starting point may need a new runtime entry; an existing runtime may already
-have the necessary package surface. Inspect before adding files. Do not increase a budget
-without explicit approval or remove required behavior merely to make a size check pass.
+have the necessary package surface. Inspect before adding files. Size budgets are
+adjustable recommendations: report measured growth and explain changes, rather than
+removing required behavior merely to meet a byte target. See the
+[size policy](../architecture/07-modules.md#size-policy).
 
 ## 6. Make the demo the component reference
 

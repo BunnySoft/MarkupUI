@@ -176,6 +176,12 @@ See the [Alert demo/API](../../demo/components/alert.html).
 
 ## Shared-runtime boundary
 
+Box's `if.ts` owns `If` / `m-if`: inert conditional source capture and the literal
+focus-target API. The existing `src/state/templates.ts` alone owns condition evaluation,
+scopes, placement and cleanup. State accesses the ordinary native accessor through a
+type-only import; Box never imports state. `native-content.ts` adopts cloned primitive
+chrome captured by a template so Label and Details retain one native semantic owner.
+
 Dynamic Tags' element in `dynamic-tags/dynamic-tags-element.ts` now owns only direct
 properties and native renderer construction. Its internal `dynamic-tags.ts` owns tag
 policy, draft transactions, events and lifecycle; it delegates collection mutation to

@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
@@ -83,7 +84,7 @@ describe("Tree selected element delivery", () => {
     const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     for (const [format, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       expect(manifest.componentPayloads.tree[format].dependencies).toEqual([`markup-ui-core${suffix}`])
-      expect(manifest.componentPayloads.tree[format].runtimeGzipBytes).toBeLessThanOrEqual(12000)
+      checkSizeRecommendation(manifest.componentPayloads.tree[format].runtimeGzipBytes, 12000, "tree-distribution.test.ts: manifest.componentPayloads.tree[format].runtimeGzipBytes")
       for (const family of ["cascader", "tree-select"]) {
         const map = JSON.parse(readFileSync(`dist/markup-ui-${family}${suffix}.map`, "utf8"))
         if (family === "cascader") expect(map.sources).toContain("../src/components/tree/hierarchy.ts")

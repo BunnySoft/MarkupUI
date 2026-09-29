@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
 import { createContext, runInContext } from "node:vm"
@@ -330,7 +331,7 @@ describe("passive Flex composition", () => {
 
 describe("Flex CSS, demo and selected delivery", () => {
   it("retains the existing CSS ceiling and only native container/direct-child styles", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "flex.test.ts: gzipSync(css, { level: 9 }).length")
     expect(css).not.toMatch(/@import|\.m-flex|\.m-space|data-m-theme|--m-color|--m-font|--m-text|padding:|margin:/)
     expect(css).toContain("row-gap: var(--m-flex-row-gap, var(--_m-flex-row-gap))")
     expect(css).toContain("column-gap: var(--m-flex-column-gap, var(--_m-flex-column-gap))")
@@ -387,12 +388,12 @@ describe("Flex CSS, demo and selected delivery", () => {
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const payload = manifest.componentPayloads.flex[mode]
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`])
-      expect(payload.gzipBytes).toBeLessThanOrEqual(1500)
-      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(2750)
+      checkSizeRecommendation(payload.gzipBytes, 1500, "flex.test.ts: payload.gzipBytes")
+      checkSizeRecommendation(payload.runtimeGzipBytes, 2750, "flex.test.ts: payload.runtimeGzipBytes")
       expect(payload.runtimeBudget).toBe(2750)
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + manifest.componentPayloads.flex.cssGzipBytes)
     }
-    expect(manifest.componentPayloads.flex.cssGzipBytes).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(manifest.componentPayloads.flex.cssGzipBytes, 1000, "flex.test.ts: manifest.componentPayloads.flex.cssGzipBytes")
     const esm = readFileSync("dist/markup-ui-flex.js", "utf8")
     expect(esm).toContain('"./markup-ui-core.js"')
     expect(esm).not.toContain("m-space")

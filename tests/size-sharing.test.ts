@@ -9,11 +9,14 @@ it("measures explicit sharing without modifying shipped artifacts or the frozen 
   execFileSync(process.execPath, ["scripts/size-sharing.mjs"], { stdio: "pipe" })
   expect(files.map(file => readFileSync(file, "utf8"))).toEqual(before)
   const report = JSON.parse(readFileSync(".vite/size/sharing.json", "utf8"))
+  expect(report.budgetPolicy).toBe("advisory")
   expect(report.results).toHaveLength(12)
   for (const result of report.results) {
     expect(result.families.length).toBeGreaterThan(1)
     expect(result.sharedSize.gzipBytes).toBeGreaterThan(0)
     expect(result.selections.grid.after).toBe(result.selections.grid.before + result.selections.grid.delta)
-    expect(result.accepted).toBe(result.families.every((family: { passes: boolean }) => family.passes) && result.totalDelta < 0)
+    expect(result.withinRecommendations).toBe(result.families.every((family: { overRecommendationBytes: number }) => family.overRecommendationBytes === 0))
+    expect(result.combinedSaving).toBe(result.totalDelta < 0)
+    expect(result).not.toHaveProperty("accepted")
   }
 }, 30_000)

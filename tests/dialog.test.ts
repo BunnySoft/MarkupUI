@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -578,7 +579,7 @@ describe("Explicit template owners and CSS", () => {
   it("keeps exact production composed CSS under its unchanged gzip ceiling", () => {
     const native = readFileSync(resolve("src", "components", "dialog", "native.css"), "utf8")
     const css = readFileSync(resolve("src", "components", "dialog", "dialog.css"), "utf8")
-    expect(gzipSync(`${native}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1500)
+    checkSizeRecommendation(gzipSync(`${native}\n${css}`, { level: 9 }).length, 1500, "dialog.test.ts: gzipSync(`${native}\\n${css}`, { level: 9 }).length")
   })
   it("normalizes formatter whitespace without hiding selector or value-token changes", () => {
     expect(normalizeCSS(".m-dialog :where(button) { padding: 16px 28px; }"))

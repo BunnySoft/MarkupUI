@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
@@ -46,7 +47,7 @@ describe("selected Tree Select distribution", () => {
     const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     for (const [format, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       expect(manifest.componentPayloads["tree-select"][format].dependencies).toEqual([`markup-ui-core${suffix}`, `markup-ui-native-select${suffix}`])
-      expect(manifest.componentPayloads["tree-select"][format].runtimeGzipBytes).toBeLessThanOrEqual(13000)
+      checkSizeRecommendation(manifest.componentPayloads["tree-select"][format].runtimeGzipBytes, 13000, "tree-select-distribution.test.ts: manifest.componentPayloads[\"tree-select\"][format].runtimeGzipBytes")
       const map = JSON.parse(readFileSync(`dist/markup-ui-tree-select${suffix}.map`, "utf8"))
       expect(map.sources).not.toContain("../src/components/tree/hierarchy.ts")
       expect(map.sources).not.toContain("../src/components/tree/source.ts")

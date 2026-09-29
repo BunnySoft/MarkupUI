@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -106,7 +107,7 @@ describe("Input OTP single-field default styles", () => {
   })
 
   it("fits the existing 1000-byte ceiling in LF and Windows checkout form", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
-    expect(gzipSync(css.replace(/\r?\n/g, "\r\n"), { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "input-otp.styles.test.ts: gzipSync(css, { level: 9 }).length")
+    checkSizeRecommendation(gzipSync(css.replace(/\r?\n/g, "\r\n"), { level: 9 }).length, 1000, "input-otp.styles.test.ts: gzipSync(css.replace(/\\r?\\n/g, \"\\r\\n\"), { level: 9 }).length")
   })
 })

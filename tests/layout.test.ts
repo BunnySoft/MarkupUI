@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
 import { createContext, runInContext } from "node:vm"
@@ -344,7 +345,7 @@ describe("direct native Layout family", () => {
   })
 
   it("keeps source CSS within its unchanged 1500 gzip-byte ceiling", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1500, "layout.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("defines only private theme and inverted defaults rather than overwriting author tokens", () => {
@@ -481,8 +482,8 @@ describe("Layout documentation and selected delivery", () => {
       const payload = manifest.componentPayloads.layout[mode]
       expect(payload.file).toBe(`markup-ui-layout${suffix}`)
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`])
-      expect(payload.gzipBytes).toBeLessThanOrEqual(2000)
-      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(3000)
+      checkSizeRecommendation(payload.gzipBytes, 2000, "layout.test.ts: payload.gzipBytes")
+      checkSizeRecommendation(payload.runtimeGzipBytes, 3000, "layout.test.ts: payload.runtimeGzipBytes")
       expect(payload.runtimeBudget).toBe(3000)
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + manifest.componentPayloads.layout.cssGzipBytes)
     }

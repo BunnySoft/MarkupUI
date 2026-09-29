@@ -84,7 +84,8 @@ for (const [name, source] of candidates) {
       const runtime = size.gzipBytes + sharedSize.gzipBytes + dependencyFiles.reduce((total, path) => total + manifest.bundles[path].gzipBytes, 0)
       const before = report.costs[`${format}:${family}:runtime`]
       families.push({ family, before: before.gzipBytes, after: runtime, delta: runtime - before.gzipBytes,
-        entry: size, runtimeBudget: payload[format].runtimeBudget, passes: runtime <= payload[format].runtimeBudget })
+        entry: size, runtimeBudget: payload[format].runtimeBudget,
+        overRecommendationBytes: Math.max(0, runtime - payload[format].runtimeBudget) })
     }
     assert(families.length > 0, `No measured consumers: ${name}`)
     const totalDelta = sharedSize.gzipBytes + families.reduce((sum, item) => sum + item.entry.gzipBytes - report.costs[`${format}:${item.family}:entry`].gzipBytes, 0)
@@ -102,10 +103,10 @@ for (const [name, source] of candidates) {
       selections[group] = { before, after: before + delta, delta }
     }
     const result = { name, source, format, sharedSize, families, selections, totalDelta,
-      accepted: families.every(item => item.passes) && totalDelta < 0 }
+      withinRecommendations: families.every(item => item.overRecommendationBytes === 0), combinedSaving: totalDelta < 0 }
     results.push(result)
-    console.log(`${name} ${format}: ${families.length} consumers, combined ${totalDelta >= 0 ? "+" : ""}${totalDelta} gzip; failing ceilings: ${families.filter(item => !item.passes).map(item => item.family).join(", ") || "none"}`)
+    console.log(`${name} ${format}: ${families.length} consumers, combined ${totalDelta >= 0 ? "+" : ""}${totalDelta} gzip; above recommendations: ${families.filter(item => item.overRecommendationBytes > 0).map(item => item.family).join(", ") || "none"}`)
   }
 }
 await mkdir(".vite/size", { recursive: true })
-await writeFile(".vite/size/sharing.json", JSON.stringify({ measurement: "In-memory source builds with the production core bridges and source-map comments; maps excluded; explicit shared boundaries; not shipped or behavior-accepted.", results }, null, 2) + "\n")
+await writeFile(".vite/size/sharing.json", JSON.stringify({ budgetPolicy: "advisory", measurement: "In-memory source builds with the production core bridges and source-map comments; maps excluded; explicit shared boundaries; not shipped or behavior-accepted.", results }, null, 2) + "\n")

@@ -6,17 +6,26 @@ is not automatically a delivered API.
 
 ## Current status
 
-As of September 29, 2026, the Web catalog provides 89 selectable families / 203 tags,
+As of September 30, 2026, Asia/Shanghai (verification recorded September 29 UTC),
+the Web catalog provides 89 selectable families / 205 tags,
 an optional full-catalog bundle, and separate root/plugin entries. The size optimization
 plan is complete through S6. Subsequent Theme, Field, AccordionItem and App lifecycle
 fixes and root stylesheet cleanup have passed local integrated verification.
 
-The latest recorded run passed 5,103 tests, 588 browser catalog checks and the
-96-entry packed-consumer check. These are local results, not production approval.
-Structural binding, remaining contract review, human accessibility/device acceptance,
-security/performance review, Chart engine-inclusive budget approval and clean remote
+The first-five checkpoint adds portable If, a batched fallback-placement improvement,
+retained-root/primitive fixes and Chart/data hardening. Its 589 focused tests, 96-entry
+packed consumer and three-engine/two-layout ESM/classic workflows passed. The final full
+rerun passed 5,447/5,447 tests in 153 files. Repeated resource measurements and a dependency audit are recorded
+in the [checkpoint](architecture/09-production.md#first-five-checkpoint).
+The 588 catalog checks remain the earlier full retained-root checkpoint.
+These are local results, not production approval. Full contract approval, human accessibility/device acceptance,
+security/performance review, Chart engine-inclusive cost review and clean remote
 CI evidence remain open. The [production readiness page](architecture/09-production.md)
 owns the current task summary, evidence and remaining work order.
+
+The [session handoff](../HANDOFF.md) records implementation ownership, local evidence
+paths, reproduction commands and the next-session boundaries. The current local commit
+authorization does not authorize pushing or publishing.
 
 Public authoring uses `m-*`; native HTML semantics belong to the Web renderer or an
 explicit Web interoperability example. Non-Web renderers are not delivered.

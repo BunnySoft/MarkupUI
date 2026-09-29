@@ -47,6 +47,19 @@ disposal. Failed loads retain the previous content.
 
 ## Release verification
 
+DataGrid arrays and Chart sources/dimensions reject own accessors, symbol members and
+custom array prototypes before iteration. Chart table projection reads own record
+cells only, and disposed/replaced renderer callbacks cannot report current selection.
+These are plain-data boundaries, not a sandbox for hostile JavaScript Proxies or
+modified built-in prototypes. Trusted direct Chart options intentionally remain a
+separate application-code channel.
+
+Portable `m-if` sources share the existing trusted-template boundary. Capturing a
+source does not sanitize it or suppress every custom-element constructor. Action
+names and source definitions must be application authored; default HTML sanitization
+does not admit portable elements. Focus-target IDs are root-local exact matches, not
+selectors or executable expressions.
+
 Unit tests cover policy bypass attempts, nested templates, origin resolution, streaming
 limits, cancellation, timeouts and stale response ownership. Browser checks exercise
 the filtering boundary and Chromium's Trusted Types rejection. These checks do not

@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
@@ -41,7 +42,7 @@ describe("audited Button styles", () => {
         loader: "css", minifyWhitespace: true, minifySyntax: false, legalComments: "none"
       }).code);
     `, "src/components/button/button.css"], { encoding: "utf8" })
-    expect(gzipSync(built, { level: 9 }).length).toBeLessThanOrEqual(2500)
+    checkSizeRecommendation(gzipSync(built, { level: 9 }).length, 2500, "button.test.ts: gzipSync(built, { level: 9 }).length")
   })
 
   it("uses overlay borders instead of adding border width to native button geometry", () => {

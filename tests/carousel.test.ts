@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -841,7 +842,7 @@ describe("Carousel default styles", () => {
   const css = readFileSync(resolve("src", "components", "carousel", "carousel.css"), "utf8")
 
   it("keeps the Carousel stylesheet within its unchanged ceiling", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1500, "carousel.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   describe("Carousel shared-core distribution", () => {
@@ -868,9 +869,9 @@ describe("Carousel default styles", () => {
       for (const file of ["markup-ui-carousel.js", "markup-ui-carousel.global.js"]) {
         const componentSize = gzipSync(readFileSync(`dist/${file}`), { level: 9 }).length
         const coreSize = gzipSync(readFileSync(`dist/${file.replace("carousel", "core")}`), { level: 9 }).length
-        expect(componentSize).toBeLessThanOrEqual(7000)
-        expect(coreSize).toBeLessThanOrEqual(4000)
-        expect(componentSize + coreSize).toBeLessThanOrEqual(11000)
+        checkSizeRecommendation(componentSize, 7000, "carousel.test.ts: componentSize")
+        checkSizeRecommendation(coreSize, 4000, "carousel.test.ts: coreSize")
+        checkSizeRecommendation(componentSize + coreSize, 11000, "carousel.test.ts: componentSize + coreSize")
       }
     })
   })

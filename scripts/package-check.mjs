@@ -28,7 +28,19 @@ assert(!pkg.dependencies || !Object.keys(pkg.dependencies).length, "Unexpected m
 assert(!packed.files.some(file => /(?:chart-licenses|demo\/vendor|node_modules\/(?:echarts|zrender))/.test(file.path)), "Packed vendor assets")
 await assert.rejects(access(resolve(consumer, "node_modules/echarts")))
 await writeFile(resolve(consumer, "types.ts"), entries.map((entry, index) => `import type * as Entry${index} from ${JSON.stringify(entry)};`).join("\n")
-  + `\nexport type Entries = [${entries.map((_, index) => `typeof Entry${index}`).join(",")}];\n`)
+  + `\nexport type Entries = [${entries.map((_, index) => `typeof Entry${index}`).join(",")}];\n`
+  + `import { bind, createStore, type BindingOptions } from "@dataengine/markup-ui/state";\n`
+  + `const options: BindingOptions = { templates: new Map([["row", document.createElement("template")]]), focusFallback: ({ active, removed }) => document.createElement("button") };\n`
+  + `bind(document.createElement("div"), createStore(), options).refresh();\n`
+  + `import { installActions, registerAction } from "@dataengine/markup-ui";\n`
+  + `const actionRoot = document.createElement("div"); const binding = bind(actionRoot, createStore());\n`
+  + `const argument: unknown = binding.read(actionRoot, "value"); const sameStore = binding.store;\n`
+  + `registerAction("typed", ({ arguments: args, parameters, store }) => { const value: unknown = args.key; });\n`
+  + `installActions(actionRoot, binding)();\n`
+  + `import { List, ListTemplate } from "@dataengine/markup-ui/list";\n`
+  + `const list = new List(); const region = new ListTemplate(); region.focusOnRemove = true; region.label = "Tasks";\n`
+  + `const source: HTMLTemplateElement = region.native; const items: readonly import("@dataengine/markup-ui/list").ListItem[] = list.items;\n`
+  + `import { If } from "@dataengine/markup-ui/box"; const condition = new If(); condition.focusTarget = "edit"; const inert: HTMLTemplateElement = condition.native;\n`)
 await writeFile(resolve(consumer, "tsconfig.json"), JSON.stringify({
   compilerOptions: { module: "NodeNext", moduleResolution: "NodeNext", target: "ES2022", lib: ["ES2022", "DOM", "DOM.Iterable"], strict: true, noEmit: true, types: [] },
   files: ["types.ts"],
@@ -39,7 +51,7 @@ await writeFile(resolve(consumer, "runtime.mjs"), `
 import assert from "node:assert/strict";
 import { JSDOM } from ${JSON.stringify(jsdom)};
 const { window } = new JSDOM("<!doctype html>", { url: "http://localhost/", pretendToBeVisual: true });
-for (const key of ["window", "document", "customElements", "MutationObserver", "CustomEvent", "Event", "Element", "Node", "DocumentFragment", "DOMParser", ...Object.getOwnPropertyNames(window).filter(key => /^(?:HTML|SVG).*Element$/.test(key))]) {
+for (const key of ["window", "document", "customElements", "MutationObserver", "CustomEvent", "Event", "Element", "Node", "Document", "DocumentFragment", "DOMParser", ...Object.getOwnPropertyNames(window).filter(key => /^(?:HTML|SVG).*Element$/.test(key))]) {
   globalThis[key] = key === "window" ? window : window[key];
 }
 for (const key of ["getComputedStyle", "requestAnimationFrame", "cancelAnimationFrame"]) globalThis[key] = window[key].bind(window);
@@ -71,6 +83,105 @@ assert.equal(typeof chart.configureChartEngine, "function");
 assert.throws(() => chart.configureChartEngine({}), /init/);
 chart.configureChartEngine({ init() { throw new Error("Not rendered by import"); } });
 if (root) assert.equal("MElement" in root, false);
+const state = await import("@dataengine/markup-ui/state");
+const conditional = document.createElement("m-box");
+conditional.innerHTML = '<m-button id="packed-return">Edit</m-button><m-if data-if="visible" focus-target="packed-return"><m-input data-model-value="title" data-model-event="input" data-model-target="native"></m-input></m-if>';
+document.body.append(conditional);
+const conditionalStore = state.createStore({ visible: true, title: "Packed condition" });
+let conditionBinding = state.bind(conditional, conditionalStore);
+const conditionalField = conditional.querySelector("m-input");
+assert.equal(conditionalField.value, "Packed condition");
+conditionBinding();
+conditionBinding = state.bind(conditional, conditionalStore);
+assert.equal(conditional.querySelector("m-input"), conditionalField);
+conditionalField.focus();
+conditionalStore.set("visible", false);
+assert.equal(document.activeElement, conditional.querySelector("button"));
+assert.equal(conditional.querySelector("m-input"), null);
+conditionBinding();
+conditional.remove();
+const editor = document.createElement("div");
+editor.innerHTML = '<template data-each="rows" data-each-key="id"><input data-model-value="$item.name" data-model-event="input"></template>';
+document.body.append(editor);
+const store = state.createStore({ rows: [{ id: "a", name: "Alpha" }, { id: "b", name: "Beta" }] });
+let stop = state.bind(editor, store);
+const first = editor.querySelector("input");
+store.set("rows", [...store.get("rows")].reverse());
+assert.equal(editor.querySelectorAll("input")[1], first);
+stop();
+stop = state.bind(editor, store);
+assert.equal(editor.querySelectorAll("input").length, 2);
+first.value = "Packed edit";
+first.dispatchEvent(new Event("input"));
+assert.equal(store.get("rows.1.name"), "Packed edit");
+stop();
+editor.remove();
+const list = document.createElement("m-list");
+list.innerHTML = '<m-list-template data-each="rows" data-each-key="id" focus-on-remove label="Packed list"><m-list-item><m-input data-model-value="$item.name" data-model-event="input" data-model-target="native"></m-input></m-list-item></m-list-template>';
+document.body.append(list);
+stop = state.bind(list, store);
+const item = list.items[0];
+const control = item.querySelector("m-input").native;
+assert.equal(item.parentElement.localName, "li");
+assert.equal(item.hasAttribute("role"), false);
+store.set("rows", [...store.get("rows")].reverse());
+assert.equal(list.items[1], item);
+control.value = "Portable packed edit";
+control.dispatchEvent(new Event("input", { bubbles: true }));
+assert.equal(store.get("rows.1.name"), "Portable packed edit");
+control.focus();
+store.set("rows", []);
+assert.equal(document.activeElement, list.itemsContainer);
+stop();
+list.remove();
+const references = document.createElement("div");
+references.innerHTML = '<m-list><m-list-template data-each="rows" data-each-key="id" data-template="#row"></m-list-template></m-list><template id="row"><m-list-item><m-label data-bind-html-for="$item.field" data-bind-text="$item.name"></m-label><m-input data-bind-id="$item.field" data-model-value="$item.name" data-model-event="input" data-model-target="native"></m-input></m-list-item></template><template data-each="rows" data-each-key="id" data-template="field"></template>';
+const fieldSource = document.createElement("template");
+fieldSource.innerHTML = '<input data-model-value="$item.name" data-model-event="input">';
+const sourceOptions = { templates: new Map([["field", fieldSource]]) };
+document.body.append(references);
+store.set("rows", [{ id: "a", name: "Reusable", field: "packed-field-a" }]);
+stop = state.bind(references, store, sourceOptions);
+await Promise.resolve();
+const referencedField = references.querySelector("m-input");
+assert.equal(referencedField.value, "Reusable");
+assert.equal(referencedField.id, "packed-field-a");
+assert.equal(references.querySelector("m-label").control, referencedField.native);
+assert.equal(references.querySelector("m-list-item").parentElement.localName, "li");
+referencedField.native.value = "Reference edit";
+referencedField.native.dispatchEvent(new Event("input", { bubbles: true }));
+assert.equal(store.get("rows.0.name"), "Reference edit");
+assert.equal(references.lastElementChild.previousElementSibling.value, "Reference edit");
+stop();
+stop = state.bind(references, store, sourceOptions);
+await Promise.resolve();
+assert.equal(references.querySelector("m-input"), referencedField);
+assert.equal(references.querySelector("m-label").control, referencedField.native);
+assert.equal(references.querySelector("#row").content.querySelector("m-input").hasAttribute("value"), false);
+assert.equal(stop.store, store);
+assert.equal(stop.read(referencedField, "$key"), "a");
+stop();
+references.remove();
+if (root) {
+  const actions = document.createElement("div");
+  actions.innerHTML = '<template data-each="rows" data-each-key="id"><m-button m-action="packed-action" m-arg-key="$key" m-arg-index="$index" m-param-mode="save">Save</m-button></template>';
+  document.body.append(actions);
+  store.set("rows", [{ id: "a" }, { id: "b" }]);
+  stop = state.bind(actions, store);
+  let captured;
+  root.registerAction("packed-action", context => { captured = context; });
+  const disposeActions = root.installActions(actions, stop);
+  const first = actions.querySelector("m-button");
+  store.set("rows", [...store.get("rows")].reverse());
+  first.querySelector("button").click();
+  assert.equal(captured.store, store);
+  assert.deepEqual(captured.arguments, { key: "a", index: 1 });
+  assert.deepEqual(captured.parameters, { mode: "save" });
+  disposeActions();
+  stop();
+  assert.throws(() => stop.read(first, "$key"), /disposed/);
+  actions.remove();
+}
 window.close();
 console.log(aggregate ? "Packed aggregate runtime imports passed" : "Packed modular runtime imports passed");
 `)

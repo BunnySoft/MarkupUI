@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
@@ -29,7 +30,7 @@ afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
 describe("Tree Select native visuals and registration", () => {
   it("keeps native list sizing and palette overrides within budget", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1250, "tree-select.test.ts: gzipSync(css, { level: 9 }).length")
     for (const height of [22, 28, 34, 40]) expect(css).toContain(`--_tree-select-height: ${height}px`)
     for (const token of ["--m-select-border", "--m-select-background", "--m-select-color", "--m-select-focus", "--m-select-pad"]) expect(css).toContain(token)
     expect(css).not.toMatch(/(?:^|[;{])\s*(?:height|block-size):/m)

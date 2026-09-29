@@ -17,3 +17,9 @@ metadata lookup, decorators or a generic property engine. API documentation is e
 
 The [active documentation](docs/README.md) describes the current design. Material under
 `docs/archive` is historical reference, not an implementation pattern to copy.
+
+Payload size budgets are recommendations, not hard limits. Report measured size and
+warn when a recommendation is exceeded; adjust recommendations when justified by the
+required behavior. Do not remove functionality or add artificial packaging boundaries
+just to fit a byte target. Preserve accurate dependency accounting and the frozen S0
+baseline. See [size policy](docs/architecture/07-modules.md#size-policy).

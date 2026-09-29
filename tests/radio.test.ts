@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { createContext, runInContext } from "node:vm"
@@ -489,11 +490,11 @@ describe("source API and selected delivery", () => {
     for (const [format, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const payload = manifest.componentPayloads.radio[format]
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`, `markup-ui-native-radio${suffix}`])
-      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(payload.runtimeBudget)
+      checkSizeRecommendation(payload.runtimeGzipBytes, payload.runtimeBudget, "radio.test.ts: payload.runtimeGzipBytes")
       expect(manifest.bundles[`markup-ui-radio${suffix}`].budget).toBe(3000)
       expect(manifest.componentPayloads.rate[format].dependencies).toEqual([`markup-ui-core${suffix}`, `markup-ui-native-radio${suffix}`])
     }
     expect(manifest.bundles["markup-ui-radio.css"].budget).toBe(1250)
-    expect(manifest.componentPayloads.radio.cssGzipBytes).toBeLessThanOrEqual(1250)
+    checkSizeRecommendation(manifest.componentPayloads.radio.cssGzipBytes, 1250, "radio.test.ts: manifest.componentPayloads.radio.cssGzipBytes")
   })
 })

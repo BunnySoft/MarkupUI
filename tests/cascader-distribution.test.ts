@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
@@ -45,7 +46,7 @@ describe("selected Cascader distribution", () => {
     const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     for (const [format, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       expect(manifest.componentPayloads.cascader[format].dependencies).toEqual([`markup-ui-core${suffix}`])
-      expect(manifest.componentPayloads.cascader[format].runtimeGzipBytes).toBeLessThanOrEqual(12000)
+      checkSizeRecommendation(manifest.componentPayloads.cascader[format].runtimeGzipBytes, 12000, "cascader-distribution.test.ts: manifest.componentPayloads.cascader[format].runtimeGzipBytes")
       const map = JSON.parse(readFileSync(`dist/markup-ui-cascader${suffix}.map`, "utf8"))
       expect(map.sources).toContain("../src/components/tree/hierarchy.ts")
       expect(map.sources).not.toContain("../src/components/tree/tree.ts")

@@ -21,7 +21,7 @@ to the archive rather than maintaining duplicate component API/usage pages.
 
 ## Status
 
-September 29, 2026: the selectable Web catalog contains 89 families / 203 tags, with
+The selectable Web catalog contains 89 families / 205 tags, with
 an optional full-catalog entry. S0-S6 optimization is complete; catalog coverage and
 passing local tests do not approve every retained contract. The
 [production task summary](../architecture/09-production.md#task-summary) records
@@ -29,7 +29,8 @@ remaining work. Root Theme, Field, AccordionItem and App have an additional veri
 [lifecycle baseline](../api/01-core.md#optional-root-lifecycle), separate from the catalog.
 
 Box-family primitives now provide native Web semantic owners for portable labels,
-disclosure, articles, footers and phrasing. See the
+disclosure, articles, footers and phrasing, plus an explicit `m-if` conditional source
+for optional state binding. See the
 [Box demo/API](../../demo/components/box.html) for ownership and lifecycle rules.
 Representative native keyboard/focus workflows passed Chromium, Firefox and WebKit
 in desktop/mobile-sized layouts. Screen-reader, real-device and broader input-mode

@@ -108,6 +108,44 @@
 :where(:is(m-list, .m-list):is([data-show-divider="false"], [show-divider="false"]) :is(m-list-item, .m-list-item))::after {
   content: none;
 }
+:where(m-list-template) {
+  display: block;
+  min-inline-size: 0;
+}
+:where(m-list-template > ul[data-list-template]) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:where(m-list-template > m-list-item) {
+  display: none;
+}
+:where(m-list-template > ul[data-list-template] > li[data-list-template-item]) {
+  position: relative;
+  min-inline-size: 0;
+}
+:where(li[data-list-template-item] > m-list-item) {
+  display: block;
+  box-sizing: border-box;
+  padding-block: var(--m-list-padding-block, var(--_m-list-padding-block));
+  padding-inline: var(--m-list-padding-inline, var(--_m-list-padding-inline));
+}
+:where(m-list:not([show-divider="false"]) > m-list-template > ul > li:not(:has(> m-list-item[hidden])):has(~ li > m-list-item:not([hidden]))) {
+  border-block-end: 1px solid var(--m-list-border-color, var(--_m-list-border, #efeff5));
+}
+:where(li[data-list-template-item]:has(> m-list-item[hidden]:not([hidden="until-found"]))) {
+  display: none;
+}
+:where(m-list-template > ul:focus-visible) {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+:where(m-list > :is(.m-list-header, [data-part="header"], m-list-header, header):has(~ m-list-template > ul > li)) {
+  border-block-end: 1px solid var(--m-list-border-color, var(--_m-list-border, #efeff5));
+}
+:where(m-list-template:has(> ul > li) ~ :is(.m-list-footer, [data-part="footer"], m-list-footer, footer)) {
+  border-block-start: 1px solid var(--m-list-border-color, var(--_m-list-border, #efeff5));
+}
 :where(.m-list-row, [data-part="row"], .m-list-actions, [data-part="actions"]) {
   display: flex;
   flex-wrap: wrap;
@@ -175,7 +213,7 @@
   }
 }
 :where(
-  m-list, .m-list, .m-list-items, [data-part="items"], m-list-item, .m-list-item,
+  m-list, .m-list, .m-list-items, [data-part="items"], m-list-item, .m-list-item, m-list-template,
   .m-list-header, [data-part="header"], m-list-header, .m-list-footer, [data-part="footer"], m-list-footer,
   .m-list-row, [data-part="row"], .m-list-prefix, [data-part="prefix"],
   .m-list-content, [data-part="content"], .m-list-suffix, [data-part="suffix"],

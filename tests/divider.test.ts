@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { createContext, runInContext } from "node:vm"
 import { gzipSync } from "node:zlib"
@@ -305,7 +306,7 @@ describe("Divider presentation and packaging", () => {
       "flex: 0 1 var(--m-divider-edge, 28px)", "@media (forced-colors: active)", "--m-divider-color: CanvasText",
     ]) expect(css).toContain(value)
     for (const value of ["transition:", "@keyframes", "overflow: hidden", "background:", ".m-divider", "--m-border", "--m-text-primary", "forced-color-adjust: none"]) expect(css).not.toContain(value)
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1500, "divider.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("exports the runtime and stylesheet, requires shared core and registers no other family", () => {
@@ -338,8 +339,8 @@ describe("Divider presentation and packaging", () => {
       const component = gzipSync(readFileSync(`dist/markup-ui-divider${suffix}`), { level: 9 }).length
       const core = gzipSync(readFileSync(`dist/markup-ui-core${suffix}`), { level: 9 }).length
       const styles = gzipSync(readFileSync("dist/markup-ui-divider.css"), { level: 9 }).length
-      expect(component).toBeLessThanOrEqual(3000)
-      expect(component + core).toBeLessThanOrEqual(5000)
+      checkSizeRecommendation(component, 3000, "divider.test.ts: component")
+      checkSizeRecommendation(component + core, 5000, "divider.test.ts: component + core")
       expect(manifest.bundles[`markup-ui-divider${suffix}`].budget).toBe(3000)
       expect(payload[mode!]).toMatchObject({ dependencies: [`markup-ui-core${suffix}`], runtimeBudget: 5000, runtimeGzipBytes: component + core, totalGzipBytes: component + core + styles })
     }

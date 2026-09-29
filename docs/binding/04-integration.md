@@ -30,6 +30,14 @@ Its collection properties, item/rest roles, writable routes and focus policy nee
 contract decision before implementation. Do not embed that earlier proposal into every
 element or create a private AvatarGroup renderer.
 
+The [List/ListItem consumer](../../demo/components/list.html#template-heading) now uses
+one portable ListTemplate region, an explicit store route and stable key, and a
+surviving-list focus policy. List owns native semantic chrome; state alone owns generated
+instance placement. State recognizes this declared structural source and calls its
+ordinary native accessor, without registering/importing the List runtime or consulting
+metadata. Unbound List requires only core. The
+[delivery plan](05-delivery-plan.md) records the bounded checkpoint and remaining work.
+
 ## Delivery gates
 
 | Stage | Required outcome |
@@ -40,10 +48,19 @@ element or create a private AvatarGroup renderer.
 | Proving element | One approved collection consumer demonstrates real composition and focus behavior. |
 | Expansion | Reuse the proven mechanism; add collection operations or adapters only when required. |
 
-The scalar/model binder ships through the optional state entry, with a 4,000-byte gzip
-ceiling per runtime format. The language page defines the text-property escape and
-explicit Web event-owner adapter; it uses no runtime metadata. Template lookup,
-item scopes, writable keyed routes and generic focus policy remain unimplemented.
+The scalar/model and inline Web template binder ship through the optional state entry, with a 4,000-byte gzip
+recommendation per runtime format. Size recommendations are adjustable, not hard gates;
+see the [size policy](../architecture/07-modules.md#size-policy).
+The language page defines the text-property escape and
+explicit Web event-owner adapter; it uses no runtime metadata. Item scopes, current-key
+model writes, explicit `focusFallback` and ListTemplate's portable focus policy are
+implemented. Root-local ID references and explicit programmatic template Maps use that
+same binder; native source objects remain a Web-only adapter. One-way paired IDs add
+next-tree uniqueness and root-local label/ARIA relationship preflight without component
+imports. [Scoped actions](06-actions.md) read data through an explicit live binding;
+state does not import the action registry, and named actions remain an optional root
+facade feature. Generic portable conditions use Box's `m-if` and the same optional
+state runtime. Broader resource and human interaction acceptance remain pending.
 This is a clean rewrite: previous binding names have no aliases.
 
 The binder stays optional. Measure startup, updates, retained memory and payload instead

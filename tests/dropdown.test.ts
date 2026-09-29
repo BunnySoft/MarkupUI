@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createDropdown } from "../src/components/dropdown/controller.js"
@@ -581,15 +582,15 @@ describe("Dropdown shared-core distribution", () => {
     expect(build).toContain('"markup-ui-dropdown.css": 1_850')
     const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     const cssBytes = manifest.bundles["markup-ui-dropdown.css"].gzipBytes
-    expect(cssBytes).toBeLessThanOrEqual(1_850)
+    checkSizeRecommendation(cssBytes, 1_850, "dropdown.test.ts: cssBytes")
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const payload = manifest.componentPayloads.dropdown[mode]
       const core = `markup-ui-core${suffix}`
-      expect(payload.gzipBytes).toBeLessThanOrEqual(13_000)
+      checkSizeRecommendation(payload.gzipBytes, 13_000, "dropdown.test.ts: payload.gzipBytes")
       expect(payload.dependencies).toEqual([core])
       expect(payload.runtimeBudget).toBe(14_500)
       expect(payload.runtimeGzipBytes).toBe(payload.gzipBytes + manifest.bundles[core].gzipBytes)
-      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(14_500)
+      checkSizeRecommendation(payload.runtimeGzipBytes, 14_500, "dropdown.test.ts: payload.runtimeGzipBytes")
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + cssBytes)
     }
   })

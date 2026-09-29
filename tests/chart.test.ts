@@ -76,6 +76,22 @@ describe("Chart ECharts-shaped configuration", () => {
 })
 
 describe("Chart renderer lifecycle and fallback", () => {
+  it("ignores interaction callbacks from disposed or replaced renderers", async () => {
+    const host = chart(), selected = vi.fn()
+    host.addEventListener("m:chart-select", selected)
+    await flush()
+    const oldClick = renderer.instances[0]!.on.mock.calls.find(call => call[0] === "click")![1]
+    host.remove()
+    oldClick({ dataIndex: 0 })
+    expect(selected).not.toHaveBeenCalled()
+    document.body.append(host)
+    await flush()
+    oldClick({ dataIndex: 0 })
+    expect(selected).not.toHaveBeenCalled()
+    renderer.instances.at(-1)!.on.mock.calls.find(call => call[0] === "click")![1]({ dataIndex: 1 })
+    expect(selected).toHaveBeenCalledOnce()
+  })
+
   it("replays pre-upgrade direct configuration before rendering", async () => {
     const host = document.createElement("m-late-chart") as Chart
     host.option = { series: [{ type: "pie", data: [{ name: "A", value: 1 }] }] }

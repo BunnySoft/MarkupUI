@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./box.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-state.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -90,6 +91,43 @@
       <m-p>On Web, Label creates a native label associated with the field's native control.
         The public field ID stays on m-input. Input's runtime and styles are additional
         dependencies of this example, not of Box.</m-p>
+    </section>
+
+    <section data-demo-example="condition" aria-labelledby="condition-heading">
+      <header data-demo-header><m-heading level="2" id="condition-heading">Conditional editor</m-heading></header>
+      <m-box data-demo-preview id="conditional-editor" display="flex" direction="column" gap="12">
+        <m-button id="toggle-editor">Close editor</m-button>
+        <m-if data-if="editing" focus-target="toggle-editor">
+          <m-box display="flex" direction="column" gap="8">
+            <m-label for="conditional-title">Report title</m-label>
+            <m-input id="conditional-title" data-model-value="title"
+              data-model-event="input" data-model-target="native"></m-input>
+            <m-span data-bind-text="title"></m-span>
+          </m-box>
+        </m-if>
+        <m-span id="conditional-status" role="status"></m-span>
+      </m-box>
+      <pre><code>&lt;m-button id="toggle-editor"&gt;Close editor&lt;/m-button&gt;
+&lt;m-if data-if="editing" focus-target="toggle-editor"&gt;
+  &lt;m-input aria-label="Report title" data-model-value="title"
+    data-model-event="input" data-model-target="native"&gt;&lt;/m-input&gt;
+&lt;/m-if&gt;
+
+const store = MarkupUIState.createStore({ editing: true, title: "Quarterly report" })
+const binding = MarkupUIState.bind(root, store)
+store.set("editing", false)
+binding()</code></pre>
+      <m-p>If belongs to Box; state is an additional explicit selection for this example.
+        Load markup-ui-state.global.js before binding, or import bind and createStore
+        from @dataengine/markup-ui/state. Input and Button are also separate selections.
+        Conditions require Boolean values and one content root. False destroys the
+        instance and releases its bindings, rather than hiding it. focus-target is an
+        exact ID inside this binding root; it may name a native control or a portable
+        control with its own focus method. The target must survive removal.</m-p>
+      <m-p>Nested conditions retain the nearest list item scope. References through
+        data-template use the existing Web-only native definitions. Stop/rebind retains
+        surviving instances. Authored descendants can briefly connect before inert capture;
+        loading Box alone does not activate state or render a condition.</m-p>
     </section>
 
     <section aria-labelledby="api-heading">

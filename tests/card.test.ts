@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { createContext, runInContext } from "node:vm"
@@ -208,10 +209,10 @@ describe("Card shared-core distribution", () => {
     const core = `markup-ui-core${suffix}`
     const measure = (name: string) => gzipSync(readFileSync(`dist/${name}`), { level: 9 }).length
     const runtime = measure(core) + measure(file)
-    expect(measure(core)).toBeLessThanOrEqual(4000)
-    expect(measure(file)).toBeLessThanOrEqual(3000)
-    expect(measure("markup-ui-card.css")).toBeLessThanOrEqual(2500)
-    expect(runtime).toBeLessThanOrEqual(7000)
+    checkSizeRecommendation(measure(core), 4000, "card.test.ts: measure(core)")
+    checkSizeRecommendation(measure(file), 3000, "card.test.ts: measure(file)")
+    checkSizeRecommendation(measure("markup-ui-card.css"), 2500, "card.test.ts: measure(\"markup-ui-card.css\")")
+    checkSizeRecommendation(runtime, 7000, "card.test.ts: runtime")
     const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     expect(manifest.componentPayloads.card[mode!]).toMatchObject({
       file, dependencies: [core], runtimeGzipBytes: runtime, runtimeBudget: 7000,

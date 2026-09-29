@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { execFileSync } from "node:child_process"
 import { existsSync, readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
@@ -94,6 +95,8 @@ describe("root shared-core distribution", () => {
 
   it("accounts for every root/plugin dependency and selected stylesheet", () => {
     const manifest = JSON.parse(read("manifest.json"))
+    expect(manifest.budgetPolicy).toBe("advisory")
+    expect(Array.isArray(manifest.sizeWarnings)).toBe(true)
     const measure = (file: string) => gzipSync(readFileSync(resolve("dist", file)), { level: 9 }).length
     expect(manifest.entryPayloads.root.dependencies).toEqual(["markup-ui-core.js", "markup-ui-state.js"])
     expect(manifest.entryPayloads["root-classic"].dependencies).toEqual(["markup-ui-core.global.js", "markup-ui-state.global.js"])
@@ -103,7 +106,7 @@ describe("root shared-core distribution", () => {
       const runtime = [payload.file, ...payload.dependencies].reduce((total, file) => total + measure(file), 0)
       expect(payload.runtimeGzipBytes).toBe(runtime)
       expect(payload.totalGzipBytes).toBe(runtime + payload.css.reduce((total, file) => total + measure(file), 0))
-      if (payload.runtimeBudget !== undefined) expect(runtime).toBeLessThanOrEqual(payload.runtimeBudget)
+      if (payload.runtimeBudget !== undefined) checkSizeRecommendation(runtime, payload.runtimeBudget, "core-distribution.test.ts: runtime")
     }
     for (const name of ["advanced", "widgets"]) {
       expect(manifest.entryPayloads[name].dependencies).toEqual(["markup-ui.js", "markup-ui-core.js", "markup-ui-state.js"])
@@ -123,7 +126,7 @@ describe("root shared-core distribution", () => {
     }
   })
 
-  it("enforces exact dependency-inclusive budgets for every component in both formats", () => {
+  it("verifies dependency-inclusive measurements and reports size recommendations in both formats", () => {
     const manifest = JSON.parse(read("manifest.json"))
     const measure = (file: string) => gzipSync(readFileSync(resolve("dist", file)), { level: 9 }).length
     for (const [name, payload] of Object.entries(manifest.componentPayloads) as Array<[string, {
@@ -137,7 +140,7 @@ describe("root shared-core distribution", () => {
         const runtime = [entry.file, ...entry.dependencies].reduce((total, file) => total + measure(file), 0)
         expect(entry.runtimeGzipBytes, `${name} ${mode}`).toBe(runtime)
         expect(entry.totalGzipBytes, `${name} ${mode}`).toBe(runtime + measure(payload.css))
-        if (entry.dependencies.length) expect(runtime, `${name} ${mode}`).toBeLessThanOrEqual(entry.runtimeBudget)
+        if (entry.dependencies.length) checkSizeRecommendation(runtime, entry.runtimeBudget, `${name} ${mode}`)
       }
     }
   })

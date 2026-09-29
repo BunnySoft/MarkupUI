@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
@@ -50,9 +51,9 @@ describe("Button shared-core distribution", () => {
     const core = `markup-ui-core${suffix}`
     const measure = (name: string) => gzipSync(readFileSync(`dist/${name}`), { level: 9 }).length
     const runtime = measure(core) + measure(file)
-    expect.soft(measure(core)).toBeLessThanOrEqual(4000)
-    expect.soft(measure(file)).toBeLessThanOrEqual(6000)
-    expect.soft(runtime).toBeLessThanOrEqual(9500)
+    checkSizeRecommendation(measure(core), 4000, "button-distribution.test.ts: measure(core)")
+    checkSizeRecommendation(measure(file), 6000, "button-distribution.test.ts: measure(file)")
+    checkSizeRecommendation(runtime, 9500, "button-distribution.test.ts: runtime")
     const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     expect(manifest.componentPayloads.button[mode!]).toMatchObject({
       file, dependencies: [core], runtimeGzipBytes: runtime, runtimeBudget: 9500,
@@ -72,7 +73,7 @@ describe("Button CSS distribution", () => {
     const actual = readFileSync("dist/markup-ui-button.css")
     const gzipBytes = gzipSync(actual, { level: 9 }).length
     expect(actual.toString()).toBe(expected)
-    expect(gzipBytes).toBeLessThanOrEqual(2500)
+    checkSizeRecommendation(gzipBytes, 2500, "button-distribution.test.ts: gzipBytes")
     const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     expect(manifest.bundles["markup-ui-button.css"]).toEqual({
       bytes: actual.length, gzipBytes, budget: 2500,

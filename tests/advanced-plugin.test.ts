@@ -26,6 +26,19 @@ function grid(): Grid {
 }
 
 describe("optional DataGrid ownership", () => {
+  it.each(["index", "iterator", "subclass", "symbol"])("rejects executable or nonplain %s arrays before reading rows", kind => {
+    const element = grid(), previous = element.rows
+    const executed = vi.fn(() => ({ name: "Injected" }))
+    const rows: unknown[] = [{ name: "Valid" }]
+    if (kind === "index") Object.defineProperty(rows, "0", { get: executed })
+    if (kind === "iterator") Object.defineProperty(rows, Symbol.iterator, { get: executed })
+    if (kind === "subclass") Object.setPrototypeOf(rows, Object.create(Array.prototype))
+    if (kind === "symbol") Object.defineProperty(rows, Symbol("hidden"), { value: true })
+    expect(() => { element.rows = rows as Grid["rows"] }).toThrow()
+    expect(executed).not.toHaveBeenCalled()
+    expect(element.rows).toBe(previous)
+  })
+
   it("replays rows assigned before plugin registration", () => {
     expect(beforeUpgrade.querySelector("td")?.textContent).toBe("Before upgrade")
     expect(Object.hasOwn(beforeUpgrade, "rows")).toBe(false)

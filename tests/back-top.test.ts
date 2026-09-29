@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -397,7 +398,7 @@ describe("validation, ownership and cleanup", () => {
         .map(rule => (rule as CSSMediaRule).media.mediaText)
       expect(media).toContain("(prefers-reduced-motion:reduce)")
     } finally { style.remove() }
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "back-top.test.ts: gzipSync(css, { level: 9 }).length")
   })
   it("preserves authored icon nodes and local style tokens through visibility and focus changes", () => {
     const { action, root } = nodes()

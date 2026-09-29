@@ -1,9 +1,31 @@
 # 7. Small core and selectable components
 
-**Implemented for the shared core and 89 selectable families, with explicit payload
-ceilings. Chart's new ceilings remain provisional pending release approval.**
+**Implemented for the shared core and 89 selectable families, with measured payload
+recommendations. Chart's engine-inclusive performance acceptance remains open.**
 Follow the useful jQuery/plugin pattern: load one small core, then only the features the
 application needs. This is a packaging and extension pattern, not a dependency on jQuery.
+
+## Size policy
+
+September 29, 2026 user direction: payload budgets are **advisory and adjustable**, not
+hard limits. Required behavior, correctness, accessibility and maintainability take
+priority over fitting a byte target. Do not remove functionality or invent a shared
+chunk solely to fit a recommendation. The small core and optional selected delivery
+remain architectural requirements.
+
+Builds and default size reports emit warnings for exceeded recommendations and keep
+the measured bytes, thresholds and overages in `sizeWarnings`; `budgetPolicy` is
+`advisory`. Existing manifest fields `budget` and `runtimeBudget` retain their names.
+Threshold adjustments are recorded in baseline comparisons, not rejected. Explain
+meaningful increases and adjust the recommendation when useful; do not rewrite S0.
+No numeric recommendation is changed merely by adopting this policy.
+
+Missing files, invalid measurement metadata, stale hashes, incorrect byte totals,
+dependency errors and functional tests still fail. Explicit `--check-regressions`
+remains an opt-in strict comparison of bytes/exports against the chosen baseline,
+not the default build/release size gate. It does not reject recommendation changes.
+Historical checkpoint descriptions below retain the numbers and decisions recorded
+at the time; mentions of hard ceilings/fail-fast size checks do not override this policy.
 
 ## Delivery units
 
@@ -37,7 +59,7 @@ files and ordering in the component's API page.
 ## Optional Full Catalog
 
 `@dataengine/markup-ui/all` serves `markup-ui-all.js` with declarations in `all.d.ts`.
-It registers all 89 families / 203 tags and exports namespaces such as `button`,
+It registers all 89 families / 205 tags and exports namespaces such as `button`,
 `dataTable`, `treeSelect` and `chart`, without export-name collisions. The existing
 root facade `markup-ui.min.js` retains its different purpose and name.
 
@@ -65,11 +87,14 @@ styles. Themes/global document styling remain optional separate assets. ECharts
 remains application supplied, with no vendor code/types or automatic engine download.
 Configure it through `all.chart.configureChartEngine(echarts)` when Chart is used.
 
-The final complete measurement is 314,066 ESM / 312,492 classic gzip bytes including
+The historical S6 complete measurement is 314,066 ESM / 312,492 classic gzip bytes including
 core and adapter, and 63,150 CSS bytes. The new aggregate-only runtime ceiling is
 315,000 bytes in either format; its CSS ceiling is 64,000. No existing ceiling changes.
 See the final measurements in [the optimization record](10-size-optimization.md).
 The earlier 282.28 KiB diagnostic was not a feature-validated distribution or approved ceiling.
+Subsequent ListTemplate work adds one catalog tag without adding a mandatory dependency.
+See the [portable checkpoint](09-production.md#portable-list-template-checkpoint) for
+current selected/aggregate costs; the S6 measurements above remain historical evidence.
 
 ## Shared Identity and Errors
 
@@ -88,8 +113,8 @@ import `markup-ui-core.js` and `markup-ui-state.js`; classic loading is
 `markup-ui-core.global.js`, `markup-ui-state.global.js`, then `markup-ui.global.js`.
 Neither root format embeds another base implementation or private binding owner.
 `dist/manifest.json` records these root and optional plugin costs in `entryPayloads`,
-including runtime dependencies and CSS. The existing 15,000-byte minified-root ceiling
-also gates core-inclusive minified ESM and classic runtime; no ceiling is increased.
+including runtime dependencies and CSS. The existing 15,000-byte minified-root
+recommendation also covers core-inclusive minified ESM and classic runtime.
 
 After retained-root lifecycle hardening, the root's embedded/external stylesheet no
 longer duplicates migrated family rules. Application-selected families still require
@@ -117,16 +142,36 @@ less efficiently. The benefit is amortizing common runtime cost across component
 avoiding unused features. Do not claim a saving by excluding required dependency bytes.
 
 The build manifest and API documentation must agree on dependency files and total costs.
-Keep approved budgets unless a measured change is explicitly accepted.
-Both ESM and classic builds enforce the exact manifest runtime ceiling, without a
-format-specific allowance. Distribution tests independently gzip the shipped files and
+Report recommendation changes alongside measured costs.
+Both ESM and classic builds warn on exceeded manifest runtime recommendations.
+Distribution tests independently gzip the shipped files and
 sum their dependencies; source-only measurements are not release evidence.
 
-The optional `@dataengine/markup-ui/state` entry provides the store and scalar/model
-binder without core, components, query or the aggregate. Served ESM is
+The optional `@dataengine/markup-ui/state` entry provides the store, scalar/model
+binder, Web conditional/keyed templates, reusable sources, paired IDs and ListTemplate/If
+integration without core, component runtimes, query or the aggregate. Served ESM is
 `markup-ui-state.js`; classic scripts expose `MarkupUIState` from
-`markup-ui-state.global.js`. Each format has a 4,000-byte gzip ceiling. The root facade
-reuses this entry, and its existing dependency-inclusive 15,000-byte ceiling is unchanged.
+`markup-ui-state.global.js`. Each format has a 4,000-byte gzip recommendation. The root
+facade reuses this entry with a dependency-inclusive 15,000-byte recommendation.
+The Web template implementation exceeds those original recommendations; builds warn
+and record the overages. Current dependency-inclusive evidence is in the
+[first-five checkpoint](09-production.md#first-five-checkpoint). No mandatory
+runtime file or dependency boundary was added to fit a byte target.
+
+Scoped action arguments reuse `Binding.read(element, path)` and the binding's explicit
+store identity. Actions remain in the optional root facade; core, state, ordinary List
+and the full catalog do not import the action registry. `m-app` connects its existing
+binding automatically; manual installations pass the live binding explicitly.
+The [scoped-action checkpoint](09-production.md#scoped-action-checkpoint) records the
+complete root and selected composition costs, including state. This does not create a
+new actions-only distribution entry or require the full catalog.
+
+Box also exports `If` / `m-if` for portable conditional content. Its family still selects
+only core; applications explicitly add state and any content families. Classic order is
+core, Box/content entries and state before binding. The full catalog includes the If
+element, but not state, root actions or an automatically installed binding.
+The first-five checkpoint reports the resulting Box/state/aggregate growth. Existing
+recommendations warn and the frozen S0 baseline remains unchanged.
 
 The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
 `@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,
@@ -541,7 +586,8 @@ level-9 gzip per file. Stale or missing evidence requires a rebuild.
 `docs/architecture/size-baseline.json` is the S0 pre-optimization baseline.
 `pnpm size:report --check-regressions` also rejects raw/gzip increases or changed ESM
 export names relative to it. The default command reports changes without rejecting
-growth within existing ceilings; raising/removing an existing ceiling is still rejected.
+growth and recommendation changes without rejecting them. Exceeded recommendations
+produce warnings; inconsistent or stale measurement evidence still fails.
 Only an intentional baseline capture uses `--write-baseline`; do not use it to clear a
 regression. `--baseline <file>` and `--output <file>` allow separate experiments.
 

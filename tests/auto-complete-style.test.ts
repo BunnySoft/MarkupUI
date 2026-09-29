@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -15,7 +16,7 @@ afterEach(() => { style?.remove(); style = undefined; document.body.replaceChild
 
 describe("Auto Complete native field styles", () => {
   it("keeps the strict 1000-byte CSS budget with no Input stylesheet dependency", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "auto-complete-style.test.ts: gzipSync(css, { level: 9 }).length")
     expect(css).not.toContain("@import")
     expect(css).not.toContain("--m-input-")
     expect(css).not.toContain("animation")

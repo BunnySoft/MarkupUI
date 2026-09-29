@@ -29,9 +29,11 @@ describe("CSS and theme sources", () => {
     })
   })
 
-  it("preserves the approved runtime CSS baselines exactly", () => {
+  it("preserves runtime CSS baselines apart from the reviewed Spacer default", () => {
     // Root owns foundation/dynamic elements and its scoped feedback service, not selected families.
-    expect(hash(builtInStyles)).toBe("b9fc9a5f28a82c888dae9d242cdbbc7e90bf2af4ea2df78d08ef410ec5c9911c")
+    const spacer = "m-spacer{flex:1}\n"
+    expect(builtInStyles).toContain(spacer)
+    expect(hash(builtInStyles.replace(spacer, ""))).toBe("b9fc9a5f28a82c888dae9d242cdbbc7e90bf2af4ea2df78d08ef410ec5c9911c")
     expect(builtInStyles).not.toContain("m-autocomplete")
     expect(builtInStyles).not.toMatch(/m-card|m-avatar|m-button(?=[\[>{:.])|m-tab|m-tree|m-dialog|m-drawer/)
     expect(builtInStyles).toContain("m-overlay-host>m-message")

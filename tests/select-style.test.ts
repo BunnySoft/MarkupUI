@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -15,13 +16,13 @@ afterEach(() => { style?.remove(); style = undefined; document.body.replaceChild
 
 describe("Select native field defaults", () => {
   it("keeps both the Select and derived Popselect CSS within their fixed budgets", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "select-style.test.ts: gzipSync(css, { level: 9 }).length")
     const composed = [
       readFileSync(resolve("src", "components", "popover", "popover.css"), "utf8"),
       css,
       readFileSync(resolve("src", "components", "popselect", "popselect.css"), "utf8")
     ].join("\n")
-    expect(gzipSync(composed, { level: 9 }).length).toBeLessThanOrEqual(2500)
+    checkSizeRecommendation(gzipSync(composed, { level: 9 }).length, 2500, "select-style.test.ts: gzipSync(composed, { level: 9 }).length")
   })
 
   it("uses reference font/height presets without overwriting public size or state overrides", () => {

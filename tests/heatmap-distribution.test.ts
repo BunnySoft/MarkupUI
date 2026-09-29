@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
@@ -42,7 +43,7 @@ describe("selected Heatmap distribution", () => {
     const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     for (const [format, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       expect(manifest.componentPayloads.heatmap[format].dependencies).toEqual([`markup-ui-core${suffix}`])
-      expect(manifest.componentPayloads.heatmap[format].runtimeGzipBytes).toBeLessThanOrEqual(10500)
+      checkSizeRecommendation(manifest.componentPayloads.heatmap[format].runtimeGzipBytes, 10500, "heatmap-distribution.test.ts: manifest.componentPayloads.heatmap[format].runtimeGzipBytes")
       const map = JSON.parse(readFileSync(`dist/markup-ui-heatmap${suffix}.map`, "utf8"))
       expect(map.sources).toContain("../src/components/heatmap/heatmap.ts")
       expect(map.sources).not.toContain("../src/components/calendar/calendar-element.ts")

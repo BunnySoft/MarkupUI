@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { join, resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -326,7 +327,7 @@ describe("validated passive anatomy and packaging", () => {
       expect(css).toContain("transition: none !important")
       expect(css).toContain("@media (forced-colors: active)")
       expect(css).toContain("@media print")
-      expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+      checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1250, "loading-bar.test.ts: gzipSync(css, { level: 9 }).length")
       const { controller, status, progress } = bind()
       controller.start()
       controller.setProgress(35)

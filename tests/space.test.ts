@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -338,7 +339,7 @@ describe("passive Space composition", () => {
 
 describe("Space CSS, demo and selected delivery", () => {
   it("retains the unchanged CSS ceiling and independent style resources", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "space.test.ts: gzipSync(css, { level: 9 }).length")
     expect(css).not.toMatch(/@import|\.m-flex|data-m-theme|--m-color|--m-font|--m-text/)
     expect(css).toContain("row-gap: var(--m-space-row-gap, var(--_m-space-row-gap))")
     expect(css).toContain("column-gap: var(--m-space-column-gap, var(--_m-space-column-gap))")
@@ -394,12 +395,12 @@ describe("Space CSS, demo and selected delivery", () => {
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const payload = manifest.componentPayloads.space[mode]
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`])
-      expect(payload.gzipBytes).toBeLessThanOrEqual(1500)
-      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(2750)
+      checkSizeRecommendation(payload.gzipBytes, 1500, "space.test.ts: payload.gzipBytes")
+      checkSizeRecommendation(payload.runtimeGzipBytes, 2750, "space.test.ts: payload.runtimeGzipBytes")
       expect(payload.runtimeBudget).toBe(2750)
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + manifest.componentPayloads.space.cssGzipBytes)
     }
-    expect(manifest.componentPayloads.space.cssGzipBytes).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(manifest.componentPayloads.space.cssGzipBytes, 1000, "space.test.ts: manifest.componentPayloads.space.cssGzipBytes")
     expect(readFileSync("dist/markup-ui-space.js", "utf8")).toContain('"./markup-ui-core.js"')
     expect(readFileSync("src/components/elements.ts", "utf8")).not.toContain('"m-space"')
     for (const name of ["collapse", "dropdown", "tooltip"]) {

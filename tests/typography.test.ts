@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -292,8 +293,8 @@ describe("native-owner Typography", () => {
     for (const format of [".js", ".global.js"]) {
       const component = gzipSync(readFileSync(resolve("dist", `markup-ui-typography${format}`)), { level: 9 }).length
       const core = gzipSync(readFileSync(resolve("dist", `markup-ui-core${format}`)), { level: 9 }).length
-      expect(component).toBeLessThanOrEqual(6000)
-      expect(component + core).toBeLessThanOrEqual(8000)
+      checkSizeRecommendation(component, 6000, "typography.test.ts: component")
+      checkSizeRecommendation(component + core, 8000, "typography.test.ts: component + core")
     }
   })
 
@@ -391,7 +392,7 @@ describe("native-owner Typography", () => {
   })
 
   it("keeps the source-only CSS within its unchanged 2500 gzip-byte budget", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(2500)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 2500, "typography.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("uses measured reference heading sizes, weights, paragraph and list spacing", () => {

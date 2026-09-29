@@ -14,7 +14,13 @@ export interface DataGridElement extends HTMLElement {
 }
 
 function validateRows(rows: unknown): asserts rows is ReadonlyArray<Record<string, unknown>> {
-  if (!Array.isArray(rows) || rows.length > 1000) throw new TypeError("DataGrid accepts at most 1000 object rows.")
+  if (!Array.isArray(rows) || Object.getPrototypeOf(rows) !== Array.prototype || rows.length > 1000
+    || Object.getOwnPropertySymbols(rows).length) throw new TypeError("DataGrid accepts plain arrays of at most 1000 object rows.")
+  for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(rows))) {
+    if (descriptor.get || descriptor.set || key !== "length" && !/^(0|[1-9]\d*)$/.test(key)) {
+      throw new TypeError("DataGrid arrays require own data indices.")
+    }
+  }
   for (const row of rows) {
     if (!row || typeof row !== "object" || ![Object.prototype, null].includes(Object.getPrototypeOf(row))
       || Object.getOwnPropertySymbols(row).length) throw new TypeError("DataGrid rows must be plain records.")

@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -34,7 +35,7 @@ describe("Number Animation default styles", () => {
   const css = readFileSync(resolve("src", "components", "number-animation", "number-animation.css"), "utf8")
 
   it("keeps the optional stylesheet within its unchanged ceiling", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(500)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 500, "number-animation.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("adds only numeric readability, wrapping and focus presentation", () => {

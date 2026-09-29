@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
@@ -414,7 +415,7 @@ describe("canonical Select direct API", () => {
       const select = manifest.componentPayloads.select[mode!]
       expect(select.dependencies).toEqual([`markup-ui-core${suffix}`, `markup-ui-native-select${suffix}`])
       expect(select.runtimeGzipBytes).toBe(select.gzipBytes + select.dependencies.reduce((total: number, file: string) => total + manifest.bundles[file].gzipBytes, 0))
-      expect(select.runtimeGzipBytes).toBeLessThanOrEqual(8000)
+      checkSizeRecommendation(select.runtimeGzipBytes, 8000, "select.test.ts: select.runtimeGzipBytes")
       expect(manifest.bundles[select.file].budget).toBe(4000)
       expect(manifest.bundles[`markup-ui-native-select${suffix}`].budget).toBe(4000)
       for (const consumer of ["tree-select", "popselect"]) expect(manifest.componentPayloads[consumer][mode!].dependencies).toEqual([`markup-ui-core${suffix}`, `markup-ui-native-select${suffix}`])

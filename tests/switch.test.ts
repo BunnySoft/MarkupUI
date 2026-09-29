@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
@@ -353,7 +354,7 @@ describe("Switch selected delivery and source API", () => {
       const payload = manifest.componentPayloads.switch[format]
       const file = manifest.bundles[`markup-ui-switch${suffix}`], core = manifest.bundles[`markup-ui-core${suffix}`]
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`])
-      expect(file.budget).toBe(3500); expect(file.gzipBytes).toBeLessThanOrEqual(file.budget)
+      expect(file.budget).toBe(3500); checkSizeRecommendation(file.gzipBytes, file.budget, "switch.test.ts: file.gzipBytes")
       expect(payload.runtimeBudget).toBe(4500)
       expect(payload.runtimeGzipBytes).toBe(file.gzipBytes + core.gzipBytes)
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + manifest.bundles["markup-ui-switch.css"].gzipBytes)

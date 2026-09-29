@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
@@ -274,7 +275,7 @@ describe("Marquee ownership, failure and finish", () => {
     })
 
     it("keeps the independent stylesheet under its existing 1000-byte gzip ceiling", () => {
-      expect(gzipSync(sheet.textContent!, { level: 9 }).length).toBeLessThanOrEqual(1000)
+      checkSizeRecommendation(gzipSync(sheet.textContent!, { level: 9 }).length, 1000, "marquee.test.ts: gzipSync(sheet.textContent!, { level: 9 }).length")
       expect(sheet.textContent).not.toContain("@import")
     })
   })

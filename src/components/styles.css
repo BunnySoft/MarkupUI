@@ -23,6 +23,7 @@ m-header,m-main,m-section,m-field{display:block}
 m-field{display:grid;gap:var(--m-space-xs)}m-field>[data-m-label]{font-size:.875em;font-weight:600}
 m-stack,m-row,m-wrap,m-center{display:flex}
 m-stack{flex-direction:column}m-row{flex-direction:row}m-wrap{flex-wrap:wrap}m-center{align-items:center;justify-content:center}
+m-spacer{flex:1}
 [gap="xs"]{gap:var(--m-space-xs)}[gap="sm"]{gap:var(--m-space-sm)}[gap="md"]{gap:var(--m-space-md)}[gap="lg"]{gap:var(--m-space-lg)}
 [align="center"]:not(m-grid){align-items:center}[align="end"]:not(m-grid){align-items:flex-end}[align="stretch"]:not(m-grid){align-items:stretch}
 [justify="center"]:not(m-grid){justify-content:center}[justify="end"]:not(m-grid){justify-content:flex-end}[justify="between"]:not(m-grid){justify-content:space-between}[justify="around"]:not(m-grid){justify-content:space-around}

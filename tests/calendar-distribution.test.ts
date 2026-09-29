@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
@@ -101,7 +102,7 @@ describe("Calendar selected delivery", () => {
     const manifest = JSON.parse(read("manifest.json"))
     for (const [format, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       expect(manifest.componentPayloads.calendar[format].dependencies).toEqual([`markup-ui-core${suffix}`])
-      expect(manifest.componentPayloads.calendar[format].runtimeGzipBytes).toBeLessThanOrEqual(11000)
+      checkSizeRecommendation(manifest.componentPayloads.calendar[format].runtimeGzipBytes, 11000, "calendar-distribution.test.ts: manifest.componentPayloads.calendar[format].runtimeGzipBytes")
       const map = JSON.parse(read(`markup-ui-calendar${suffix}.map`))
       expect(map.sources).toContain("../src/components/calendar/calendar.ts")
       expect(map.sources).toContain("../src/components/calendar/calendar-element.ts")

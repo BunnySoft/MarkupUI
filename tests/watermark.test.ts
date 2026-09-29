@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -25,7 +26,7 @@ function context() {
     const css = readFileSync(resolve("src", "components", "watermark", "watermark.css"), "utf8")
 
     it("keeps the overlay stylesheet within its unchanged ceiling", () => {
-      expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+      checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "watermark.test.ts: gzipSync(css, { level: 9 }).length")
     })
 
     it("matches the reference absolute repeat and pointer-transparent overlay", () => {

@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { existsSync, readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -172,7 +173,7 @@ describe("Native Grid, Flex and Space interoperability", () => {
     const build = readFileSync(resolve("scripts", "build.mjs"), "utf8")
     for (const [name, ceiling] of Object.entries(ceilings)) {
       const source = readFileSync(resolve("src", "components", name, `${name}.css`))
-      expect(gzipSync(source, { level: 9 }).length).toBeLessThanOrEqual(ceiling)
+      checkSizeRecommendation(gzipSync(source, { level: 9 }).length, ceiling, "grid-native.test.ts: gzipSync(source, { level: 9 }).length")
       expect(build).toContain(`"markup-ui-${name}.css": ${ceiling.toLocaleString("en-US").replace(",", "_")}`)
     }
     expect(build).not.toContain("markup-ui-legacy-grid")

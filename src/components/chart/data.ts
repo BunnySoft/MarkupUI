@@ -13,8 +13,12 @@ function values(value: unknown): void {
 }
 
 function keys(value: object): string[] {
+  if (Object.getOwnPropertySymbols(value).length || Array.isArray(value) && Object.getPrototypeOf(value) !== Array.prototype) {
+    throw new TypeError("Chart data requires plain records and arrays without symbols.")
+  }
   for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(value))) {
-    if (["__proto__", "prototype", "constructor"].includes(key) || descriptor.get || descriptor.set) {
+    if (["__proto__", "prototype", "constructor"].includes(key) || descriptor.get || descriptor.set
+      || Array.isArray(value) && key !== "length" && !/^(0|[1-9]\d*)$/.test(key)) {
       throw new TypeError("Unsafe chart data member.")
     }
   }
@@ -68,7 +72,9 @@ export function validateSource(source: unknown): asserts source is ChartSource {
 
 export function validateDimensions(value: unknown): asserts value is string[] | null {
   if (value === null) return
-  if (!Array.isArray(value) || value.length > maxChartColumns || value.some(name => typeof name !== "string" || !name.trim())
+  if (!Array.isArray(value) || value.length > maxChartColumns) throw new TypeError("Dimensions must be unique nonempty names.")
+  keys(value)
+  if ([...value].some(name => typeof name !== "string" || !name.trim() || ["__proto__", "prototype", "constructor"].includes(name))
     || new Set(value).size !== value.length) throw new TypeError("Dimensions must be unique nonempty names.")
 }
 
@@ -80,7 +86,7 @@ export function chartTable(source: ChartSource, dimensions: string[] | null, hea
   if (!source.length) return { columns: dimensions ?? [], rows: [] }
   if (!Array.isArray(source[0])) {
     const columns = dimensions ?? [...new Set((source as Record<string, ChartValue>[]).flatMap(row => Object.keys(row)))]
-    return { columns, rows: (source as Record<string, ChartValue>[]).map(row => columns.map(name => row[name] ?? null)) }
+    return { columns, rows: (source as Record<string, ChartValue>[]).map(row => columns.map(name => Object.hasOwn(row, name) ? row[name] ?? null : null)) }
   }
   const rows = source as ChartValue[][]
   const hasHeader = header === true || header === "auto" && rows[0]!.every(value => typeof value === "string")

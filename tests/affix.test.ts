@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -160,7 +161,7 @@ describe("CSS-native sticky Affix", () => {
     expect(css).not.toMatch(/(?:^|[;{])\s*(?:color|background(?:-[\w-]+)?|font(?:-[\w-]+)?|padding(?:-[\w-]+)?|border(?:-[\w-]+)?)\s*:/m)
     expect(css).not.toContain("overflow")
     expect(css).not.toContain("content:")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(500)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 500, "affix.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("honors element-local inset/layer tokens without leaking offsets into nested affixes", () => {

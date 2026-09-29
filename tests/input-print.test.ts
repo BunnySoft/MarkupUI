@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -15,7 +16,7 @@ afterEach(() => { sheet?.remove(); sheet = undefined; document.body.replaceChild
 
 describe("Input scoped print defaults", () => {
   it("retains the adjusted 1800-byte stylesheet ceiling", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1800)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1800, "input-print.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("uses light print colors for roots, groups and labels without replacing author tokens", () => {

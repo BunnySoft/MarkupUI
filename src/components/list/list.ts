@@ -2,6 +2,7 @@ import { ViewElement } from "../../core/index.js"
 import { listSizes } from "./model.js"
 import type { ListSize } from "./model.js"
 import { ListItem } from "./item.js"
+import type { ListTemplate } from "./template.js"
 
 const inert = "template,script,style"
 
@@ -10,6 +11,7 @@ const inert = "template,script,style"
  * @region {"name":"header","accepts":["heading","content"],"min":0,"max":1}
  * @region {"name":"items","accepts":["ListItem","native list"],"min":0,"max":null}
  * @region {"name":"footer","accepts":["content"],"min":0,"max":1}
+ * @region {"name":"template","accepts":["ListTemplate"],"min":0,"max":1}
  */
 export class List extends ViewElement {
   public static readonly tag = "m-list"
@@ -93,6 +95,7 @@ export class List extends ViewElement {
   }
 
   public get itemsContainer(): HTMLElement | null {
+    if (this.itemTemplate) return this.itemTemplate.itemsContainer
     return [...this.children].find((child): child is HTMLElement =>
       child instanceof HTMLElement && !child.matches(inert) && (
         child.matches("[data-part='items'], .m-list-items")
@@ -105,12 +108,19 @@ export class List extends ViewElement {
   public get items(): readonly ListItem[] {
     return Object.freeze(
       [...this.querySelectorAll<ListItem>("m-list-item")].filter(item =>
-        item.closest("m-list") === this
+        item.closest("m-list") === this && (item.closest("m-list-template")?.closest("m-list") !== this
+          || item.parentElement?.matches("li[data-list-template-item]"))
       )
     )
   }
 
+  /** Optional store-bound region. Authored items and a template cannot share an item region. */
+  public get itemTemplate(): ListTemplate | null {
+    return [...this.children].find(child => child.localName === "m-list-template") as ListTemplate | undefined ?? null
+  }
+
   public appendItem(item: ListItem | string): ListItem {
+    if (this.itemTemplate) throw new TypeError("Update the bound store collection instead of appending template items.")
     const element = typeof item === "string" ? this.ownerDocument.createElement("m-list-item") as ListItem : item
     if (typeof item === "string") element.textContent = item
     const container = this.itemsContainer ?? this
@@ -119,6 +129,7 @@ export class List extends ViewElement {
   }
 
   public removeItem(item: ListItem): boolean {
+    if (this.itemTemplate) throw new TypeError("Update the bound store collection instead of removing template items.")
     if (this.contains(item) && item.closest("m-list") === this) {
       item.remove()
       return true
@@ -129,7 +140,7 @@ export class List extends ViewElement {
   private synchronize(): void {
     this.observer?.disconnect()
     try {
-      const container = this.itemsContainer
+      const container = this.itemTemplate ?? this.itemsContainer
       if (container) {
         if (this.getAttribute("role") === "list") {
           this.removeAttribute("role")

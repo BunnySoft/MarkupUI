@@ -1,7 +1,7 @@
 # 5. Complete MarkupUI element directory
 
 This directory lists the current Web registration surface: **89 selectable families**
-with **203 distinct tags**, plus **15 root-facade tags** and **3 optional plugin tags**.
+with **205 distinct tags**, plus **15 root-facade tags** and **3 optional plugin tags**.
 Family tags are checked against source-generated `demo/api` data by
 `tests/element-directory.test.ts`. Property/method documentation belongs in the linked
 demo/API pages, not duplicated here.
@@ -25,7 +25,7 @@ Companion/configuration tags belong to the same family, not separate delivery un
 | [avatar](../../demo/components/avatar.html) | `m-avatar-placeholder`, `m-avatar-fallback`, `m-avatar`, `m-avatar-group` |
 | [back-top](../../demo/components/back-top.html) | `m-back-top` |
 | [badge](../../demo/components/badge.html) | `m-badge` |
-| [box](../../demo/components/box.html) | `m-box`, `m-div`, `m-span`, `m-label`, `m-footer`, `m-article`, `m-strong`, `m-em`, `m-small`, `m-pre`, `m-details`, `m-summary` |
+| [box](../../demo/components/box.html) | `m-box`, `m-div`, `m-if`, `m-span`, `m-label`, `m-footer`, `m-article`, `m-strong`, `m-em`, `m-small`, `m-pre`, `m-details`, `m-summary` |
 | [breadcrumb](../../demo/components/breadcrumb.html) | `m-breadcrumb`, `m-breadcrumb-item` |
 | [button](../../demo/components/button.html) | `m-button`, `m-button-group` |
 | [calendar](../../demo/components/calendar.html) | `m-calendar` |
@@ -64,7 +64,7 @@ Companion/configuration tags belong to the same family, not separate delivery un
 | [input-otp](../../demo/components/input-otp.html) | `m-input-otp` |
 | [input](../../demo/components/input.html) | `m-input`, `m-textarea`, `m-input-group`, `m-input-group-label` |
 | [layout](../../demo/components/layout.html) | `m-layout`, `m-layout-header`, `m-layout-content`, `m-layout-footer`, `m-layout-sider` |
-| [list](../../demo/components/list.html) | `m-list-item`, `m-list` |
+| [list](../../demo/components/list.html) | `m-list-item`, `m-list`, `m-list-template` |
 | [loading-bar](../../demo/components/loading-bar.html) | `m-loading-bar` |
 | [log](../../demo/components/log.html) | `m-log` |
 | [marquee](../../demo/components/marquee.html) | `m-marquee` |

@@ -1,16 +1,35 @@
 // @vitest-environment node
 import { execFileSync } from "node:child_process"
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises"
+import { copyFile, mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises"
+import { createHash } from "node:crypto"
 import { tmpdir } from "node:os"
 import { dirname, resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import {
   baselineSnapshot, compareBaseline, createReport, dependencyClosure,
   outputDependencies, repeatedSources, sumFiles,
 } from "../scripts/size-report.mjs"
 
 describe("size accounting primitives", () => {
+  it("warns above recommendations without failing, and accepts equality", () => {
+    const warn = vi.fn()
+    expect(checkSizeRecommendation(101, 100, "example", warn)).toEqual({
+      label: "example", gzipBytes: 101, budget: 100, excessBytes: 1,
+    })
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("recommended 100 (+1)"))
+    expect(checkSizeRecommendation(100, 100, "example", warn)).toBeNull()
+    expect(checkSizeRecommendation(0, 100, "empty", warn)).toBeNull()
+    expect(warn).toHaveBeenCalledOnce()
+  })
+
+  it.each([[NaN, 1], [-1, 1], [1.5, 2], [1, 0], [1, -1], [1, Infinity], [1, undefined]])(
+    "still rejects invalid measurement metadata: %s / %s", (actual, budget) => {
+      expect(() => checkSizeRecommendation(actual, budget, "invalid")).toThrow("Invalid size")
+    },
+  )
+
   it("walks transitive dependencies once, in dependency-first order", () => {
     const graph = { a: ["core", "shared"], b: ["shared"], shared: ["core"], core: [] }
     expect(dependencyClosure(["a", "b", "a"], graph)).toEqual(["core", "shared", "a", "b"])
@@ -53,7 +72,7 @@ describe("size accounting primitives", () => {
     }])
   })
 
-  it("reports growth, removed files, export removals and raised/removed ceilings", () => {
+  it("reports growth, removed files, export removals and changed recommendations", () => {
     const before = {
       schemaVersion: 1, measurement: "test", revision: "baseline",
       files: { a: { bytes: 100, gzipBytes: 50 }, removed: { bytes: 10, gzipBytes: 10 } },
@@ -76,10 +95,11 @@ describe("size accounting primitives", () => {
 })
 
 describe("built distribution size evidence", () => {
-  it("accounts for every selected file, all existing ceilings, and optional host dependencies", async () => {
+  it("accounts for every selected file, size recommendations, and optional host dependencies", async () => {
     const report = await createReport(resolve("."))
     const baseline = JSON.parse(await readFile("docs/architecture/size-baseline.json", "utf8"))
     expect(report.families).toHaveLength(89)
+    expect(report.budgetPolicy).toBe("advisory")
     expect(baseline.costs["esm:selection:all"].gzipBytes).toBe(414065)
     expect(baseline.costs["classic:selection:all"].gzipBytes).toBe(427555)
     for (const format of ["esm", "classic"]) {
@@ -137,6 +157,33 @@ describe("built distribution size evidence", () => {
     } finally { await rm(directory, { recursive: true, force: true }) }
   })
 
+  it("reports exceeded file, CSS, component and optional runtime recommendations without rejecting valid evidence", async () => {
+    const directory = await mkdtemp(resolve(tmpdir(), "markupui-size-advisory-"))
+    try {
+      const report = await createReport(resolve("."))
+      await Promise.all(Object.keys(report.files).map(async file => {
+        await mkdir(dirname(resolve(directory, file)), { recursive: true })
+        await copyFile(file, resolve(directory, file))
+      }))
+      const manifest = JSON.parse(await readFile("dist/manifest.json", "utf8"))
+      manifest.bundles["markup-ui-grid.js"].budget = 1
+      manifest.bundles["markup-ui-grid.css"].budget = 1
+      manifest.componentPayloads.grid.esm.runtimeBudget = 1
+      manifest.entryPayloads["root-classic"].runtimeBudget = 1
+      const content = JSON.stringify(manifest)
+      const evidence = JSON.parse(await readFile(".vite/size/build.json", "utf8"))
+      evidence.manifestSha256 = createHash("sha256").update(content).digest("hex")
+      await mkdir(resolve(directory, ".vite/size"), { recursive: true })
+      await writeFile(resolve(directory, "dist/manifest.json"), content)
+      await writeFile(resolve(directory, ".vite/size/build.json"), JSON.stringify(evidence))
+      const result = await createReport(directory)
+      const labels = ["file:dist/markup-ui-grid.js", "file:dist/markup-ui-grid.css", "esm:grid:runtime", "optional:root-classic:runtime"]
+      expect(result.sizeWarnings.filter(warning => labels.includes(warning.label))).toHaveLength(4)
+      expect(result.sizeWarnings.every(warning => warning.excessBytes === warning.gzipBytes - warning.budget)).toBe(true)
+      expect(result.costs).toEqual(report.costs)
+    } finally { await rm(directory, { recursive: true, force: true }) }
+  }, 15_000)
+
   it("produces a deterministic report against an unchanged baseline", async () => {
     const directory = await mkdtemp(resolve(tmpdir(), "markupui-size-cli-"))
     try {
@@ -153,7 +200,7 @@ describe("built distribution size evidence", () => {
     } finally { await rm(directory, { recursive: true, force: true }) }
   })
 
-  it.each(["Payload regression", "Export surface changed", "ceilings were raised"])(
+  it.each(["Payload regression", "Export surface changed"])(
     "rejects CLI baseline changes: %s", async message => {
       const directory = await mkdtemp(resolve(tmpdir(), "markupui-size-cli-"))
       try {
@@ -161,12 +208,30 @@ describe("built distribution size evidence", () => {
         const baseline = baselineSnapshot(await createReport(resolve(".")))
         const file = "dist/markup-ui-grid.js"
         if (message === "Payload regression") baseline.files[file].bytes--
-        else if (message === "Export surface changed") baseline.exports[file].push("removedFactory")
-        else baseline.budgets[`file:${file}`]--
+        else baseline.exports[file].push("removedFactory")
         await writeFile(baselinePath, JSON.stringify(baseline))
+        expect(execFileSync(process.execPath, ["scripts/size-report.mjs",
+          "--baseline", baselinePath, "--output", output], { encoding: "utf8", stdio: "pipe" }))
+          .toContain("Report:")
         expect(() => execFileSync(process.execPath, ["scripts/size-report.mjs", "--check-regressions",
           "--baseline", baselinePath, "--output", output], { encoding: "utf8", stdio: "pipe" })).toThrow(message)
       } finally { await rm(directory, { recursive: true, force: true }) }
     },
   )
+
+  it("allows recommendation adjustments even in opt-in baseline checking", async () => {
+    const directory = await mkdtemp(resolve(tmpdir(), "markupui-size-recommendations-"))
+    try {
+      const output = resolve(directory, "report.json"), baselinePath = resolve(directory, "baseline.json")
+      const baseline = baselineSnapshot(await createReport(resolve(".")))
+      baseline.budgets["file:dist/markup-ui-grid.js"] = 1
+      baseline.budgets["file:dist/no-longer-shipped.js"] = 100
+      await writeFile(baselinePath, JSON.stringify(baseline))
+      const stdout = execFileSync(process.execPath, ["scripts/size-report.mjs", "--check-regressions",
+        "--baseline", baselinePath, "--output", output], { encoding: "utf8", stdio: "pipe" })
+      expect(stdout).toContain("2 changed since baseline (advisory)")
+      const result = JSON.parse(await readFile(output, "utf8"))
+      expect(result.comparison.budgetChanges).toHaveLength(2)
+    } finally { await rm(directory, { recursive: true, force: true }) }
+  })
 })

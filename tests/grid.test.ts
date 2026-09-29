@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
 import { createContext, runInContext } from "node:vm"
@@ -391,12 +392,12 @@ describe("Grid documentation and selected delivery", () => {
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const payload = manifest.componentPayloads.grid[mode]
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`])
-      expect(payload.gzipBytes).toBeLessThanOrEqual(1750)
-      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(3000)
+      checkSizeRecommendation(payload.gzipBytes, 1750, "grid.test.ts: payload.gzipBytes")
+      checkSizeRecommendation(payload.runtimeGzipBytes, 3000, "grid.test.ts: payload.runtimeGzipBytes")
       expect(payload.runtimeBudget).toBe(3000)
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + manifest.componentPayloads.grid.cssGzipBytes)
     }
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1500, "grid.test.ts: gzipSync(css, { level: 9 }).length")
     const aggregate = readFileSync("src/components/elements.ts", "utf8")
     expect(aggregate).not.toContain('"m-grid"')
     for (const alias of ["m-row", "m-stack", "m-wrap", "m-center", "m-spacer"]) expect(aggregate).toContain(`"${alias}"`)

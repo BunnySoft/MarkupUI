@@ -10,6 +10,30 @@ const flush = async () => { await Promise.resolve(); await Promise.resolve() }
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
 describe("retained root lifecycle", () => {
+  it.each(["m-header", "m-main", "m-section"])("preserves application roles through %s reconnect", tag => {
+    const element = document.createElement(tag)
+    element.setAttribute("role", "region")
+    element.setAttribute("data-role", "complementary")
+    document.body.append(element)
+    expect(element.getAttribute("role")).toBe("region")
+    element.remove()
+    element.setAttribute("role", "navigation")
+    document.body.append(element)
+    expect(element.getAttribute("role")).toBe("navigation")
+    expect(element.getAttribute("data-role")).toBe("complementary")
+  })
+
+  it("does not replace authored Spacer flex declarations on connect or reconnect", () => {
+    const spacer = document.createElement("m-spacer")
+    spacer.style.flex = "2 0 20px"
+    document.body.append(spacer)
+    expect(spacer.style.flex).toBe("2 0 20px")
+    spacer.remove()
+    spacer.style.flex = "3 1 10px"
+    document.body.append(spacer)
+    expect(spacer.style.flex).toBe("3 1 10px")
+  })
+
   it("restores authored theme tokens and marker when name is removed", () => {
     theme.register("root-first", { accent: "red", surface: "white" })
     const root = document.createElement("m-theme")

@@ -12,7 +12,8 @@ It is not another application store and is not serialized into DOM attributes.
 | Nested item | Its own item context, with explicit access to the parent scope. |
 | Named element region | Only the context names declared by the owning Element Contract. |
 
-Scopes are linked internally and associated with instance roots through weak references.
+Template integration links scopes internally and retains instance ownership through
+weak references.
 Arrays and records remain references to owned data, not hidden JSON copies.
 Resolve paths through the current scope, parent scopes and the root store; reject unsafe
 segments such as `__proto__`, `prototype` and `constructor`.
@@ -21,8 +22,24 @@ The implemented store path primitive accepts nonempty dot-separated identifiers 
 canonical numeric child indices, such as `report.rows.0.sales`. It reads own properties
 only, rejects expressions, whitespace and empty segments, preserves existing arrays,
 and rejects writes through scalar values. Explicit nonoverlapping root/store scopes are
-implemented by the scalar binder. Parent/item scopes and templates remain separate
-delivery work; a safe store path alone does not implement them.
+implemented by the binder. Internal parent/item scopes in `src/state/scope.ts` now
+connect to inline Web template instances and their model events; no public scope class
+is exported. See the
+[implementation checkpoint](05-delivery-plan.md#implementation-checkpoint).
+
+Template paths recognize `$root`, `$item`, `$parent`, `$index` and `$key`.
+Unprefixed paths retain root meaning; outside templates, dollar-prefixed keys are literal
+store keys. `$parent` selects the nearest enclosing repeated item, not an intervening
+condition; the remaining path reads that record's fields. Index/key contexts are read-only.
+Writes resolve current nested keys before calling `store.set` and reject key/ancestor
+replacement, missing or duplicate keys, accessor paths and disposed scopes.
+Array `length` is also read-only for scope models; replace the collection explicitly.
+Ordinary object fields named `length` remain writable.
+Template roots observe store changes internally, so immutable replacement and nested
+path writes resolve against current keys without retaining insertion-time indices.
+Collection validation is cached only during synchronous read-only preparation; model
+writes always validate current data. This is not a store transaction or a memory/
+performance acceptance claim.
 
 ## Passing data between elements
 
@@ -38,8 +55,8 @@ Plain collection data is one-way unless an explicit writable route is supplied.
 
 ## Identity and ownership
 
-When a new record has an existing key, retain the instance root, replace the scope's item
-reference and update its subscriptions. Index changes do not change identity.
+When a new record has an existing key, retain the instance root and resolve its live
+route against the replacement data. Index changes do not change identity.
 
 Two binders may not own the same property or repeated region. Disposing a root removes
 subscriptions, model listeners and child scopes, invokes registered cleanup, and leaves

@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { execFileSync } from "node:child_process"
 import { existsSync, readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
@@ -76,7 +77,7 @@ describe("Chart selected delivery", () => {
       configuration: "configureChartEngine", testedVersion: "6.1.0",
     }])
     for (const suffix of [".js", ".global.js"]) {
-      expect(manifest.bundles[`markup-ui-chart-renderer${suffix}`].gzipBytes).toBeLessThan(1000)
+      checkSizeRecommendation(manifest.bundles[`markup-ui-chart-renderer${suffix}`].gzipBytes, 1000, "chart-distribution.test.ts: manifest.bundles[`markup-ui-chart-renderer${suffix}`].gzipBytes")
     }
   })
 })

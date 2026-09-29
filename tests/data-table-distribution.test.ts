@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
@@ -42,8 +43,8 @@ describe("selected Data Table distribution", () => {
     const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     for (const [format, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       expect(manifest.componentPayloads["data-table"][format].dependencies).toEqual([`markup-ui-core${suffix}`])
-      expect(manifest.componentPayloads["data-table"][format].runtimeGzipBytes).toBeLessThanOrEqual(10000)
-      expect(manifest.componentPayloads["data-table"][format].gzipBytes).toBeLessThanOrEqual(9000)
+      checkSizeRecommendation(manifest.componentPayloads["data-table"][format].runtimeGzipBytes, 10000, "data-table-distribution.test.ts: manifest.componentPayloads[\"data-table\"][format].runtimeGzipBytes")
+      checkSizeRecommendation(manifest.componentPayloads["data-table"][format].gzipBytes, 9000, "data-table-distribution.test.ts: manifest.componentPayloads[\"data-table\"][format].gzipBytes")
       const map = JSON.parse(readFileSync(`dist/markup-ui-data-table${suffix}.map`, "utf8"))
       expect(map.sources).not.toContain("../src/components/table/table.ts")
       expect(map.sources).not.toContain("../src/components/checkbox/checkbox.ts")

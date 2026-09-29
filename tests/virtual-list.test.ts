@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -23,7 +24,7 @@ describe("Virtual List default styles", () => {
   it("keeps fixed-window geometry within its unchanged ceiling", () => {
     expect(css).toContain("height: var(--m-virtual-list-height)")
     expect(css).toContain("height: var(--m-virtual-row-size)")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "virtual-list.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("uses the native scrollbar without component-owned paint or typography", () => {

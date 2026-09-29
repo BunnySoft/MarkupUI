@@ -4,19 +4,25 @@ import { mkdir, writeFile } from "node:fs/promises"
 import { resolve } from "node:path"
 import { chromium, firefox, webkit } from "playwright"
 import { components } from "../demo/catalog.js"
+import { verifyTemplates, verifyListTemplates, verifyTemplateSources, verifyPairedIds, verifyScopedActions } from "./browser-templates.mjs"
 
 const engines = { chromium, firefox, webkit }
 const selectedBrowser = process.argv.find(arg => arg.startsWith("--browser="))?.slice("--browser=".length)
 if (selectedBrowser) assert(Object.hasOwn(engines, selectedBrowser), `Unknown browser: ${selectedBrowser}`)
 const selectedPage = process.argv.find(arg => arg.startsWith("--page="))?.slice("--page=".length)
 if (selectedPage) assert(components.some(component => component.slug === selectedPage), `Unknown page: ${selectedPage}`)
-const output = resolve(".vite/browser")
+const output = resolve(process.argv.find(arg => arg.startsWith("--output="))?.slice("--output=".length) ?? ".vite/browser")
 await mkdir(output, { recursive: true })
 const server = spawn(process.execPath, ["demo/server.mjs"], {
   env: { ...process.env, PORT: "0" }, windowsHide: true, stdio: ["ignore", "pipe", "pipe"],
 })
 const results = []
 const catalogResults = []
+const templateResults = []
+const listTemplateResults = []
+const sourceResults = []
+const idResults = []
+const actionResults = []
 async function verifyRoot(page, origin, mode, engine, layout) {
   const url = `${origin}/demo/root-${mode}-check.html`
   await page.route(url, route => route.fulfill({
@@ -404,6 +410,53 @@ try {
           const page = await context.newPage()
           const errors = []
           page.on("pageerror", error => errors.push(error.stack ?? error.message))
+          for (const mode of ["esm", "classic"]) {
+            const samples = await verifyTemplates(page, origin, mode, name, layout, output)
+            templateResults.push({ browser: name, version: browser.version(), layout, mode, samples })
+            await writeFile(resolve(output, "templates-results.json"), JSON.stringify({ date: new Date().toISOString(), results: templateResults }, null, 2))
+            const listSamples = await verifyListTemplates(page, origin, mode, name, layout, output)
+            listTemplateResults.push({ browser: name, version: browser.version(), layout, mode, samples: listSamples })
+            await writeFile(resolve(output, "list-templates-results.json"), JSON.stringify({ date: new Date().toISOString(), results: listTemplateResults }, null, 2))
+            const sources = await verifyTemplateSources(page, origin, mode, name, layout, output)
+            sourceResults.push({ browser: name, version: browser.version(), layout, mode, ...sources })
+            await writeFile(resolve(output, "template-sources-results.json"), JSON.stringify({ date: new Date().toISOString(), results: sourceResults }, null, 2))
+            const ids = await verifyPairedIds(page, origin, mode, name, layout, output)
+            idResults.push({ browser: name, version: browser.version(), layout, mode, ...ids })
+            await writeFile(resolve(output, "binding-ids-results.json"), JSON.stringify({ date: new Date().toISOString(), results: idResults }, null, 2))
+            const actions = await verifyScopedActions(page, origin, mode, name, layout, output)
+            actionResults.push({ browser: name, version: browser.version(), layout, mode, ...actions })
+            await writeFile(resolve(output, "scoped-actions-results.json"), JSON.stringify({ date: new Date().toISOString(), results: actionResults }, null, 2))
+          }
+          if (process.argv.includes("--templates")) {
+            for (const mode of ["esm", "classic"]) await verifyRoot(page, origin, mode, name, layout)
+            await page.goto(`${origin}/demo/components/list.html`)
+            const tasks = page.getByRole("list", { name: "Tasks", exact: true })
+            await page.locator("#task-list m-label > label").filter({ hasText: "Report" }).click()
+            assert(await page.getByRole("textbox", { name: "Report", exact: true }).evaluate(node => node === document.activeElement), "Demo label did not focus input")
+            assert.equal(await page.getByRole("textbox", { name: "Report", exact: true }).getAttribute("aria-describedby"), "task-help-a")
+            await page.getByRole("textbox", { name: "Report", exact: true }).fill("Demo edit")
+            await page.getByRole("button", { name: "Reverse order", exact: true }).click()
+            assert.equal(await page.getByRole("textbox", { name: "Report", exact: true }).inputValue(), "Demo edit")
+            await page.getByRole("button", { name: "Add task", exact: true }).click()
+            assert.equal(await tasks.getByRole("listitem").count(), 3)
+            await page.getByRole("button", { name: "Remove first task", exact: true }).click()
+            assert.equal(await tasks.getByRole("listitem").count(), 2)
+            const reportRow = tasks.getByRole("listitem").filter({ has: page.getByRole("textbox", { name: "Report", exact: true }) })
+            await reportRow.getByRole("button", { name: "Remove task", exact: true }).click()
+            assert.equal(await tasks.getByRole("listitem").count(), 1)
+            assert.equal(await page.locator("#task-status").textContent(), "1 tasks")
+            assert(await tasks.evaluate(list => document.activeElement === list), "Demo scoped removal lost focus policy")
+            await page.getByRole("button", { name: "Add task", exact: true }).click()
+            assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), "List demo overflow")
+            await page.locator('[data-demo-example="template"]').screenshot({ path: resolve(output, `${name}-${layout}-list-template-demo.png`) })
+            const primary = page.getByRole("list", { name: "Primary tasks", exact: true }).getByRole("textbox", { name: "Shared task", exact: true })
+            await primary.fill("Shared source edit")
+            assert.equal(await page.getByRole("list", { name: "Mirrored tasks", exact: true }).getByRole("textbox", { name: "Shared task", exact: true }).inputValue(), "Shared source edit")
+            await page.locator('[data-demo-example="sources"]').screenshot({ path: resolve(output, `${name}-${layout}-list-source-demo.png`) })
+            assert.deepEqual(errors, [])
+            console.log(`${name}/${layout}: template and root ESM/classic checks passed`)
+            continue
+          }
           await verifyExternalChartEngine(page, origin, "esm")
           await verifyExternalChartEngine(page, origin, "classic")
           const start = performance.now()
@@ -1031,7 +1084,7 @@ try {
       }
     } finally { await browser.close() }
   }
-  await writeFile(resolve(output, "results.json"), JSON.stringify({ date: new Date().toISOString(), results }, null, 2))
+  if (!process.argv.includes("--templates")) await writeFile(resolve(output, "results.json"), JSON.stringify({ date: new Date().toISOString(), results }, null, 2))
   if (catalogResults.length) {
     await writeFile(resolve(output, "catalog-results.json"), JSON.stringify({ date: new Date().toISOString(), results: catalogResults }, null, 2))
     console.log(`Catalog: ${catalogResults.filter(result => result.passed).length}/${catalogResults.length} checks passed`)

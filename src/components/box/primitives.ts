@@ -164,7 +164,7 @@ export class Pre extends NativeContent<HTMLPreElement> {
 export class Details extends NativeContent<HTMLDetailsElement> {
   public static readonly tag = "m-details"
   public static override readonly observedAttributes = [...NativeContent.observedAttributes, "open"]
-  private readonly summary = this.ownerDocument.createElement("summary")
+  private summary = this.ownerDocument.createElement("summary")
 
   public constructor() { super("details") }
   public override connectedCallback(): void {
@@ -194,6 +194,9 @@ export class Details extends NativeContent<HTMLDetailsElement> {
     if (summaries.length > 1) throw new TypeError("Details accepts at most one Summary.")
     const summary = summaries[0]
     if (summary) {
+      if (summary.parentElement?.localName === "summary" && summary.parentElement.parentElement === this.native) {
+        this.summary = summary.parentElement
+      }
       if (summary.parentElement !== this.native && summary.parentElement !== this.summary) throw new TypeError("Summary must belong directly to Details.")
       if (summary.parentElement !== this.summary) this.summary.replaceChildren(summary)
       if (this.native.firstChild !== this.summary) this.native.prepend(this.summary)

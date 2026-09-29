@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -27,7 +28,7 @@ afterEach(() => {
 
 describe("canonical List and ListItem components", () => {
   it("registers canonical classes extending ViewElement with own tags", () => {
-    expect(Object.keys(listApi).sort()).toEqual(["List", "ListItem", "listSizes", "registerList"])
+    expect(Object.keys(listApi).sort()).toEqual(["List", "ListItem", "ListTemplate", "listSizes", "registerList"])
     expect(List.tag).toBe("m-list")
     expect(ListItem.tag).toBe("m-list-item")
     expect(ViewElement.prototype.isPrototypeOf(List.prototype)).toBe(true)
@@ -299,6 +300,6 @@ describe("canonical List and ListItem components", () => {
     expect(css).toContain("@media print")
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("@media (prefers-reduced-motion: reduce)")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1800)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1800, "list.test.ts: gzipSync(css, { level: 9 }).length")
   })
 })

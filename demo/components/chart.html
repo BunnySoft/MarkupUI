@@ -164,7 +164,9 @@ store.set("report.sales", nextSales);</code></pre>
       <m-p>One source per dataset: property or scoped binding, JSON attribute, nested JSON,
         or remote src. Dispose any binding and call clearSource() before switching source
         kinds. Assign new data or call refresh() after an in-place edit. Null cells are
-        missing values; non-finite numbers, functions, accessors and unsafe keys are rejected.</m-p>
+        missing values; non-finite numbers, functions, accessors, hidden symbols,
+        custom array prototypes and unsafe keys are rejected. Dimensions use dense
+        arrays of safe, unique names; absent record cells never read inherited values.</m-p>
       <m-p>Remote data is limited to same-origin HTTP(S), JSON content types and 1 MiB.
         Credentials and redirects are disabled. Requests time out after 15 seconds and
         are cancelled on source changes and disconnect. reload() reports failure through
@@ -179,6 +181,7 @@ store.set("report.sales", nextSales);</code></pre>
       <m-p>Declarative tooltips use ECharts rich-text rendering, not HTML. Direct option
         callbacks and HTML configuration are trusted application code. Updates replace
         the full option, so removed collections cannot survive through implicit merging.
+        Disposed or replaced renderer callbacks cannot emit current selections.
         Core and unrelated components do not import ECharts.</m-p>
     </section>
     <section aria-labelledby="api-heading">

@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -346,7 +347,7 @@ describe("Drawer backdrop and template owners", () => {
   it("keeps exact production composed CSS inside its unchanged gzip ceiling", () => {
     const native = readFileSync(resolve("src", "components", "dialog", "native.css"), "utf8")
     const css = readFileSync(resolve("src", "components", "drawer", "drawer.css"), "utf8")
-    expect(gzipSync(`${native}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1500)
+    checkSizeRecommendation(gzipSync(`${native}\n${css}`, { level: 9 }).length, 1500, "drawer.test.ts: gzipSync(`${native}\\n${css}`, { level: 9 }).length")
   })
 })
 

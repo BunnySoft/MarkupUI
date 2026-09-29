@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -221,7 +222,7 @@ describe("Icon styling and distribution", () => {
     expect(css).toContain("m-icon-wrapper { border: 1px solid CanvasText; transition: none; }")
     expect(css).not.toContain("@keyframes")
     expect(css).not.toContain("pointer-events: none")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "icon.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("delivers only core and Icon with explicit classic core requirements", () => {
@@ -242,10 +243,10 @@ describe("Icon styling and distribution", () => {
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const payload = manifest.componentPayloads.icon[mode]
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`])
-      expect(payload.gzipBytes).toBeLessThanOrEqual(3000)
-      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(5000)
+      checkSizeRecommendation(payload.gzipBytes, 3000, "icon.test.ts: payload.gzipBytes")
+      checkSizeRecommendation(payload.runtimeGzipBytes, 5000, "icon.test.ts: payload.runtimeGzipBytes")
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + manifest.componentPayloads.icon.cssGzipBytes)
     }
-    expect(manifest.componentPayloads.icon.cssGzipBytes).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(manifest.componentPayloads.icon.cssGzipBytes, 1000, "icon.test.ts: manifest.componentPayloads.icon.cssGzipBytes")
   })
 })

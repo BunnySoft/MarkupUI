@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -39,7 +40,7 @@ describe("default styles", () => {
     expect(css).toContain("--_m-mention-height: 34px")
     expect(css).toContain("--_m-mention-height: 40px")
     expect(css).toContain("block-size: var(--_m-mention-height)")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1250, "mention.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("leaves composed Input controls to their owning stylesheet", () => {

@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
@@ -85,7 +86,7 @@ describe("Split default styles", () => {
   const css = readFileSync(resolve("src", "components", "split", "split.css"), "utf8")
 
   it("keeps the stylesheet within its existing ceiling", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1500, "split.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("uses the reference neutral and primary handle roles", () => {

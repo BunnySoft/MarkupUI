@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { join, resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -478,7 +479,7 @@ describe("location ownership, observers and cleanup", () => {
         .map(rule => (rule as CSSMediaRule).media.mediaText)
       expect(media).toContain("(prefers-reduced-motion:reduce)")
     } finally { style.remove() }
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "anchor.test.ts: gzipSync(css, { level: 9 }).length")
   })
   it("preserves authored styles, hrefs and native focus during current-marker updates", () => {
     const { nav, root, links, controller } = bind()

@@ -1,16 +1,14 @@
 # MarkupUI session handoff
 
-Snapshot: September 29, 2026, Asia/Shanghai.
+Snapshot: September 30, 2026, Asia/Shanghai. Verification below was recorded
+September 29, 2026 UTC during the same local session.
 Workspace: `D:\repos\MarkupUI`; Windows / PowerShell / Node 22.12.0.
-Base HEAD before the session-closing commit:
-`d986aa6` (`docs: record completed size-optimization acceptance`).
+Base HEAD before this checkpoint commit: `2384748`.
 
-This is a session snapshot, not the architecture authority or release approval.
-Recheck the worktree and current documentation before continuing. The user requested
-this handoff and an end to the current session; no further implementation is underway.
-The user subsequently authorized committing all current changes before ending the
-session. This handoff accompanies that local closing commit; use `git log -1` for
-its revision. No push or publication was requested.
+The user authorized updating documentation and committing the accumulated implementation,
+tests, demos and size-policy changes. This handoff accompanies that local commit; use
+`git log -1` for its revision. No push or publication is authorized.
+This snapshot is not architecture authority or production release approval.
 
 ## Start here
 
@@ -20,202 +18,188 @@ Read `AGENTS.md`, then:
 2. [Core and component delivery](docs/architecture/07-modules.md).
 3. [Relevant element contracts](docs/elements/README.md).
 4. [Component development](docs/elements/04-development.md).
-5. [Current tasks, evidence and release gates](docs/architecture/09-production.md).
-6. [Completed optimization record](docs/architecture/10-size-optimization.md).
-7. [Root lifecycle behavior](docs/api/01-core.md#optional-root-lifecycle).
+5. [Current release work order](docs/architecture/09-production.md#work-order).
+6. [First-five evidence](docs/architecture/09-production.md#first-five-checkpoint).
+7. [Binding delivery status](docs/binding/05-delivery-plan.md#implementation-checkpoint).
 
-## Nonnegotiable boundaries
+## Current progress
 
-- Public portable authoring uses `m-*`, including primitive HTML-equivalent elements.
-  Native HTML semantics and controls belong to the Web renderer. Explicitly identified
-  Web interoperability/fallback examples are exceptions, not the portable contract.
-- Keep the small core, independently selected families and optional state/plugins.
-  The aggregate is optional; selected components must not depend on it.
-- Keep implementation in existing `src` owners. Use direct typed properties and
-  ordinary methods, not runtime metadata lookup, decorators or a generic property engine.
-- Generated API JSON is demo-only. Do not introduce compatibility aliases or restore
-  removed public factories without an explicit contract change.
-- Do not raise existing payload ceilings or rewrite the frozen S0 baseline.
-- Preserve all existing worktree changes. Do not commit, push or publish without
-  authorization. No production readiness is claimed.
-- Active docs are authoritative; `docs/archive` is historical reference.
+The first five requested workstreams have bounded implementation and local verification.
+Their remaining release gates are not automatically approved by passing local tests.
 
-## Completed work
+| Workstream | Completed | Remaining |
+| --- | --- | --- |
+| Portable conditions | Box-owned `If` / `m-if`, nested scopes, strict Boolean paths, exact root-local `focus-target`, models/actions/IDs, cleanup/rebind and demo. | No non-Web renderer or platform-neutral reusable definition is delivered. |
+| Binding performance/resources | Repeated 0/1/100/1000-row measurements, batched fallback moves and Chromium forced-GC lifecycle checks. | Representative workload/latency targets, final-paint and process-memory/device measurements. |
+| Retained root/plugin contracts | Bounded review of 15 root and 3 plugin tags; role/Spacer and captured primitive ownership fixes. | Full-family contract approval. |
+| Interaction/accessibility | Three-engine keyboard, labels/forms, focus, synthetic composition, RTL, emulated forced colors and text scaling. | Real devices, screen readers, real IME, actual browser/OS zoom and high contrast. |
+| Security and Chart | Plain-data boundary hardening, stale callback guard, dependency audit, SVG/canvas and engine-inclusive resource measurements. | Independent security review and approved Chart payload/performance targets. |
+| Clean CI | Existing Windows/Linux/macOS x Node 22/24 workflow configuration retained. | Actual clean matrix results for the committed revision. |
+| Release | Current scope, evidence and limitations documented. | Remaining gates, final rerun and explicit release authorization. |
 
-### Size optimization
+There is no pending generic-condition implementation task. Portable ListTemplate,
+reusable Web sources, paired IDs and scoped actions are also implemented.
+S0-S6 size optimization is complete; do not restart it as unfinished extraction work.
+Historical milestones remain in the production page, with their original measurements
+and failures, rather than being repeated here as current status.
 
-S0-S6 are complete: reproducible measurement, registration dependency cleanup,
-canonical behavior reconciliation, component-local simplification, sharing evaluation,
-optional full-catalog delivery and local integrated acceptance.
+## Implementation map
 
-S4 evaluated six sharing candidates and rejected them because cold single-component
-budgets failed. This is a completed decision, not unfinished extraction work.
+- `src/state/{binding,scope,templates,ids,data,changes}.ts`: one binding/reconciliation
+  owner for scalar/models, strict conditions, stable-key collections, nested current-key
+  writes, reusable Web sources, paired IDs and lifecycle. Store notifications snapshot
+  subscriptions. No generic property engine or runtime metadata is introduced.
+- `src/components/list/template.ts`: portable inert source and native list chrome.
+  List imports only core; state owns generated instances. `focus-on-remove` opts into
+  surviving-list focus. Template-mode collections change through the bound store.
+- `src/components/box/if.ts`: portable one-root condition source, using ordinary
+  `.native` access and type-only recognition from state. False destroys the instance;
+  true recreates it. Explicit Web `focusFallback` takes precedence over `focus-target`.
+- Box `native-content.ts` and `primitives.ts`: adopt captured native shells/summary
+  rather than nesting labels or disclosures. An actual browser label-click failure
+  drove this fix; preserve the regression.
+- `src/actions/index.ts`: typed `m-arg-*` reads from an explicit live binding.
+  Literal `m-param-*`, nested event ownership, sync/async errors and App initialization
+  cleanup are covered. Actions remain in the optional root facade.
+- Root and plugin owners: authored roles/data-role and Spacer flex survive reconnect;
+  DataGrid/Chart reject accessor/symbol/custom-prototype arrays before iteration.
+  Chart projects own cells only and rejects stale renderer selection callbacks.
+- `scripts/size-policy.mjs` and existing build/report/tests: size overages warn,
+  while invalid measurements and functional failures remain errors.
+- `scripts/browser-acceptance.mjs`, `browser-templates.mjs`, existing browser/package
+  harnesses, and new binding/condition/list tests provide reproducible local coverage.
 
-The catalog has 89 selectable families / 203 tags. ESM and classic are alternative
-formats. Gzip measurements:
+Read the [template contract](docs/binding/03-templates.md) and
+[action contract](docs/binding/06-actions.md) before extending them. Native source
+descendants may briefly connect before capture. Plain-data validation is not a sandbox
+for hostile Proxies or modified built-ins. No atomic DOM rollback or general async
+action cancellation is promised.
 
-| Selection | ESM bytes | Classic bytes |
-| --- | ---: | ---: |
-| All modular families and required runtime files | 413,512 | 427,022 |
-| Cumulative modular saving against S0 | 553 | 533 |
-| Optional full catalog, including core and Chart adapter | 314,066 | 312,492 |
-
-Aggregate CSS is separately 63,150 gzip bytes. The aggregate saves 24.05% / 26.82%
-against loading all modular families, not against a small selection.
-Application-supplied ECharts is excluded and remains an additional application cost.
-Existing budgets pass; strict S0 `--check-regressions` is not claimed to pass because
-intentional export removals and capability-related growth are recorded.
-
-Recent commits:
-
-- `d986aa6`: completed optimization acceptance record.
-- `99ab5a6`: optional full-catalog distributions.
-- `ec9cae4`: Tree Select reset reconciliation no longer discards a later clear action.
-
-### Subsequent root fixes (included in the closing commit)
-
-- Theme: clearing `name` releases owned tokens/marker; restores earlier values and
-  priorities while preserving later application writes. Unknown themes validate
-  before cleanup. Disconnect retains presentation; reconnect reconciles the name.
-- Field: a real native label tracks late/replaced controls and ID/type changes,
-  excludes nested Fields and disconnects its observer. No implicit family registration
-  or overwrite of authored accessible names.
-- AccordionItem: live `open`/`title` properties, stable native chrome and authored
-  children, removable activation listener and correct reconnect behavior.
-- App: pre-upgrade store assignment survives; bindings/actions share the same store.
-  Acquired/assigned stores conflict with inline JSON; disconnect before replacing an
-  active store.
-- Root CSS: removed duplicate migrated-family styles. Root retains its own elements,
-  shared tokens/layout utilities and scoped feedback styling. Selected families
-  still need their own CSS.
-
-Complete minified root runtime is 12,361 / 12,271 gzip bytes, below the unchanged
-15,000-byte ceiling. External root CSS is 1,678 bytes. Only three root JS files and
-root CSS changed among 296 measured files since S6; core, state, selected-family and
-full-catalog assets remain byte-identical.
-
-## Verification already recorded
-
-September 29, 2026 local checkpoint:
+## Recorded verification
 
 | Check | Result |
 | --- | --- |
-| Typecheck/build | Passed; existing ceilings unchanged. |
-| Integrated tests | 5,103/5,103 in 146 files, two workers; no failures, skips or todos. |
-| Catalog | 588/588 checks, 98 pages. |
-| Browser workflows | Chromium 153.0.8010.12, Firefox 155.0, WebKit 26.6; 1280x900 and 375x812. Root ESM/classic passed all six combinations. |
-| Packed consumer | 96 JS entries / 2,344 files; strict NodeNext and modular/aggregate imports passed without ECharts installed. |
-| Visual review | Desktop/mobile screenshots inspected in the implementation session. |
+| Typecheck/build | Passed; nine advisory size warnings, no new runtime entry/dependency. |
+| Focused suite | 589/589 in 18 files, including 46 portable-condition cases. |
+| Full suite | 5447/5447 in 153 files, two workers, 280.42 seconds; no failures/skips/todos. |
+| Packed consumer | 96 JS entries / 2372 files; strict NodeNext and modular/aggregate workflows without installed ECharts. |
+| New browser acceptance | 12 condition/resource combinations, six plugin/Chart checks and six actual Box demo checks passed. |
+| Existing browser regressions | Three engines/two layouts; template/source/ID/action/root/aggregate/Form/primitive/plugin/Chart/HTML-policy checks passed. |
+| Audit | Zero advisories across 167 reported dependencies; not an independent security audit. |
+| Integrity | 296/296 asset hashes, 251 documentation links/anchors and whitespace checks passed at the implementation checkpoint. |
 
-Local generated evidence (ignored files, not guaranteed in a fresh checkout):
+Browsers: Chromium 153.0.8010.12, Firefox 155.0, WebKit 26.6.
+Viewports: 1280x900 and 375x812. Screenshots were inspected. The 588 catalog checks
+remain the earlier retained-root result; no new full catalog sweep is claimed.
+The in-app browser failed to connect on environment metadata; repository Playwright
+provided this evidence. Mobile-sized headless windows are not physical devices.
 
-- `.vite/root-lifecycle-tests.json`
-- `.vite/root-lifecycle-tests-initial.json`
-- `.vite/browser/results.json`
-- `.vite/browser/catalog-results.json`
-- `.vite/package/results.json`
-- `.vite/size/root-lifecycle.json`
-- `.vite/size/s6-final.json`
+The first full run passed 5446/5447 because the old root CSS hash rejected the intentional
+Spacer rule. The corrected test asserts that exact rule and checks all remaining CSS
+against the original hash; the final full rerun above passed. Preserve initial failures.
 
-The initial root run passed 5,102/5,103: an obsolete Avatar assertion required
-duplicate root CSS. It was corrected to check source/published Avatar defaults and
-absence from root; the final full run passed. No failing runtime test was waived.
+This closing documentation pass does not change runtime/build/test code or rerun the
+full suite/browser matrix. It verified 301 local links/anchors across 22 changed Markdown
+files, saved passing test/browser/audit evidence, all 296 current asset hashes, frozen S0
+and `git diff --check` using the repository's normal line-ending settings.
 
-The browser skill setup failed because Node REPL lacked `sandboxPolicy`; the existing
-repository Playwright harness completed the checks. Headless mobile-sized viewports
-do not establish real-device or screen-reader acceptance.
+### Resource observations
 
-The final documentation-only turn checked 14 added local links/Markdown anchors,
-confirmed all 296 current measured asset hashes against the root report, and passed
-`git diff --check`. It did not rerun the full suite or browser matrix.
+Five repetitions per template configuration showed WebKit 1000-row reorder medians
+improving from 1298-1338 to 267-297 ms for native conditions and from 1503-1688 to
+282-385 ms for portable conditions. The existing fallback path batches contiguous
+moves while retaining already-positioned nodes and preferring native `moveBefore`.
+These large updates still are not frame-budget operations.
 
-To reproduce after implementation changes, run sequentially:
+Chromium 30 x 100-row mount/toggle/dispose cycles retained 196 nodes and 45 listeners
+before/after in both layouts; used heap changed by +15,112 / +3,004 bytes after forced GC.
+This does not establish general leak freedom or process-memory acceptance.
+
+At 10000 Chart rows, SVG state-ready medians were 342.8-706 ms and synchronous refresh
+151.2-292 ms; canvas was 43-222 ms and 24.4-93 ms. These are not final-paint or completed
+progressive-rendering times. Disposal emptied renderer DOM; tables stayed at most
+50 rows; SVG geometry and canvas pixels were nonblank.
+
+### Dependency-inclusive sizes
+
+Gzip bytes, deduplicated required files; CSS is separate:
+
+| Selection | ESM | Classic |
+| --- | ---: | ---: |
+| State | 9083 | 9285 |
+| Box including core | 4161 | 4345 |
+| Bound If/Box plus state, before content | 13244 | 13630 |
+| Conditional editor: Box/Input/Button/state | 23110 | 23762 |
+| Minified root including core/state | 19156 | 19060 |
+| Chart including core/adapter, excluding engine | 9174 | 9614 |
+| Chart plus demo-selected ECharts 6.1.0 | 212835 | 213452 |
+| Aggregate including core/adapter, excluding state/root/engine | 315370 | 313757 |
+
+Separate CSS: Box 763, conditional selection 5020, Chart 403, root 1685, aggregate
+63354 bytes. The selected demo engine alone costs 203661/203838 bytes.
+Fifteen of 296 asset hashes changed against the scoped-action checkpoint; 281,
+all numeric recommendations and frozen S0 were unchanged.
+The current catalog is 89 selectable families / 205 tags.
+
+## Evidence and reproduction
+
+Generated evidence is local and ignored, not guaranteed in a fresh checkout:
+
+- `.vite/size/first-five-{focused,full-tests,final,audit,integrity}.json`
+- `.vite/package/first-five-results.json`
+- `.vite/browser/first-five-final/acceptance.json` and screenshots
+- `.vite/browser/first-five-regression/` for the original browser harness
+- `.vite/browser/first-five/acceptance.json` for before-batching measurements
+- `.vite/size/first-five-full-tests-initial.json` and
+  `first-five-review-regressions.json` retain the initial failures.
+
+Reports record pre-commit HEAD `2384748` because the tested implementation was then
+uncommitted. That field is not proof that the old committed revision contains the new
+behavior. The asset hashes and this closing commit identify the implementation checkpoint.
+
+Run verification sequentially, choosing fresh output paths to preserve existing evidence:
 
 ```powershell
+node node_modules/typescript/bin/tsc --noEmit
 node scripts/build.mjs
-node node_modules/vitest/vitest.mjs run --maxWorkers=2 --reporter=default --reporter=json --outputFile=.vite/root-lifecycle-tests.json
+node node_modules/vitest/vitest.mjs run --maxWorkers=2 --reporter=default --reporter=json --outputFile=.vite/size/next-full-tests.json
 node scripts/package-check.mjs
-node scripts/browser-check.mjs --catalog
-node scripts/size-report.mjs --output .vite/size/root-lifecycle.json
+node scripts/browser-acceptance.mjs --output=.vite/browser/next-acceptance
+node scripts/browser-check.mjs --page=plugins --output=.vite/browser/next-regression
+node scripts/size-report.mjs --output .vite/size/next-final.json
+pnpm audit --json
 git diff --check
 ```
 
-Do not run builds or the heavy browser matrix concurrently with the full suite.
-Review evidence before overwriting it. No needed tool session or dev server is running.
+The size command uses frozen S0 by default; a local prior report may be selected with
+`--baseline` for an incremental comparison. Do not use `--write-baseline`.
+The package check writes `.vite/package/results.json`; preserve earlier evidence first.
+Never overlap builds with distribution-reading tests, package checks or browsers.
+Never edit source/tests during a full suite.
 
-## Changes included in the closing commit
+At the implementation checkpoint, verification processes had exited and the preexisting
+preview server was left running at
+`http://localhost:57912/demo/components/box.html#condition-heading`.
+Recheck its port/process before relying on it in a later session.
 
-Before this handoff, `git status --short` showed 22 tracked modifications and one
-new test. The user authorized committing these changes together with this handoff.
-No push is authorized; recheck `git status` before starting new work.
+## Boundaries and next session
 
-Runtime/build-test changes:
+- Use portable `m-*` authoring; native HTML belongs to the Web renderer or an explicit
+  interoperability example. Non-Web renderers are not delivered.
+- Preserve small core and independently selectable families/state/plugins. Aggregate
+  is optional; do not introduce a mandatory aggregate or byte-budget-only shared chunk.
+- Keep code in existing `src` owners, with direct typed properties and ordinary methods.
+  API JSON is demo-only, not a runtime dependency.
+- Byte recommendations are adjustable, not hard gates. Report complete dependency
+  costs and warnings; never remove required behavior just to fit a recommendation.
+- Frozen S0 SHA-256:
+  `8362ea61301dc94271bd06aabb281ebbcd54256ac1f9133e60397b1d8e646094`.
+- Preserve unrelated worktree changes. Current authorization covers this local closing
+  commit only, not future commits, pushing or publication.
 
-- `src/components/foundation.ts`
-- `src/components/dynamic.ts`
-- `src/components/styles.css`
-- `src/components/styles.ts` (generated by build; do not hand-edit)
-- `src/theme/index.ts`
-- `scripts/browser-check.mjs`
-- `tests/avatar.test.ts`
-- `tests/native.test.ts`
-- `tests/styles.test.ts`
-- `tests/root-lifecycle.test.ts` (new, 18 tests)
-
-Documentation changes:
-
-- `CHANGELOG.md`
-- `docs/README.md`
-- `docs/api/01-core.md`
-- `docs/architecture/README.md`
-- `docs/architecture/04-rewrite.md`
-- `docs/architecture/06-source.md`
-- `docs/architecture/07-modules.md`
-- `docs/architecture/09-production.md`
-- `docs/architecture/10-size-optimization.md`
-- `docs/binding/01-language.md`
-- `docs/elements/README.md`
-- `docs/elements/contracts/chart.md`
-- `docs/styling/01-design.md`
-
-This session additionally creates `HANDOFF.md`.
-The documentation now distinguishes current implementation, recorded local acceptance
-and remaining release work. It preserves S0/S6 historical measurements, records root
-fixes/style ownership, corrects stale early-batch/browser status and removes the
-obsolete claim that ViewElement owns runtime metadata access.
-
-## Remaining release work
-
-Production release remains blocked:
-
-1. Resolve structural-binding scope and contract. Scalar/model binding is implemented;
-   `data-if`/`data-each` explicitly reject use. Conditional/keyed templates, item/parent
-   scopes, writable keyed routes and a proving collection consumer are not implemented.
-   Template lookup, focus policy and consumer API need decisions. AvatarGroup is only
-   a candidate, not an approved consumer.
-2. Review remaining root/plugin/family contracts and portable-authoring/lifecycle
-   acceptance. The four root fixes and DataGrid/Rating baselines do not approve every
-   retained surface.
-3. Complete real screen-reader/device/input-mode checks, including IME, RTL, forced
-   colors and zoom.
-4. Complete independent security/performance reviews and broader large-data, update,
-   repeated lifecycle and memory acceptance.
-5. Close Chart accessibility/resource acceptance and approve engine-inclusive payload
-   and performance budgets. First-batch types, five source forms and selectable
-   browser delivery are implemented; engine externalization is not budget approval.
-6. Obtain actual clean Windows/Linux/macOS x Node 22/24 CI evidence. Workflow
-   configuration and local Windows tests do not prove this matrix.
-7. After remaining changes, rerun automated gates, reconcile release notes and obtain
-   explicit release authorization. Pushing and publishing remain separate actions.
-
-Non-Web renderers are not delivered; portable authoring does not imply otherwise.
-No overall completion percentage or production-ready claim is justified.
-
-## Recommended next session
-
-First inspect `git status` and the session-closing commit; do not redo S0-S6 or discard
-the root fixes. Use the production work order, starting with an explicit
-structural-binding scope/contract decision. Read the binding design pages and current
-`src/state/binding.ts` before implementing templates. Record each bounded change and
-its evidence separately. The current commit authorization does not authorize future
-commits, pushing or releasing.
+Next inspect `git status` and the closing commit, then use the production
+[work order](docs/architecture/09-production.md#work-order). Prioritize agreed production
+workloads and remaining resource measurements, full-family contract approval, real
+assistive-technology/device acceptance, independent security review and clean CI.
+Do not redo implemented portable conditions or infer human/independent approval from
+local automation. Obtain explicit release authorization after the remaining gates.

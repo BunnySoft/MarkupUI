@@ -1,4 +1,5 @@
 export { Box, Div } from "./box.js"
+export { If } from "./if.js"
 export {
   Span,
   Label,
@@ -25,6 +26,7 @@ export type {
 } from "./model.js"
 
 import { Box, Div } from "./box.js"
+import { If } from "./if.js"
 import {
   Span,
   Label,
@@ -46,6 +48,7 @@ export function registerBox(
     [
       Box,
       Div,
+      If,
       Span,
       Label,
       Footer,

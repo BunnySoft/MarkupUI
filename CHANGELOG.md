@@ -2,6 +2,69 @@
 
 ## Unreleased
 
+Local verification for the accumulated binding/first-five checkpoint passed 5447 tests
+in 153 files, packed consumption and three-engine/two-layout browser workflows.
+See [production evidence](docs/architecture/09-production.md#first-five-checkpoint)
+for measured costs and remaining release gates. This is not a published release or
+human accessibility, independent security or clean cross-platform CI approval.
+
+- Added Box-owned `If` / `m-if`, using the existing optional state runtime for strict
+  conditions, nested scopes, reusable Web sources and retained stop/rebind ownership.
+  Literal `focus-target` selects a surviving native or portable focus owner.
+  Box primitives adopt captured native chrome, preventing nested labels/disclosures
+  when a connected source is later instantiated.
+- Batched contiguous keyed moves in the fallback placement path, reducing repeated
+  live insertions while retaining already-positioned nodes and native `moveBefore`
+  where available. Repeated WebKit 1000-row fixtures show materially faster reorder;
+  focus, drafts and current-key writes remain covered by the browser matrix.
+- Preserved application roles and Spacer flex styles across retained-root reconnect.
+  Hardened DataGrid/Chart arrays and dimensions against accessors, hidden symbols and
+  custom array prototypes; Chart table projection does not expose inherited cells.
+  Disposed/replaced Chart renderer callbacks no longer emit selection.
+- Added repeated template/Chart resource measurements, forced-GC observations and
+  portable keyboard/form/RTL/forced-colors/text-scaling browser fixtures. These are
+  local evidence, not real-device, screen-reader, independent security or performance
+  approval. Advisory size recommendations and frozen S0 remain unchanged.
+
+- Added typed `m-arg-*` action arguments through an explicitly supplied live `Binding`,
+  with current-key item/parent/root reads and App reconnect integration. State exposes
+  scoped reads without importing actions or components; named actions remain in the
+  optional root facade. Nested action roots execute once, and synchronous exceptions
+  now use the same Promise/`m:error` path as async failures. Fixed truncated literal
+  `m-param-*` names. App releases its new binding when action installation fails.
+  The List task example removes the selected row by stable key.
+
+- Added one-way paired ID bindings for native and portable template content and
+  root-level bindings. Preflight rejects duplicate IDs and dangling/cross-root
+  label/ARIA references before bound scalar writes; keyed reorders and stop/rebind
+  preserve instances. IDs remain application-supplied, fixed repeated IDs and
+  two-way identifier/label-target models are rejected, and no atomic DOM transaction
+  or new component forwarding is claimed. The List task demo now uses actual labels
+  and paired descriptions.
+
+- Payload budgets are now adjustable size recommendations. Builds, component size
+  checks and default reports warn on overages instead of failing; manifests/reports
+  retain exact measurements and structured warnings. Measurement integrity and
+  functional checks remain strict, as does explicitly requested baseline regression
+  checking. Frozen S0 measurements and existing numeric recommendations are unchanged.
+
+- Added inline Web `data-if`/stable-key `data-each` templates in the optional state
+  binder, with nested item/parent/root paths, current-key model writes, strict
+  preparation, retained nodes on stop/rebind and explicit focus fallback. Reorders
+  retain native editing state; failed setup releases new listeners/instances.
+  Reusable Web sources use root-local `data-template="#id"` references or an explicit
+  `BindingOptions.templates` Map for `data-template="name"`. Definitions remain inert
+  and unchanged; invalid, cyclic or oversized reference graphs fail before insertion.
+  Source changes use existing replacement/focus rules, including portable List regions.
+  Shared binding validation also rejects hidden symbol members without invoking accessors.
+- Store notifications snapshot subscription callbacks so additions during notification
+  do not loop; stale disposal cannot remove a later subscription owner.
+- Added portable `m-list-template` authoring inside List, backed by inert source content
+  and native `ul`/`li` owners. Optional state reuses its keyed reconciliation and current-key
+  model routes; ordinary List still imports only core. `focus-on-remove` opts into
+  focusing a surviving list, with explicit Web callbacks taking precedence. Template
+  collections are changed through the bound store, not List's authored-item methods.
+
 - Fixed retained root lifecycle behavior: Theme restores owned tokens/marker when its
   name is cleared; Field uses a real native label and tracks late/replaced controls
   without overwriting authored accessible names. Portable `m-*` authoring is retained.
@@ -70,8 +133,8 @@
   native data-table alternative. ECharts is supplied explicitly by the application using
   `configureChartEngine(echarts)`, not bundled or automatically downloaded. The lightweight
   adapter has no vendor declaration dependency; demo-only vendor assets stay out of the package.
-- Added explicit scalar/model binding with safe paths and lifecycle cleanup. Structural
-  templates and item scopes are not implemented.
+- Added explicit scalar/model binding with safe paths and lifecycle cleanup; the
+  subsequent inline Web template work is tracked above.
 - Added native semantic owners for portable labels, disclosure and phrasing primitives;
   repaired selected-module demos and removed obsolete migration showcases.
 - Restricted HTML insertion and remote markup loading with explicit trust options,

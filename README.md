@@ -10,8 +10,10 @@ require no chart engine. See the [Chart setup examples](demo/components/chart.ht
 includes 89 selectable component families, an optional all-components bundle, the
 separate root facade and plugins.
 Components use the shared `ViewElement` base and direct properties; API data is generated
-separately for demos. Explicit scalar/model binding and Chart are implemented.
-Structural templates and item scopes are not implemented. Native-target mappings are
+separately for demos. Chart and explicit scalar/model binding are implemented, as are
+inline Web conditional/keyed templates with nested item scopes, portable
+ListTemplate and If regions, paired IDs and scoped action arguments. Root-local
+references and explicit programmatic Web template sources are implemented. Native-target mappings are
 design contracts, not delivered SwiftUI, Flutter or CLI renderers.
 See the [release evidence and remaining gates](docs/architecture/09-production.md).
 
@@ -22,7 +24,7 @@ See the [release evidence and remaining gates](docs/architecture/09-production.m
 | Web components | Unprefixed classes based on `ViewElement`, registered as `m-*` elements. |
 | Metadata | Development-only data extracted from source; no production metadata lookup. |
 | Content | Explicit regions, preserved authored nodes and native browser semantics. |
-| Binding | Optional explicit scalar/model data flow; keyed templates remain planned. |
+| Binding | Optional scalar/model data flow, keyed templates, portable ListTemplate/If, paired IDs and explicit scoped action arguments. |
 | Styling | Component CSS and theme resources; short, scoped `data-part` / `data-state` markers. |
 | Development | One canonical API; no compatibility aliases or migration layer. |
 | Delivery | Small shared core plus independently selectable components/plugins, without a jQuery dependency. |
@@ -58,7 +60,7 @@ CI is configured for Windows, Linux and macOS on Node 22/24; browser acceptance 
 | Command | Purpose |
 | --- | --- |
 | `pnpm install --frozen-lockfile` | Install the locked development dependencies. |
-| `pnpm build` | Generate distributions and enforce payload budgets. |
+| `pnpm build` | Generate distributions and warn on exceeded size recommendations. |
 | `pnpm test` | Run the existing test suite; use focused fixtures while changing a component. |
 | `pnpm test:package` | Pack the built files and verify exports, types and imports in an isolated consumer. |
 | `pnpm test:browser` | Verify Chart, primitive, Form, aggregate ESM/classic and HTML-policy workflows in installed Playwright browser engines. |

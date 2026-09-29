@@ -1,4 +1,5 @@
 import { pathParts, readPath } from "./path.js"
+import { changed } from "./changes.js"
 
 export type StateValue = unknown
 export type StateSubscriber = (value: StateValue, path: string) => void
@@ -33,19 +34,22 @@ export class MStore {
     this.subscribers.set(path, values)
     return () => {
       values.delete(subscriber)
-      if (values.size === 0) this.subscribers.delete(path)
+      if (values.size === 0 && this.subscribers.get(path) === values) this.subscribers.delete(path)
     }
   }
 
   private notify(path: string): void {
-    for (const [subscribedPath, subscribers] of this.subscribers) {
+    changed(this)
+    // Snapshot before callbacks can add or replace subscriptions.
+    const pending = [...this.subscribers].map(([key, entries]) => [key, entries, [...entries]] as const)
+    for (const [subscribedPath, subscribers, callbacks] of pending) {
       if (
         subscribedPath === path
         || subscribedPath.startsWith(`${path}.`)
         || path.startsWith(`${subscribedPath}.`)
       ) {
         const value = this.get(subscribedPath)
-        subscribers.forEach((subscriber) => subscriber(value, subscribedPath))
+        callbacks.forEach(subscriber => { if (subscribers.has(subscriber)) subscriber(value, subscribedPath) })
       }
     }
   }
@@ -55,4 +59,4 @@ export function createStore(state: Record<string, StateValue> = {}): MStore {
   return new MStore(state)
 }
 
-export { bind, type Binding } from "./binding.js"
+export { bind, type Binding, type BindingOptions } from "./binding.js"

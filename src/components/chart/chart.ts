@@ -132,7 +132,9 @@ export class Chart extends ViewElement {
       if (!this.instance) {
         this.instance = createChartRenderer(this.surface, this.theme, this.renderer)
         this.instanceKey = key
+        const instance = this.instance
         this.instance.on("click", event => {
+          if (!this.isConnected || this.instance !== instance) return
           const data = event as { seriesIndex?: number; dataIndex?: number; name?: string; value?: unknown }
           this.emit("m:chart-select", { seriesIndex: data.seriesIndex, dataIndex: data.dataIndex, name: data.name, value: data.value })
         })

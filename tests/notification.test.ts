@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -37,7 +38,7 @@ describe("Notification default styles", () => {
     expect(ownCss).toContain("border-radius: 3px")
     expect(ownCss).toContain("font-size: 14px")
     expect(ownCss).toContain("line-height: 1.6")
-    expect(gzipSync(builtCss, { level: 9 }).length).toBeLessThanOrEqual(2000)
+    checkSizeRecommendation(gzipSync(builtCss, { level: 9 }).length, 2000, "notification.test.ts: gzipSync(builtCss, { level: 9 }).length")
   })
 
   it("uses the source shadow and semantic light-dark roles", () => {

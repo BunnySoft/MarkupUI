@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -468,7 +469,7 @@ describe("Explicit native template ownership", () => {
   it("keeps the exact production composed CSS within the unchanged gzip ceiling", () => {
     const native = readFileSync(resolve("src", "components", "dialog", "native.css"), "utf8")
     const css = readFileSync(resolve("src", "components", "modal", "modal.css"), "utf8")
-    expect(gzipSync(`${native}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    checkSizeRecommendation(gzipSync(`${native}\n${css}`, { level: 9 }).length, 1250, "modal.test.ts: gzipSync(`${native}\\n${css}`, { level: 9 }).length")
   })
 })
 

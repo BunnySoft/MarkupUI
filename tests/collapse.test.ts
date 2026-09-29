@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createCollapse } from "../src/components/collapse/controller.js"
@@ -696,10 +697,10 @@ describe("Collapse shared-core delivery", () => {
     for (const suffix of [".js", ".global.js"]) {
       const component = gzipSync(readFileSync(`dist/markup-ui-collapse${suffix}`), { level: 9 }).length
       const core = gzipSync(readFileSync(`dist/markup-ui-core${suffix}`), { level: 9 }).length
-      expect(component).toBeLessThanOrEqual(6500)
-      expect(component + core).toBeLessThanOrEqual(8000)
+      checkSizeRecommendation(component, 6500, "collapse.test.ts: component")
+      checkSizeRecommendation(component + core, 8000, "collapse.test.ts: component + core")
     }
-    expect(gzipSync(readFileSync("dist/markup-ui-collapse.css"), { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(readFileSync("dist/markup-ui-collapse.css"), { level: 9 }).length, 1000, "collapse.test.ts: gzipSync(readFileSync(\"dist/markup-ui-collapse.css\"), { level: 9 }).length")
   })
 })
 

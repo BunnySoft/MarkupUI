@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -88,6 +89,6 @@ describe("audited native Log presentation", () => {
 
   it("stays within the composed Code plus Log stylesheet ceiling without imports or transforms", () => {
     expect(css).not.toContain("@import")
-    expect(gzipSync(`${code}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1750)
+    checkSizeRecommendation(gzipSync(`${code}\n${css}`, { level: 9 }).length, 1750, "log.styles.test.ts: gzipSync(`${code}\\n${css}`, { level: 9 }).length")
   })
 })

@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -179,7 +180,7 @@ describe("native owned Highlight surface", () => {
       expect(css).toContain("text-decoration: underline")
       expect(css.slice(css.indexOf("@media print"))).not.toContain("color: inherit")
       expect(css.slice(css.indexOf("@media print"))).toContain("color: var(--m-highlight-color, MarkText)")
-      expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(750)
+      checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 750, "highlight.test.ts: gzipSync(css, { level: 9 }).length")
     })
   })
 

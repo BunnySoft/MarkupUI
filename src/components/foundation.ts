@@ -21,7 +21,7 @@ export class Theme extends ViewElement {
 export abstract class Semantic extends ViewElement {
   public connectedCallback(): void {
     const role = this.getAttribute("data-role")
-    if (role) this.setAttribute("role", role)
+    if (role && !this.hasAttribute("role")) this.setAttribute("role", role)
   }
 }
 
@@ -107,7 +107,13 @@ export class App extends ViewElement {
       state.remove()
     }
     this.binding = bind(this, this.store)
-    this.disposeActions = installActions(this, this.store)
+    try {
+      this.disposeActions = installActions(this, this.binding)
+    } catch (error) {
+      this.binding()
+      this.binding = undefined
+      throw error
+    }
     this.observer = new MutationObserver(() => this.binding?.refresh())
     this.observer.observe(this, { childList: true, subtree: true })
   }

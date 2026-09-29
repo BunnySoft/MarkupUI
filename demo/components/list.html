@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-list.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
@@ -18,8 +19,12 @@
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-list.global.js"></script>
+  <script defer src="../../dist/markup-ui-state.global.js"></script>
+  <script defer src="../../dist/markup-ui-native-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui.global.js"></script>
   <script type="module" src="./list.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -56,6 +61,76 @@
           <m-list-item>Third item</m-list-item>
         </m-list>
       </div>
+    </section>
+
+    <section data-demo-example="template" aria-labelledby="template-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="template-heading">Store-bound tasks</h2>
+          <p>Portable item content with stable keys. This example additionally selects state, Input and its native-input dependency, Box, Button, and the optional root facade for named actions.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-box id="task-workspace" display="flex" direction="column" gap="12" width="100%">
+          <m-list id="task-list">
+            <m-list-template data-each="tasks" data-each-key="id" label="Tasks" focus-on-remove>
+              <m-list-item>
+                <m-box display="flex" direction="column" gap="8">
+                  <m-label data-bind-html-for="$item.fieldId" data-bind-text="$item.title"></m-label>
+                  <m-input data-bind-id="$item.fieldId" data-bind-attr-aria-describedby="$item.helpId" data-model-value="$item.name"
+                    data-model-event="input change" data-model-target="native"></m-input>
+                  <m-small data-bind-id="$item.helpId">Task description</m-small>
+                  <m-button m-action="task.remove" m-arg-key="$key">Remove task</m-button>
+                </m-box>
+              </m-list-item>
+            </m-list-template>
+          </m-list>
+          <m-box display="flex" wrap gap="8">
+            <m-button id="task-add">Add task</m-button>
+            <m-button id="task-reverse">Reverse order</m-button>
+            <m-button id="task-remove">Remove first task</m-button>
+          </m-box>
+          <m-text id="task-status" role="status"></m-text>
+        </m-box>
+      </div>
+      <pre><code>const store = MarkupUIState.createStore({
+  tasks: [{ id: "a", title: "Report", name: "Quarterly report",
+    fieldId: "task-field-a", helpId: "task-help-a" }]
+})
+const binding = MarkupUIState.bind(document.getElementById("task-workspace"), store)
+m.actions.register("task.remove", ({ store, arguments: args }) =&gt; {
+  store.set("tasks", store.get("tasks").filter(task =&gt; task.id !== args.key))
+})
+const stopActions = m.actions.install(document.getElementById("task-workspace"), binding)
+// Collection replacement and edits use this same store.
+store.set("tasks", [...store.get("tasks")].reverse())
+// On teardown: stopActions(); binding().
+// Rebind and reinstall actions together to reuse retained instances.</code></pre>
+    </section>
+
+    <section data-demo-example="sources" aria-labelledby="sources-heading">
+      <header data-demo-header><div>
+        <h2 id="sources-heading">Reusable source (Web)</h2>
+        <p>A root-local native template supplies portable ListItem content to two independent regions.</p>
+      </div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-box id="source-workspace" display="flex" direction="column" gap="12" width="100%">
+          <m-list><m-list-template data-each="tasks" data-each-key="id" data-template="#shared-task"
+            label="Primary tasks" focus-on-remove></m-list-template></m-list>
+          <m-list><m-list-template data-each="tasks" data-each-key="id" data-template="#shared-task"
+            label="Mirrored tasks" focus-on-remove></m-list-template></m-list>
+          <template id="shared-task"><m-list-item>
+            <m-input aria-label="Shared task" data-model-value="$item.name"
+              data-model-event="input change" data-model-target="native"></m-input>
+          </m-list-item></template>
+        </m-box>
+      </div>
+      <pre><code>const root = document.getElementById("source-workspace")
+const store = MarkupUIState.createStore({ tasks: [{ id: "a", name: "Review" }] })
+const stop = MarkupUIState.bind(root, store)
+// For data-template="task", supply an explicit Web template:
+// bind(root, store, { templates: new Map([["task", templateElement]]) })
+// After changing a definition or Map entry: stop.refresh().</code></pre>
     </section>
 
     <section data-demo-example="size" aria-labelledby="size-heading">
@@ -101,7 +176,7 @@
       <header data-demo-header>
         <div>
           <h2 id="projects-heading">Projects</h2>
-          <p>Header and footer regions with rich items, actions, and nested lists.</p>
+          <p>Web interoperability: authored native lists with header/footer regions, rich items, actions, and nested lists.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
@@ -149,7 +224,7 @@
       <header data-demo-header>
         <div>
           <h2 id="actions-heading">Explicit single-action rows</h2>
-          <p>Clickable list items with buttons and links.</p>
+          <p>Web interoperability: native list containers with buttons and links.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
@@ -180,7 +255,7 @@
       <header data-demo-header>
         <div>
           <h2 id="form-heading">Native form controls</h2>
-          <p>Forms and inputs inside list items with validation and reset.</p>
+          <p>Web interoperability: forms and inputs inside list items with validation and reset.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
@@ -215,7 +290,7 @@
       <header data-demo-header>
         <div>
           <h2 id="ordered-heading">Ordered markers and logical RTL</h2>
-          <p>Ordered items with native numbering and logical direction.</p>
+          <p>Web interoperability: ordered items with native numbering and logical direction.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
@@ -263,6 +338,13 @@
       <p><code>bordered</code> defaults to true; setting <code>bordered="false"</code> removes the border. <code>size</code> accepts small, medium, or large. <code>clickable</code> and <code>hoverable</code> are presence attributes. <code>showDivider</code> defaults to true and can be disabled with <code>show-divider="false"</code>.</p>
       <h3>Accessibility and layout</h3>
       <p>Lists with direct <code>m-list-item</code> children maintain <code>role="list"</code> on the container and <code>role="listitem"</code> on items. When an explicit items container such as a <code>ul</code> or <code>ol</code> is authored, header and footer stay outside the semantic list. Native ordering, start, and value attributes on ordered lists are fully preserved.</p>
+      <h3>Portable store-bound items</h3>
+      <p>One-way <code>data-bind-id</code> and matching <code>data-bind-html-for</code> or <code>data-bind-attr-aria-describedby</code> pair application-supplied IDs. IDs must be unique in the enclosing Web tree and bound references must resolve inside the binding root. Fixed authored IDs in repeated sources and two-way ID/label-target models are rejected. Give each simultaneous placement distinct IDs; the mirrored-source example deliberately has none. Preflight checks the next surviving tree, not atomic intermediate DOM mutations. Label association and native attribute forwarding remain owned by the selected components.</p>
+      <p>One direct <code>m-list-template</code> owns the List's item region, with exactly one authored <code>m-list-item</code> root. Header/footer regions remain outside it. Do not mix authored items, another template, or an authored items container into that List. The Web renderer supplies one native <code>ul</code> and stable <code>li</code> instance roots; <code>label</code> names that list. The binder owns placement, while List never independently moves generated items.</p>
+      <p>Select state explicitly and call <code>bind(root, store)</code>, or use an explicitly selected App with the same store. <code>data-each</code> is the store-owned collection path; <code>data-each-key</code> is required. Nested paths use <code>$item</code>, <code>$parent</code>, and <code>$root</code>; <code>$index</code> and <code>$key</code> are read-only. Update that store to add, remove, or reorder items; <code>appendItem</code> and <code>removeItem</code> reject template mode. <code>items</code> remains a computed snapshot, not a private data collection.</p>
+      <p><code>focus-on-remove</code> explicitly opts into focusing the surviving semantic list when its active row is removed, including removal of the last row. It does not add a Tab stop. An explicit binding <code>focusFallback</code> callback takes precedence. Without either policy, focused removal fails before changing the rendered region. Removing the List itself needs an application fallback outside the removed content. <code>ListTemplate.focus()</code> focuses the list; it does not guess which row control should receive focus.</p>
+      <p>After capture, source content is inert and does not participate in forms. HTML parsing or custom-element upgrade can briefly connect authored descendants before capture; this is not a guarantee that source constructors never run. Prefer loading selected families before binding, and do not put side-effectful application initialization in source connection callbacks. Stop retains instances and disconnects binding listeners; same-root rebind reuses them. Moving source chrome or generated roots outside their owner is rejected. Item-scoped action arguments remain unimplemented.</p>
+      <p>Web source reuse uses <code>data-template="#id"</code> for an exact, unique native template ID inside the binding root, or <code>data-template="name"</code> for an explicitly supplied <code>BindingOptions.templates</code> Map. A referenced ListTemplate has no inline content, and its definition must contain one ListItem root. The binder copies the definition without consuming it; no document-wide lookup, remote loading or data-to-HTML conversion occurs. Call <code>binding.refresh()</code> after source or Map changes. Changed expanded content replaces affected instances under the same focus policy. Cycles, more than 32 reference hops or 1,000 expanded references per source fail before insertion. Native template definitions are a Web adapter, not portable source definitions.</p>
     </section>
   </main>
 </body>

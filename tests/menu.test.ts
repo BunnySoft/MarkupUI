@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
@@ -534,7 +535,7 @@ describe("native selection, refresh and cleanup", () => {
   })
   it("keeps the corrected native visual defaults inside the unchanged stylesheet ceiling", () => {
     const css = readFileSync("src/components/menu/menu.css", "utf8")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1250, "menu.test.ts: gzipSync(css, { level: 9 }).length")
     expect(css).toContain("--m-menu-item-height,42px")
     expect(css).toContain("font-size:14px")
     expect(css).toContain("line-height:1.75")

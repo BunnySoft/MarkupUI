@@ -76,7 +76,7 @@ reorganization or a reason to duplicate the core in each family.
 | `scripts/component-api.mjs` | Build/demo-only API extraction from source. |
 | `src/components/elements.ts` | Canonical registration ownership, not competing old/new implementations. |
 | `src/core/api.ts`, `src/index.ts` | Public base and exports aligned with `ViewElement` as consumers migrate. |
-| Build/distribution scripts | Correct component assets, generated resources and unchanged acceptance budgets. |
+| Build/distribution scripts | Correct component assets, generated resources and measured size recommendations. |
 
 Public UI components use one canonical Web base and API. Remove superseded code
 family-by-family after updating its consumers; do not break unrelated components merely
@@ -103,8 +103,9 @@ registration, styles and documentation to agree. Exercise the existing focused f
 browser behavior, lifecycle and accessibility; compare startup, updates, memory and payload
 with the current baseline. A class rename or metadata-only change is insufficient.
 
-Keep direct Web authoring free of a duplicate serialized tree or virtual DOM. Do not raise
-payload ceilings without explicit approval. Remove superseded implementations and aliases
+Keep direct Web authoring free of a duplicate serialized tree or virtual DOM. Payload
+budgets are adjustable recommendations; preserve measured evidence and explain growth.
+Remove superseded implementations and aliases
 rather than maintaining backward-compatibility shims: MarkupUI is still in development.
 
 Native-platform implementations, a `.mkl` language and a new full document/binding runtime

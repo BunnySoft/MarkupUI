@@ -3,7 +3,7 @@ import { ViewElement } from "../../core/index.js"
 /** Fixed native shell for portable primitives; authored nodes remain live children. */
 export abstract class NativeContent<T extends HTMLElement> extends ViewElement {
   public static readonly observedAttributes: readonly string[] = ["aria-label", "aria-labelledby", "aria-describedby"]
-  private readonly content: T
+  private content: T
   protected readonly observer = new MutationObserver(() => this.refresh())
 
   protected constructor(tag: string) {
@@ -31,6 +31,15 @@ export abstract class NativeContent<T extends HTMLElement> extends ViewElement {
     this.observer.disconnect()
     const active = this.ownerDocument.activeElement as HTMLElement | null
     try {
+      if (this.native.parentNode !== this) {
+        // Inert template capture may retain a primitive's previously connected chrome.
+        const captured = [...this.children].filter(child => child.localName === this.native.localName && child.getAttribute("data-part") === "content")
+        if (captured.length > 1) throw new TypeError("A primitive requires one native content owner.")
+        if (captured.length === 1) {
+          this.content = captured[0] as T
+          this.attributeChangedCallback()
+        }
+      }
       if (this.native.parentNode !== this) {
         this.native.replaceChildren()
         const nodes = [...this.childNodes]

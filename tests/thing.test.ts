@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -248,7 +249,7 @@ describe("CSS-only native Thing", () => {
     expect(css).toContain("max(0px,var(--m-thing-row-gap,12px) - var(--m-thing-lead-gap,4px))")
     expect(compactCss).toContain("@media(prefers-reduced-motion:reduce)")
     expect(css).toContain("transition:none")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "thing.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("preserves authored shared and local typography and spacing without a controller", () => {

@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -306,7 +307,7 @@ describe("Heatmap default styles", () => {
   const css = readFileSync(resolve("src", "components", "heatmap", "heatmap.css"), "utf8")
 
   it("keeps the Heatmap stylesheet within its unchanged distribution budget", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(2000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 2000, "heatmap.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("defines the pinned built-in and named palettes without replacing public overrides", () => {

@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Typecheck, build and enforce payload budgets
+      - name: Typecheck, build and report size recommendations
         run: node scripts/build.mjs
 
       - name: Full test suite

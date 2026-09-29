@@ -112,6 +112,10 @@ removed nodes and disconnected apps stop receiving updates. The optional inline
 `script[type="application/json"][data-m-state]` is an explicit Web configuration adapter.
 Load bound component definitions before App initializes, or keep the App disconnected
 until those definitions are ready; unknown binding properties are errors.
+App's action installation receives that same live binding for typed `m-arg-*`
+arguments and reinstalls it on reconnect. Manual callers use
+`installActions(root, binding)`; passing only a store retains literal-only parameters.
+See [scoped actions](../binding/06-actions.md) for ownership, errors and async limits.
 
 `m-field label="Name"` creates a native label for the first non-hidden input, textarea or
 select owned by that field, excluding nested Fields. Author one logical control per Field;
@@ -145,6 +149,25 @@ Disconnection retains presentation; reconnect reconciles the current name.
 
 The root stylesheet owns these elements, shared tokens/layout utilities and its feedback
 service. It no longer supplies migrated component-family styles; select each family's CSS.
+
+### Other Retained Surfaces
+
+`m-header` and `m-main` supply default banner/main roles only when the application has
+not supplied `role` or a different `data-role`. Section applies an explicit `data-role`
+on connection. Reconnection preserves application roles; these Web wrappers do not
+create native header/main/section elements or enforce document landmark cardinality.
+Changing `data-role` is not a live role-binding API; use the native `role` attribute.
+
+Stack, Row, Wrap and Center retain their CSS layout defaults and authored children.
+Spacer's default `flex: 1` now belongs to CSS rather than a reconnect-time inline write,
+so application flex declarations survive. Option is inert configuration, not a native
+option renderer. Accordion is a passive container, not an exclusivity controller.
+
+Include accepts only application-trusted same-origin markup, subject to the shared
+sanitizer and bounded HTML transport. Disconnect/source replacement abort requests;
+stale responses cannot replace current content. It is not a remote untrusted-component
+sandbox. Optional DataGrid and Rating remain the separately installed Web baselines
+documented by the [plugin demo](../../demo/components/plugins.html).
 
 ## References
 

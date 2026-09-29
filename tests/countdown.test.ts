@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -329,7 +330,7 @@ describe("Countdown default styles", () => {
   const css = readFileSync(resolve("src", "components", "countdown", "countdown.css"), "utf8")
 
   it("keeps the Countdown stylesheet within its unchanged ceiling", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(750)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 750, "countdown.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("adds only numeric readability, unit flow and focus presentation", () => {

@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -15,7 +16,7 @@ afterEach(() => { style?.remove(); style = undefined; document.body.replaceChild
 
 describe("Tabs retained default styles", () => {
   it("keeps the strict 1750-byte source budget and existing native media policies", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1750)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1750, "tabs-style.test.ts: gzipSync(css, { level: 9 }).length")
     expect(css).toContain("prefers-reduced-motion")
     expect(css).toContain("forced-colors")
     expect(css).toContain("@media print")

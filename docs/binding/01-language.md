@@ -1,6 +1,6 @@
 # 1. Binding language
 
-**Scalar and explicit model binding implemented; templates remain design work.**
+**Scalar/models, Web templates, reusable sources, paired IDs, scoped actions, portable ListTemplate and If are implemented.**
 Directive values are safe data paths, not JavaScript expressions. Import `bind` and
 `createStore` from `@dataengine/markup-ui/state`. The binder operates only under an
 explicitly supplied root; separate nonoverlapping roots have independent stores.
@@ -14,8 +14,12 @@ explicitly supplied root; separate nonoverlapping roots have independent stores.
 | `data-bind-text="path"` | State to text | Write literal text, never HTML. |
 | `data-bind-prop-text="path"` | State to element | Explicit escape for a component property named `text`. |
 | `data-model-<property>="path"` | State and element | Two-way property binding with a declared update contract. |
-| `data-if="path"` | Planned | Create/remove one conditional template instance. |
-| `data-each="path"` with `data-each-key` | Planned | Maintain keyed template instances. |
+| `data-if="path"` on native `template` | State to Web structure | Create/remove one Boolean conditional instance. |
+| `data-if="path"` on `m-if` | State to portable structure | Box-owned conditional source, using the same optional state reconciler. |
+| `data-each="path"` with `data-each-key` on native `template` | State to Web structure | Maintain stable-key instances from a bounded array. |
+| `data-each="path"` with `data-each-key` on `m-list-template` | State to List items | Portable region backed by the same keyed binder and renderer-owned list semantics. |
+| `data-template="#id"` / `data-template="name"` on a structural placement | Web source selection | Exact root-local ID / explicitly supplied `BindingOptions.templates` Map entry; no inline content or data-path evaluation. |
+| `m-arg-<name>="path"` on an `m-action` element | Scope to action | Typed event-time data through an explicit live binding; see [scoped actions](06-actions.md). |
 
 Kebab-case property suffixes map to logical camel-case names: `data-bind-fallback-src`
 targets `fallbackSrc`. Avatar's accessible name is `label`, so its binding is
@@ -30,6 +34,7 @@ targets `fallbackSrc`. Avatar's accessible name is `label`, so its binding is
 | Web attribute | Null/undefined removes it; supported primitive values use the declared encoding. Reject object/collection values. |
 | Boolean presence attribute | Presence/removal, not the strings `"true"` and `"false"`. |
 | Text | Literal text; no `innerHTML`, interpolation or executable content. |
+| IDs and references | One-way, explicitly supplied strings with next-tree uniqueness/root-local relationship checks; see [paired IDs](03-templates.md#paired-ids). |
 
 Portable values are data, not executable callbacks or DOM objects. Any platform-only
 value channel needs an explicit adapter contract.
@@ -45,6 +50,7 @@ Programmatic assignment must not recursively fabricate that user event.
 Native input/change events belong to an explicit Web adapter. MarkupUI elements expose
 their logical model-update contract; the binder does not guess it from tag names.
 Attribute and text channels are not two-way model destinations.
+IDs and label targets are also one-way: `data-model-id` and `data-model-html-for` fail.
 
 The first Web adapter declares the event list using `data-model-event="input change"`
 and the owner using `data-model-target="native"` or `"host"` (default). Events must
@@ -72,14 +78,22 @@ One root has one binding owner; overlapping roots and duplicate destinations fai
 `const stop = bind(root, store)` installs initial values, subscriptions and listeners.
 `stop.refresh()` discovers added/removed nodes and changed directives. `stop()` releases
 ownership without reverting DOM or state. Failed initial setup cleans up subscriptions.
+Inline templates use the [Web template contract](03-templates.md). The optional third
+argument `bind(root, store, { focusFallback, templates })` can supply named Web templates
+and a surviving focus target before removing a focused instance. Without a callback or
+ListTemplate's explicit `focus-on-remove` policy, focused removal fails before tree mutation.
 The optional `m-app` explicitly owns its subtree and refreshes on child changes; reconnect
 uses the retained store. Pre-upgrade `store` assignment survives registration. A store
 acquired or supplied through the property cannot be combined with inline JSON state;
 disconnect before replacing an active store. Bindings and actions share that same store
 owner. No automatic activation occurs across the document.
+App also passes its live binding to named actions. Standalone action installations
+must explicitly receive that binding to use `m-arg-*`; supplying only a store is
+insufficient. `binding.read(element, path)` exposes current scoped reads, and
+`binding.store` identifies their owner. Action names and `m-param-*` remain literals.
 
 Text binding cannot own a bound subtree or an executable text container. The attribute
-channel accepts naming/ARIA/data attributes and the documented Boolean presence
+channel accepts naming/ARIA/data attributes (excluding binding/model/structural directives) and the documented Boolean presence
 attributes, not URL, style or event-handler sinks. Native property binding is limited to
 ordinary field state and naming properties; component setters own their value validation.
 Old development binding names are removed, without aliases or a compatibility parser.

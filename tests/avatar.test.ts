@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { createContext, runInContext } from "node:vm"
@@ -143,7 +144,7 @@ describe("modular Avatar distribution", () => {
       expect(payload.dependencies).toEqual([core])
       expect(payload.runtimeGzipBytes).toBe(coreBytes + componentBytes)
       expect(payload.runtimeBudget).toBe(8500)
-      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(payload.runtimeBudget)
+      checkSizeRecommendation(payload.runtimeGzipBytes, payload.runtimeBudget, "avatar.test.ts: payload.runtimeGzipBytes")
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + manifest.bundles["markup-ui-avatar.css"].gzipBytes)
     }
   })

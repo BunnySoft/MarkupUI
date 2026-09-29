@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
@@ -40,7 +41,7 @@ describe("Data Table mapping and structure", () => {
     expect(css).toContain("font-variant-numeric: normal")
     expect(css).not.toContain("[aria-sort]")
     expect(css).toContain("color: GrayText")
-    expect(gzipSync(`${base}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(2500)
+    checkSizeRecommendation(gzipSync(`${base}\n${css}`, { level: 9 }).length, 2500, "data-table.test.ts: gzipSync(`${base}\\n${css}`, { level: 9 }).length")
   })
   it("registers one canonical shared-base class and rejects conflicts", () => {
     expect(DataTable.prototype).toBeInstanceOf(ViewElement)

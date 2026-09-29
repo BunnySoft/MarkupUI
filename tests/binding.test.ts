@@ -56,10 +56,20 @@ describe("explicit scoped binding", () => {
     expect(() => bind(script, createStore({ text: "alert(1)" }))).toThrow("Unsafe")
   })
 
-  it("rejects unsupported structural directives instead of claiming they are active", () => {
+  it("rejects hidden symbol members through the shared plain-data validator", () => {
+    const receiver = new DataReceiver()
+    receiver.setAttribute("data-bind-source", "rows")
+    const getter = vi.fn()
+    const rows = Object.defineProperty({}, Symbol("hidden"), { get: getter })
+    expect(() => bind(receiver, createStore({ rows }))).toThrow("Unsafe data member")
+    expect(getter).not.toHaveBeenCalled()
+    expect(receiver.source).toBeNull()
+  })
+
+  it("rejects a structural source without a valid key and instance shape", () => {
     const template = document.createElement("template")
     template.setAttribute("data-each", "rows")
-    expect(() => bind(template, createStore({ rows: [] }))).toThrow("not implemented")
+    expect(() => bind(template, createStore({ rows: [] }))).toThrow()
   })
 
   it.each(["data-if", "data-each"])("rejects a late %s directive on an already-bound node", directive => {
@@ -67,7 +77,7 @@ describe("explicit scoped binding", () => {
     const { store, binding } = attach(document.body, { name: "Original" })
     const span = document.querySelector("span")!
     span.setAttribute(directive, "rows")
-    expect(() => binding.refresh()).toThrow("not implemented")
+    expect(() => binding.refresh()).toThrow("Web template")
     span.removeAttribute(directive)
     binding.refresh()
     store.set("name", "Updated")

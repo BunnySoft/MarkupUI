@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -286,7 +287,7 @@ describe("Color Picker default styles", () => {
   const css = readFileSync(resolve("src", "components", "color-picker", "color-picker.css"), "utf8")
 
   it("keeps the Color Picker stylesheet within its unchanged ceiling", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "color-picker.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("matches the retained reference trigger heights and type sizes", () => {

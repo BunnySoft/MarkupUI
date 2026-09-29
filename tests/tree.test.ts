@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
@@ -33,7 +34,7 @@ afterEach(() => { helpers.splice(0).forEach(helper => { try { helper.disconnect(
 
 describe("native Tree visual defaults", () => {
   it("keeps reference row metrics within the unchanged CSS budget", () => {
-    expect(gzipSync(treeCss, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    checkSizeRecommendation(gzipSync(treeCss, { level: 9 }).length, 1250, "tree.test.ts: gzipSync(treeCss, { level: 9 }).length")
     expect(treeCss).toContain("--m-tree-label-height, 24px")
     expect(treeCss).toContain("--m-tree-row-padding, 3px")
     expect(treeCss).toContain("--m-tree-indent, 24px")

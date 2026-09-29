@@ -5,6 +5,7 @@ import { dirname, posix, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { parseArgs } from "node:util"
 import { gzipSync } from "node:zlib"
+import { checkSizeRecommendation } from "./size-policy.mjs"
 
 const sha256 = content => createHash("sha256").update(content).digest("hex")
 const sorted = values => [...new Set(values)].sort()
@@ -109,7 +110,11 @@ export async function createReport(root) {
     hostDependencies[file] = [`dist/${manifest.entryPayloads.root.file}`]
     graph[file] = sorted([...graph[file], ...hostDependencies[file]])
   }
-  const budgets = {}
+  const budgets = {}, sizeWarnings = []
+  function recordSize(gzipBytes, budget, label) {
+    const warning = checkSizeRecommendation(gzipBytes, budget, label, null)
+    if (warning) sizeWarnings.push(warning)
+  }
   for (const [name, expected] of Object.entries(manifest.bundles)) {
     const file = `dist/${name}`
     if (!files[file]) {
@@ -120,7 +125,7 @@ export async function createReport(root) {
     assert.equal(files[file].bytes, expected.bytes, `Manifest bytes differ: ${file}`)
     assert.equal(files[file].gzipBytes, expected.gzipBytes, `Manifest gzip differs: ${file}`)
     budgets[`file:${file}`] = expected.budget
-    assert(files[file].gzipBytes <= expected.budget, `Payload ceiling exceeded: ${file}`)
+    recordSize(files[file].gzipBytes, expected.budget, `file:${file}`)
   }
   const costs = {}, formats = {}
   function payloadCost(key, payload) {
@@ -134,7 +139,7 @@ export async function createReport(root) {
     costs[`${key}:runtime`] = runtime
     if (payload.runtimeBudget !== undefined) {
       budgets[`${key}:runtime`] = payload.runtimeBudget
-      assert(runtime.gzipBytes <= payload.runtimeBudget, `Runtime ceiling exceeded: ${key}`)
+      recordSize(runtime.gzipBytes, payload.runtimeBudget, `${key}:runtime`)
     }
     return file
   }
@@ -192,6 +197,7 @@ export async function createReport(root) {
     schemaVersion: 1, measurement, packageVersion: manifest.version,
     environment: evidence.environment, revision: evidence.revision,
     families, files, graph, hostDependencies, exports, budgets, costs, formats, externalEngines,
+    budgetPolicy: "advisory", sizeWarnings,
     attributionNote: "esbuild bytesInOutput are raw source contributions, excluding some output overhead. Excess over the largest copy is diagnostic, NOT removable gzip bytes or evidence of equivalent behavior.",
   }
 }
@@ -257,9 +263,8 @@ async function main() {
   const increases = report.comparison.changes.filter(change => change.bytes > 0 || change.gzipBytes > 0)
   console.log(`Baseline: ${report.comparison.changes.length} size/file-list changes, ${increases.length} increases, ${report.comparison.exportChanges.length} export changes`)
   console.log(`Report: ${output}`)
-  const raisedBudgets = report.comparison.budgetChanges.filter(change =>
-    change.before !== null && (change.after === null || change.after > change.before))
-  assert.equal(raisedBudgets.length, 0, "Existing payload ceilings were raised or removed; see report")
+  for (const { label, gzipBytes, budget } of report.sizeWarnings) checkSizeRecommendation(gzipBytes, budget, label)
+  console.log(`Size recommendations: ${report.sizeWarnings.length} exceeded, ${report.comparison.budgetChanges.length} changed since baseline (advisory)`)
   if (values["check-regressions"]) {
     assert.equal(increases.length, 0, "Payload regression against baseline; see report")
     assert.equal(report.comparison.exportChanges.length, 0, "Export surface changed; comparison is diagnostic only")

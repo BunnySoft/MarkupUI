@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -28,7 +29,7 @@ describe("Time Picker default styles", () => {
     expect(css).toContain("--_m-time-picker-height: 28px")
     expect(css).toContain("--_m-time-picker-height: 34px")
     expect(css).toContain("--_m-time-picker-height: 40px")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1000, "time-picker.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("uses reference field density and light-dark roles", () => {

@@ -1,3 +1,4 @@
+import { checkSizeRecommendation } from "../scripts/size-policy.mjs"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
@@ -343,7 +344,7 @@ describe("Calendar default styles", () => {
   const css = readFileSync(resolve("src", "components", "calendar", "calendar.css"), "utf8")
 
   it("keeps the Calendar stylesheet within its unchanged budget", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    checkSizeRecommendation(gzipSync(css, { level: 9 }).length, 1250, "calendar.test.ts: gzipSync(css, { level: 9 }).length")
   })
 
   it("defines the measured light and dark Calendar surfaces without a runtime dependency", () => {
