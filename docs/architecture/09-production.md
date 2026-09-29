@@ -18,14 +18,14 @@ production readiness. Every supported family needs evidence for its declared con
   chart types and all five data-source forms. Chart is required before release, not deferred.
 - [ ] Keyboard, native labels/forms, focus recovery and screen-reader behavior are verified.
   Include disabled/readonly states, IME, RTL, reduced motion, forced colors and zoom.
-- [ ] Representative workflows pass in Chromium, Firefox and WebKit on desktop and mobile
+- [x] Representative workflows pass in Chromium, Firefox and WebKit on desktop and mobile
   layouts. Record actual browser versions and evidence; JSDOM is not browser acceptance.
 - [ ] Lifecycle tests cover pre-upgrade writes, reconnect, cancellation, stale async work
   and release of listeners, observers, timers and resources without losing authored state.
 - [ ] Security review covers HTML/URL handling, dynamic content, unsafe sinks and applicable
   CSP behavior. Dependency audit findings are triaged; zero runtime dependencies is not a
   substitute for review.
-- [ ] An actual packed package installs in a clean consumer. Exports, declarations, assets,
+- [x] An actual packed package installs in a clean consumer. Exports, declarations, assets,
   ESM/classic loading and shared-core identity work without repository-only files.
 - [ ] Existing dependency-inclusive payload budgets pass; large-data interactions and
   repeated mount/unmount workflows have measured performance and memory results.
@@ -36,9 +36,50 @@ production readiness. Every supported family needs evidence for its declared con
 
 ## Current evidence
 
+### Size optimization checkpoint
+
+September 29, 2026, Windows / Node 22.12.0, source checkpoint `99ab5a6`
+including the Tree Select reset correction `ec9cae4`:
+
+| Check | Local result |
+| --- | --- |
+| Typecheck/build | Passed with the original component/root/plugin ceilings unchanged. New aggregate-only ceilings account for its complete runtime and CSS. |
+| Integrated tests | 5,085/5,085 passed across 145 files after the reset correction; zero failures, skips or todo tests. |
+| Packed consumer | 96 JavaScript entries, 2,344 files; strict NodeNext types and separate modular/aggregate runtime imports pass without installed ECharts. |
+| Browser catalog | 588/588 checks across 98 pages, three engines and desktop/mobile-sized viewports. |
+| Browser interactions | Changed S2/S3 families and existing Chart, primitive, Form, plugin, Virtual List and HTML-policy workflows pass. Both aggregate formats pass real forms/reset, sorting, keyboard selection, reconnect and external-engine rendering in all six engine/layout combinations. |
+| Catalog/aggregate | 89 independently selectable families / 203 tags, with an optional namespace-based full entry; no mandatory aggregate dependency. |
+| Modular runtime gzip | All 94 selected runtime files total 413,512 bytes ESM / 427,022 classic. Cumulative S0 savings are only 553/533 bytes. |
+| Optional full runtime gzip | 314,066 bytes ESM / 312,492 classic, including core and Chart adapter. Full component CSS is separately 63,150 bytes. |
+
+Browser evidence completed September 28, 2026 UTC: Chromium 153.0.8010.12,
+Firefox 155.0 and WebKit 26.6 at 1280x900 and 375x812. The first matrix's
+586/588 result exposed a genuine Tree Select reset/clear race. Deterministic
+source/distribution regressions and the passing final matrix supersede that failure;
+it was not waived or hidden by increasing a timeout. Final aggregate and corrected
+Tree Select/Dropdown screenshots were inspected.
+
+This work preserves portable `m-*` authoring for the reconciled contracts and
+renderer-owned native HTML, with explicitly marked Web interoperability examples.
+It does not certify every retained root contract, all input modes or non-Web targets.
+The clean remote install/OS/Node matrix, human accessibility and real-device checks,
+structural binding scope, remaining retained-root contracts, independent security and
+performance review, and Chart engine-inclusive release-budget approval remain open.
+No new audit or remote CI result is claimed by this checkpoint.
+
+Evidence is retained locally in `.vite/size/s6-tests.json`,
+`.vite/size/s6-final.json`, `.vite/package/results.json`,
+`.vite/browser/results.json` and `.vite/browser/catalog-results.json`.
+The [optimization record](10-size-optimization.md) owns the detailed comparisons,
+commands, limitations and per-task evidence.
+Repeating the build at this source checkpoint reproduces all 296 measured file hashes,
+raw/gzip costs, exports and budgets exactly.
+
+### Earlier release checkpoint
+
 September 23, 2026, Windows / Node 22.12.0 / pnpm 10.28.0:
 
-| Check | Latest local result |
+| Check | Result at that checkpoint |
 | --- | --- |
 | Frozen install | Passed in the existing workspace; not a clean remote-machine install. |
 | Typecheck/build | Passed; Chart adapter/runtime ceilings reduced, all other existing ceilings unchanged. |
@@ -228,10 +269,10 @@ the unchanged ceiling. The final 97-page catalog and integrated suite remain pen
 
 ## Work order
 
-The [JavaScript size optimization plan](10-size-optimization.md) is the selected next-thread
-workstream. It prioritizes one canonical behavior implementation per component before
-shared packaging and an optional full bundle. Its tasks are planned, not completed; the
-release blockers below remain open independently.
+The [JavaScript size optimization plan](10-size-optimization.md) is complete through
+S6 local integrated acceptance: canonical behavior reconciliation, measured sharing
+decisions and optional full-catalog delivery. The release blockers below remain open
+independently and define the next work, not unfinished optimization tasks.
 
 1. Resolve the binding release scope explicitly. Scalar/model binding is delivered;
    conditional/keyed templates, item/parent scopes, writable keyed routes and a proving

@@ -1,9 +1,8 @@
 # 10. JavaScript size optimization plan
 
-Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags, Dynamic Input, Calendar and Tree
-and Cascader/Upload/Heatmap/Tree Select reconciliation verified September 28, 2026, with test scope and timing limitations
-recorded below. Data Table, local mechanics, the S4 sharing evaluation and S5 optional
-full-catalog delivery are verified below. S6 final acceptance remains open.
+Status: S0-S6 complete. Final local integrated acceptance verified September 29, 2026;
+the scoped records below retain their original dates and limitations.
+This completes the optimization workstream, not production-release approval.
 Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
 Complete and record each bounded task before claiming integrated acceptance.
@@ -120,7 +119,8 @@ their relevant evidence; task S0 must make repeatable reporting part of tracked 
 
 ## Execution order
 
-S0-S1 are complete. Do not mark a task complete on size measurements alone.
+S0-S6 are complete; this checklist records the accepted scope. Size measurements
+alone were not treated as acceptance.
 
 ### S0. Reproducible size reporting
 
@@ -226,13 +226,13 @@ so removing helper exports is not their solution.
 
 ### S6. Integrated acceptance and evidence
 
-- [ ] Run typecheck/build and all payload gates, the complete suite, isolated packed
+- [x] Run typecheck/build and all payload gates, the complete suite, isolated packed
   consumers, and the three-engine desktop/mobile catalog after the implementation settles.
-- [ ] Run focused interactions for each changed family, not just page startup. Inspect
+- [x] Run focused interactions for each changed family, not just page startup. Inspect
   screenshots where DOM/rendering changed and check focus, events, reconnect and cleanup.
-- [ ] Record final raw/gzip comparisons for components, representative groups, all modular
+- [x] Record final raw/gzip comparisons for components, representative groups, all modular
   files and the optional full bundle using the same baseline definitions.
-- [ ] Reconcile architecture, demo/API, changelog and release evidence. List remaining
+- [x] Reconcile architecture, demo/API, changelog and release evidence. List remaining
   performance/accessibility/platform gates honestly.
 
 Optimization does not close the separate binding, retained-root, real-device/accessibility
@@ -922,6 +922,8 @@ inside one file without penalizing existing cold selected-component loads.
 baseline. It passed in the final 236-test focused run alongside Dropdown/core/size
 checks. Evidence: `.vite/size/sharing.json`; it must be regenerated after later changes.
 
+Commit: `9e82f95` - `build: evaluate explicit sharing against cold-load budgets`.
+
 ### S5 - Optional full-catalog distribution, September 28, 2026 (UTC)
 
 `src/all.ts` composes all 89 existing family entries through collision-free namespaces,
@@ -976,6 +978,8 @@ fixture uses portable `m-*` controls and real renderer-owned FormData/reset, Dat
 sorting/reconnect, Dropdown keyboard selection and application-supplied Chart rendering
 in both ESM and classic modes.
 
+Commit: `99ab5a6` - `build: add optional full-catalog distributions`.
+
 ### Integrated Tree Select reset correction
 
 The first complete catalog run passed 586/588 checks and exposed a real Chromium
@@ -997,8 +1001,96 @@ bytes; full closures are 31,167 / 11,327 and 32,110 / 11,725. This adds 11/9 gzi
 bytes to its earlier record. CSS and dependencies are unchanged; every existing
 ceiling still passes. S5's measurements above include this correction.
 
-## Final acceptance pending
+### S6 - Integrated acceptance, September 29, 2026
 
-S0-S5 are complete. The corrected source and final distribution are held stable
-for the S6 integrated suite and packed-consumer rerun. Keep the original S0 baseline
-frozen; completing this plan does not close the independent production-release gates.
+S0-S6 are complete on Windows / Node 22.12.0 at source checkpoint `99ab5a6`.
+The final suite held source and distribution stable after the Tree Select correction.
+The repeated build then produced identical measured assets, not a different untested
+runtime. S0 remains frozen.
+
+| Check | Final evidence |
+| --- | --- |
+| Type/build | `node scripts/build.mjs` passes TypeScript/declarations, generated API and every payload gate. A repeated build matches all 296 measured file hashes, raw/gzip costs, exports and budgets against `.vite/size/s6-before-rebuild.json`. |
+| Integrated suite | `node node_modules/vitest/vitest.mjs run --maxWorkers=1 --reporter=default --reporter=json --outputFile=.vite/size/s6-tests.json`: 5,085/5,085 passed in 145 files; zero failed, skipped or todo tests. |
+| Packed consumer | `node scripts/package-check.mjs`: 96 JS entries / 2,344 files; strict NodeNext declarations, exports/assets and isolated modular/aggregate runtime processes pass without installed ECharts. |
+| Browser matrix | `node scripts/browser-check.mjs --catalog`: 588/588 across 98 pages in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at 1280x900 and 375x812; all six workflow combinations pass, including ESM and classic aggregates. |
+| Changed-family interactions | Tags/Input, Calendar, Tree/Cascader/Tree Select, Upload, Heatmap, Data Table and Dropdown exercise actual native controls, keyboard/focus, updates, forms/reset, cancellation and reconnect as applicable. Source/distribution tests retain pre-upgrade, ownership and cleanup assertions. |
+| Visual review | Final aggregate desktop/mobile screenshots, corrected Tree Select clear state and WebKit mobile submenu bounds were inspected. Earlier family records retain their scoped screenshot evidence. |
+| Reconciliation | Architecture/source/delivery, demo setup/generated API, changelog and production evidence agree. Full/catalog imports remain optional and portable authoring stays `m-*`; native HTML is a renderer concern or explicit Web escape. |
+
+The earlier 5,082-test success preceded the reset correction; it is superseded by
+the 5,085-test result above. The first aggregate integration run's obsolete fixture
+failures and the initial 586/588 browser result are not treated as passing acceptance.
+The final reports are `.vite/size/s6-tests.json`, `.vite/size/s6-final.json`,
+`.vite/package/results.json`, `.vite/browser/results.json` and
+`.vite/browser/catalog-results.json`; these are generated evidence, not runtime assets.
+
+Human accessibility/real-device/input-mode acceptance, non-Web renderers, structural
+binding scope, remaining retained-root contracts, independent security/performance
+review, Chart release-budget approval and clean remote CI remain separate gates in
+[production readiness](09-production.md). No pushing, publishing or production approval
+is implied by this completed workstream.
+
+#### Final measurements
+
+`node scripts/size-report.mjs --output .vite/size/s6-final.json` measures the actual
+final files against the unchanged S0 baseline. All pairs below are minified raw /
+level-9 gzip bytes; `->` means S0 to final. CSS, source maps, declarations and the
+application-owned engine are not hidden inside these JavaScript figures.
+
+| Family entry | ESM S0 -> final | Classic S0 -> final |
+| --- | --- | --- |
+| Dynamic Tags | 39,093 / 11,699 -> 34,702 / 10,968 | 39,323 / 11,845 -> 35,033 / 11,112 |
+| Dynamic Input | 22,181 / 7,243 -> 21,767 / 7,361 | 22,515 / 7,389 -> 22,100 / 7,515 |
+| Calendar | 25,560 / 9,051 -> 25,375 / 8,931 | 25,883 / 9,208 -> 25,697 / 9,097 |
+| Tree | 32,651 / 10,088 -> 32,441 / 10,352 | 32,966 / 10,255 -> 32,751 / 10,515 |
+| Cascader | 30,746 / 10,199 -> 30,864 / 10,362 | 31,069 / 10,367 -> 31,185 / 10,527 |
+| Upload | 25,792 / 8,993 -> 25,799 / 9,366 | 26,122 / 9,152 -> 26,125 / 9,525 |
+| Heatmap | 22,443 / 8,430 -> 22,230 / 8,347 | 22,764 / 8,583 -> 22,550 / 8,500 |
+| Tree Select | 21,828 / 7,179 -> 18,285 / 6,299 | 22,367 / 7,416 -> 18,824 / 6,534 |
+| Data Table | 23,662 / 7,949 -> 22,922 / 8,239 | 23,989 / 8,099 -> 23,250 / 8,407 |
+| Dropdown | 40,998 / 12,627 -> 41,812 / 12,906 | 41,112 / 12,716 -> 41,930 / 12,990 |
+
+| Complete family runtime | ESM S0 -> final | Classic S0 -> final |
+| --- | --- | --- |
+| Dynamic Tags | 42,605 / 13,122 -> 38,214 / 12,391 | 42,959 / 13,317 -> 38,669 / 12,584 |
+| Dynamic Input | 25,693 / 8,666 -> 25,279 / 8,784 | 26,151 / 8,861 -> 25,736 / 8,987 |
+| Calendar | 29,072 / 10,474 -> 28,887 / 10,354 | 29,519 / 10,680 -> 29,333 / 10,569 |
+| Tree | 36,163 / 11,511 -> 35,953 / 11,775 | 36,602 / 11,727 -> 36,387 / 11,987 |
+| Cascader | 34,258 / 11,622 -> 34,376 / 11,785 | 34,705 / 11,839 -> 34,821 / 11,999 |
+| Upload | 29,304 / 10,416 -> 29,311 / 10,789 | 29,758 / 10,624 -> 29,761 / 10,997 |
+| Heatmap | 25,955 / 9,853 -> 25,742 / 9,770 | 26,400 / 10,055 -> 26,186 / 9,972 |
+| Tree Select | 34,710 / 12,207 -> 31,167 / 11,327 | 35,653 / 12,607 -> 32,110 / 11,725 |
+| Data Table | 27,174 / 9,372 -> 26,434 / 9,662 | 27,625 / 9,571 -> 26,886 / 9,879 |
+| Dropdown | 44,510 / 14,050 -> 45,324 / 14,329 | 44,748 / 14,188 -> 45,566 / 14,462 |
+
+Dependencies are counted once per selection, including native-select for Tree Select.
+The other changed S2/S3 families still need only core plus their local entry.
+
+| Representative selection | ESM S0 -> final | Classic S0 -> final |
+| --- | --- | --- |
+| Grid + core | 8,048 / 2,872 -> 8,048 / 2,872 | 8,283 / 2,999 -> 8,283 / 2,999 |
+| Dynamic Input + Tags + core | 64,786 / 20,365 -> 59,981 / 19,752 | 65,474 / 20,706 -> 60,769 / 20,099 |
+| Tree + Cascader + Tree Select + dependencies | 98,107 / 32,494 -> 94,472 / 32,041 | 99,688 / 33,229 -> 96,046 / 32,767 |
+| Popover + Tooltip + Dropdown + core | 79,164 / 26,009 -> 79,978 / 26,288 | 79,923 / 26,462 -> 80,741 / 26,736 |
+| All modular families, 94 files | 1,240,182 / 414,065 -> 1,230,874 / 413,512 | 1,266,374 / 427,555 -> 1,257,163 / 427,022 |
+| Optional aggregate + dependencies, 3 files | New: 1,141,872 / 314,066 | New: 1,132,907 / 312,492 |
+
+The cumulative modular saving is only 553 ESM / 533 classic gzip bytes, despite
+9,308 / 9,211 fewer raw bytes. Required capability/portability fixes account for
+the documented increases; this is not a large single-component size reduction.
+The aggregate saves 24.05% / 26.82% against the final all-modular selection, but remains
+optional. Existing tight ceilings remain: one byte for Cascader classic runtime and
+Calendar CSS, three bytes for Upload classic runtime, thirteen for Input/Tree classic.
+
+All modular CSS is 418,524 raw / 101,131 gzip bytes across 89 files, compared with
+417,965 / 100,944 at S0. The aggregate stylesheet is 418,612 / 63,150; its raw size
+includes separators and its gzip cost benefits from compression across one file.
+Per-family CSS costs remain in the family records and the final report.
+The demo's selected application-owned ECharts engine is separately 594,547 / 203,661
+ESM or 594,949 / 203,838 classic. Actual applications must account for their engine
+selection; the optional bundle does not eliminate that cost.
+
+The report deliberately flags removed factory exports and capability-related growth.
+No claim is made that strict `--check-regressions` against the old API passes.
+Existing budget checks do pass; S0 was not rewritten to hide API or payload changes.
