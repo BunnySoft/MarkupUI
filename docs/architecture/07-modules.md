@@ -91,6 +91,15 @@ Neither root format embeds another base implementation or private binding owner.
 including runtime dependencies and CSS. The existing 15,000-byte minified-root ceiling
 also gates core-inclusive minified ESM and classic runtime; no ceiling is increased.
 
+After retained-root lifecycle hardening, the root's embedded/external stylesheet no
+longer duplicates migrated family rules. Application-selected families still require
+their own CSS, even when the root is loaded. The root keeps shared tokens/layout utilities,
+foundation/dynamic styles and feedback rules scoped to its overlay host. Complete root
+runtime measures 12,361/12,271 gzip bytes (ESM/classic); external root CSS is 1,678 bytes.
+The existing 15,000-byte runtime ceiling, dependency files and selected-family costs
+are unchanged. This is a root ownership correction, separate from the completed S0-S6
+optimization checkpoint.
+
 The optional `advanced` plugin retains only `m-data-grid`/`m-data-column`, and `widgets`
 retains only `m-rating`. They extend the supplied API's `ViewElement` base and register
 atomically. Date Picker, Time Picker, Upload, Virtual List, Breadcrumb, Timeline,

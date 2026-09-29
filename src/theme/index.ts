@@ -6,19 +6,40 @@ export { slateThemeTokens, slateDarkThemeTokens } from "./slate.js"
 
 const themes = new Map<string, ThemeTokens>()
 const subscribers = new Set<(name: string) => void>()
-const appliedKeys = new WeakMap<HTMLElement, Set<string>>()
+const applied = new WeakMap<HTMLElement, () => void>()
+
+/** Release only the inline values and theme marker still owned by this application. */
+export function clearTheme(root: HTMLElement): void {
+  applied.get(root)?.()
+  applied.delete(root)
+}
 
 function applyTokens(name: string, root: HTMLElement): void {
   const tokens = themes.get(name)
   if (tokens === undefined) throw new Error(`Unknown MarkupUI theme '${name}'.`)
+  clearTheme(root)
+  const previousName = root.getAttribute("data-m-theme")
   root.dataset.mTheme = name
-  appliedKeys.get(root)?.forEach((key) => root.style.removeProperty(`--m-${key}`))
-  const keys = new Set<string>()
+  const restore: Array<() => void> = []
   for (const [key, value] of Object.entries(tokens)) {
-    root.style.setProperty(`--m-${key}`, value)
-    keys.add(key)
+    const property = `--m-${key}`
+    const previous = root.style.getPropertyValue(property)
+    const priority = root.style.getPropertyPriority(property)
+    root.style.setProperty(property, value)
+    const written = root.style.getPropertyValue(property)
+    restore.push(() => {
+      if (root.style.getPropertyValue(property) === written && !root.style.getPropertyPriority(property)) {
+        root.style.setProperty(property, previous, priority)
+      }
+    })
   }
-  appliedKeys.set(root, keys)
+  applied.set(root, () => {
+    restore.forEach(release => release())
+    if (root.dataset.mTheme === name) {
+      if (previousName === null) root.removeAttribute("data-m-theme")
+      else root.setAttribute("data-m-theme", previousName)
+    }
+  })
 }
 
 export const theme = {

@@ -4,6 +4,23 @@ This is the entry point for the **current ViewElement architecture and full comp
 rewrite**. Design decisions and implementation status are separate: a documented target
 is not automatically a delivered API.
 
+## Current status
+
+As of September 29, 2026, the Web catalog provides 89 selectable families / 203 tags,
+an optional full-catalog bundle, and separate root/plugin entries. The size optimization
+plan is complete through S6. Subsequent Theme, Field, AccordionItem and App lifecycle
+fixes and root stylesheet cleanup have passed local integrated verification.
+
+The latest recorded run passed 5,103 tests, 588 browser catalog checks and the
+96-entry packed-consumer check. These are local results, not production approval.
+Structural binding, remaining contract review, human accessibility/device acceptance,
+security/performance review, Chart engine-inclusive budget approval and clean remote
+CI evidence remain open. The [production readiness page](architecture/09-production.md)
+owns the current task summary, evidence and remaining work order.
+
+Public authoring uses `m-*`; native HTML semantics belong to the Web renderer or an
+explicit Web interoperability example. Non-Web renderers are not delivered.
+
 ## Choose a topic
 
 | Folder | Read it to |

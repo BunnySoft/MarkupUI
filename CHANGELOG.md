@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- Fixed retained root lifecycle behavior: Theme restores owned tokens/marker when its
+  name is cleared; Field uses a real native label and tracks late/replaced controls
+  without overwriting authored accessible names. Portable `m-*` authoring is retained.
+- Added live `open`/`title` synchronization and disconnect/reconnect listener cleanup
+  to AccordionItem without replacing authored content.
+- App preserves pre-upgrade store assignment and shares that owner across bindings
+  and actions. Explicit/acquired stores conflict with inline JSON state; disconnect
+  before replacing an active store.
+- Removed duplicate migrated-family styles from root. Selected families require their
+  own CSS even when root is loaded; root retains its elements, shared tokens/layout
+  utilities and scoped feedback styling. Existing payload ceilings are unchanged.
+
 - Added optional all-components ESM/classic distributions and complete component CSS.
   All 89 families keep collision-free namespaces and the existing shared core/Chart
   adapter identity. ECharts, root foundation and plugins remain separate. Full and
@@ -114,8 +126,9 @@
   Windows/Linux/macOS CI configuration. Development requires Node 22.12+ in the 22.x
   line or Node 24+, with pnpm 10.28.0.
 - Production approval remains pending: remote CI evidence, human accessibility/device
-  acceptance, Chart budget approval and binding release scope are open. Non-Web renderer
-  mappings remain design contracts, not delivered implementations.
+  acceptance, remaining family/root/plugin contract review, independent security/
+  performance review, Chart engine-inclusive budget approval and binding release scope
+  are open. Non-Web renderer mappings remain design contracts, not delivered implementations.
 
 ## 0.13.0
 

@@ -30,11 +30,12 @@ describe("CSS and theme sources", () => {
   })
 
   it("preserves the approved runtime CSS baselines exactly", () => {
-    // Core includes Avatar/Button corrections; migrated Divider/Icon/Typography/Input/Checkbox/Radio/Switch/Select styles are family-owned.
-    // Grid is family-owned; pending Layout hooks no longer override Grid's item alignment.
-    // The removed autocomplete alias has no aggregate styling.
-    expect(hash(builtInStyles)).toBe("d077fc7255f88ad04a690b50e068240ab2e748f5dbceb9e24643e94612d24180")
+    // Root owns foundation/dynamic elements and its scoped feedback service, not selected families.
+    expect(hash(builtInStyles)).toBe("b9fc9a5f28a82c888dae9d242cdbbc7e90bf2af4ea2df78d08ef410ec5c9911c")
     expect(builtInStyles).not.toContain("m-autocomplete")
+    expect(builtInStyles).not.toMatch(/m-card|m-avatar|m-button(?=[\[>{:.])|m-tab|m-tree|m-dialog|m-drawer/)
+    expect(builtInStyles).toContain("m-overlay-host>m-message")
+    expect(builtInStyles).toContain("m-accordion-item>[data-m-header]:focus-visible")
     // Plugin styles retain only their own tags; selected components own their CSS.
     // DataGrid sorts through native buttons with visible focus and direction indicators.
     expect(hash(advancedStyles)).toBe("45c3e4572504df4d2dbb93aa8b990ba88ad32d2491a475f2b1c75c5bdd32e9a2")

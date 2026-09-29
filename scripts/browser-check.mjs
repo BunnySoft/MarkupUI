@@ -17,6 +17,121 @@ const server = spawn(process.execPath, ["demo/server.mjs"], {
 })
 const results = []
 const catalogResults = []
+async function verifyRoot(page, origin, mode, engine, layout) {
+  const url = `${origin}/demo/root-${mode}-check.html`
+  await page.route(url, route => route.fulfill({
+    contentType: "text/html",
+    body: `<!doctype html><meta name="viewport" content="width=device-width"><title>Root lifecycle</title>
+      <link rel="stylesheet" href="/dist/markup-ui-input.css">
+      <link rel="stylesheet" href="/dist/markup-ui-checkbox.css">
+      <link rel="stylesheet" href="/dist/markup-ui-button.css">
+      <link rel="stylesheet" href="/dist/markup-ui-box.css"><body>
+      <m-app id="root-app">
+        <m-box padding="16" display="flex" direction="column" gap="16">
+          <m-field id="name-field" label="Account name">
+            <m-input name="account" data-model-value="name" data-model-event="input change" data-model-target="native"></m-input>
+          </m-field>
+          <m-span id="root-readout" data-bind-text="name"></m-span>
+          <m-accordion-item id="root-details" title="Preferences">
+            <m-field label="Consent"><m-checkbox id="root-consent"></m-checkbox></m-field>
+          </m-accordion-item>
+          <m-theme id="root-theme"><m-span>Scoped appearance</m-span></m-theme>
+          <m-button id="root-action" m-action="root-capture">Save account</m-button>
+        </m-box>
+      </m-app></body>`,
+  }))
+  await page.goto(url)
+  if (mode === "classic") {
+    for (const name of ["core", "state", "native-input", "input", "checkbox", "box", "button"]) {
+      await page.addScriptTag({ url: `${origin}/dist/markup-ui-${name}.global.js` })
+    }
+    await page.evaluate(() => {
+      window.rootStore = MarkupUIState.createStore({ name: "Initial account" })
+      document.getElementById("root-app").store = window.rootStore
+    })
+    await page.addScriptTag({ url: `${origin}/dist/markup-ui.global.js` })
+    await page.evaluate(() => { window.rootApi = m })
+  } else {
+    await page.evaluate(async () => {
+      const state = await import("/dist/markup-ui-state.js")
+      for (const name of ["input", "checkbox", "box", "button"]) await import(`/dist/markup-ui-${name}.js`)
+      window.rootStore = state.createStore({ name: "Initial account" })
+      document.getElementById("root-app").store = window.rootStore
+      window.rootApi = (await import("/dist/markup-ui.min.js")).m
+    })
+  }
+  await page.waitForFunction(() => document.getElementById("root-readout").textContent === "Initial account")
+  assert.equal(await page.evaluate(() => document.getElementById("root-app").store === window.rootStore), true)
+  await page.evaluate(() => window.rootApi.actions.register("root-capture", ({ store }) => { window.actionStore = store }))
+  await page.getByText("Account name", { exact: true }).click()
+  const input = page.getByRole("textbox", { name: "Account name", exact: true })
+  assert.equal(await input.evaluate(control => document.activeElement === control), true)
+  await input.fill("Edited account")
+  assert.equal(await page.locator("#root-readout").textContent(), "Edited account")
+  await page.getByRole("button", { name: "Save account", exact: true }).click()
+  assert.equal(await page.evaluate(() => window.actionStore === window.rootStore), true)
+  assert.equal(await page.locator("#root-action").evaluate(host => getComputedStyle(host, "::after").content), "none",
+    "The root stylesheet must not add obsolete Button chrome")
+
+  const header = page.getByRole("button", { name: "Preferences", exact: true })
+  await header.press("Enter")
+  assert.equal(await header.getAttribute("aria-expanded"), "true")
+  const consent = page.getByRole("checkbox", { name: "Consent", exact: true })
+  await page.getByText("Consent", { exact: true }).click()
+  assert.equal(await consent.isChecked(), true)
+  await page.locator("#root-consent").evaluate(host => { host.disabled = true })
+  // Exercise native disabled-label activation instead of Playwright's enabled precondition.
+  await page.getByText("Consent", { exact: true }).click({ force: true })
+  assert.equal(await consent.isChecked(), true)
+  await header.press("Space")
+  assert.equal(await header.getAttribute("aria-expanded"), "false")
+  assert.equal(await page.locator("#root-details").evaluate(item => {
+    const header = item.querySelector("button"), content = item.querySelector("[data-m-content]")
+    item.open = true
+    item.title = "Updated preferences"
+    return header.textContent === item.title && !content.hidden && header.getAttribute("aria-expanded") === "true"
+  }), true)
+  await page.getByRole("button", { name: "Updated preferences", exact: true }).press("Space")
+
+  assert.deepEqual(await page.locator("#root-theme").evaluate(root => {
+    window.rootApi.theme.register("root-browser", { accent: "red", surface: "white", border: "black" })
+    root.dataset.mTheme = "authored"
+    root.style.setProperty("--m-accent", "blue", "important")
+    root.setAttribute("name", "root-browser")
+    root.style.setProperty("--m-border", "black", "important")
+    root.removeAttribute("name")
+    return {
+      accent: root.style.getPropertyValue("--m-accent"),
+      accentPriority: root.style.getPropertyPriority("--m-accent"),
+      borderPriority: root.style.getPropertyPriority("--m-border"),
+      surface: root.style.getPropertyValue("--m-surface"),
+      marker: root.dataset.mTheme,
+    }
+  }), { accent: "blue", accentPriority: "important", borderPriority: "important", surface: "", marker: "authored" })
+
+  assert.equal(await page.locator("#root-app").evaluate(app => {
+    const parent = app.parentElement, header = app.querySelector("#root-details > button")
+    app.remove()
+    header.click()
+    const released = !app.querySelector("#root-details").open
+    window.rootStore.set("name", "Reconnected account")
+    parent.append(app)
+    return released
+  }), true)
+  await page.waitForFunction(() => document.getElementById("root-readout").textContent === "Reconnected account")
+  await page.getByRole("button", { name: "Updated preferences", exact: true }).press("Enter")
+  assert.equal(await page.locator("#root-details").getAttribute("open"), "")
+  await page.locator("#name-field").evaluate(field => {
+    const replacement = document.createElement("m-input")
+    replacement.setAttribute("value", "Replacement account")
+    field.querySelector("m-input").replaceWith(replacement)
+    field.label = "Replacement name"
+  })
+  await page.getByText("Replacement name", { exact: true }).click()
+  assert.equal(await page.getByRole("textbox", { name: "Replacement name", exact: true }).evaluate(control => document.activeElement === control), true)
+  assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${engine}/${layout}: root overflow`)
+  await page.screenshot({ path: resolve(output, `${engine}-${layout}-root-${mode}.png`) })
+}
 async function verifyAll(page, origin, mode, engine, layout) {
   const url = `${origin}/demo/all-${mode}-check.html`
   await page.route(url, route => route.fulfill({
@@ -394,9 +509,10 @@ try {
           await verifyPlugins(page, origin, name, layout)
           await verifyHtmlPolicy(page, origin, name)
           for (const mode of ["esm", "classic"]) await verifyAll(page, origin, mode, name, layout)
+          for (const mode of ["esm", "classic"]) await verifyRoot(page, origin, mode, name, layout)
           assert.deepEqual(errors, [], `${name}/${layout}: browser errors`)
           results.push({ browser: name, version: browser.version(), layout, readyMs: Math.round(readyMs), charts: geometry, canvasColoredPixels: colored, performance: performanceSample,
-            form: "passed", plugins: "passed", all: "ESM/classic passed", htmlPolicy: "passed", trustedTypes: name === "chromium" ? "fail-closed verified" : "not tested" })
+            form: "passed", plugins: "passed", all: "ESM/classic passed", root: "ESM/classic passed", htmlPolicy: "passed", trustedTypes: name === "chromium" ? "fail-closed verified" : "not tested" })
           console.log(`${name} ${browser.version()} ${layout}: passed (${Math.round(readyMs)} ms to six ready charts)`)
           if (process.argv.includes("--catalog")) {
             const failedResources = []

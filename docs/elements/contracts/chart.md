@@ -251,6 +251,15 @@ the other required data-source forms does not satisfy the release gate.
 
 ## 8. Recorded verification
 
+September 29, 2026 retained-root checkpoint: the integrated suite passed 5,103 tests
+across 146 files; the isolated packed consumer passed 96 JavaScript entries / 2,344
+files without installed ECharts. Chart's browser workflows passed again in all six
+engine/layout combinations, including ESM/classic engine configuration and rendering.
+Chart assets and measured costs are unchanged from S6. See
+[current production evidence](../../architecture/09-production.md#retained-root-lifecycle-checkpoint)
+for reports and browser versions. This does not close the remaining accessibility/
+resource or engine-inclusive budget/performance gates above.
+
 September 23, 2026 external-engine revision: 57 focused tests and the complete 4,837-test
 suite across 131 files passed, with zero failures or skips. The published
 adapter is 258/497 gzip bytes (ESM/classic), with core+Chart+adapter totaling 9,079/9,522

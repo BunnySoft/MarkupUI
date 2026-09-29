@@ -4,24 +4,38 @@ import { requestHtml } from "../security/request.js"
 
 export class AccordionItem extends ViewElement {
   public static readonly tag = "m-accordion-item"
+  public static readonly observedAttributes = ["open", "title"]
+  private button: HTMLButtonElement | undefined
+  private content: HTMLDivElement | undefined
+  private readonly toggle = () => { this.open = !this.open }
+  public get open(): boolean { return this.hasAttribute("open") }
+  public set open(value: boolean) { this.setBooleanAttribute("open", value) }
+  public override get title(): string { return this.getAttribute("title") ?? "" }
+  public override set title(value: string) {
+    if (typeof value !== "string") throw new TypeError("Accordion title must be a string.")
+    this.setAttribute("title", value)
+  }
   public connectedCallback(): void {
-    if (this.querySelector(":scope > [data-m-header]") !== null) return
-    const content = this.ownerDocument.createElement("div")
-    content.dataset.mContent = ""
-    while (this.firstChild !== null) content.append(this.firstChild)
-    const button = this.ownerDocument.createElement("button")
-    button.type = "button"
-    button.dataset.mHeader = ""
-    button.textContent = this.getAttribute("title") ?? ""
-    const expanded = this.hasAttribute("open")
-    content.hidden = !expanded
-    button.setAttribute("aria-expanded", String(expanded))
-    button.addEventListener("click", () => {
-      content.hidden = !content.hidden
-      button.setAttribute("aria-expanded", String(!content.hidden))
-      this.toggleAttribute("open", !content.hidden)
-    })
-    this.append(button, content)
+    this.upgradeProperties()
+    if (!this.content) {
+      const content = this.content = this.ownerDocument.createElement("div")
+      content.dataset.mContent = ""
+      while (this.firstChild !== null) content.append(this.firstChild)
+      const button = this.button = this.ownerDocument.createElement("button")
+      button.type = "button"
+      button.dataset.mHeader = ""
+      this.append(button, content)
+    }
+    this.render()
+    this.button!.addEventListener("click", this.toggle)
+  }
+  public disconnectedCallback(): void { this.button?.removeEventListener("click", this.toggle) }
+  public attributeChangedCallback(): void { if (this.isConnected) this.render() }
+  private render(): void {
+    if (!this.content || !this.button) return
+    this.content.hidden = !this.open
+    this.button.setAttribute("aria-expanded", String(this.open))
+    if (this.button.textContent !== this.title) this.button.textContent = this.title
   }
 }
 

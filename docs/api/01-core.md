@@ -98,6 +98,54 @@ ViewElement.register([ProfileLabel])
 Compile normally. An independently distributed plugin must keep core external and use
 the same core module as the application.
 
+## Optional root lifecycle
+
+The package root retains foundation/dynamic elements separately from the selectable
+catalog. The following are implemented Web baselines, not approval of all retained root
+contracts or non-Web renderers.
+
+`m-app` accepts a store from the shared state entry, including assignment before element
+upgrade. Acquiring its default `store` or assigning a store establishes its state owner;
+supplying inline JSON as well is an error, not an implicit replacement. Disconnect before
+replacing the store. Reconnection reinstalls bindings and actions against that same owner;
+removed nodes and disconnected apps stop receiving updates. The optional inline
+`script[type="application/json"][data-m-state]` is an explicit Web configuration adapter.
+Load bound component definitions before App initializes, or keep the App disconnected
+until those definitions are ready; unknown binding properties are errors.
+
+`m-field label="Name"` creates a native label for the first non-hidden input, textarea or
+select owned by that field, excluding nested Fields. Author one logical control per Field;
+use FormItem with native fieldset/legend semantics for groups. Field neither imports nor
+registers control families. Late controls, replacement controls, ID/type changes and live
+`label` writes are reconciled. Empty/null labels remove the generated label. Existing
+control IDs and accessible names remain untouched; an unnamed native control receives a
+root-unique ID, retained for stable relationships. Native labels provide focus and
+activation, including disabled behavior, without synthetic click forwarding. Association
+after asynchronous control creation settles through the field's local mutation observer.
+
+```html
+<m-field label="Account name"><m-input name="account"></m-input></m-field>
+<m-accordion-item title="Preferences"><m-span>Account preferences</m-span></m-accordion-item>
+```
+
+Input and Box in this example are separate application selections with their own CSS.
+Native labels, buttons and content containers are renderer-owned, not required authoring.
+
+`m-accordion-item` exposes Boolean-presence `open` and string `title` properties/attributes.
+Writes update its retained native button and content without replacing authored children.
+Native button activation toggles `open`; Enter/Space use native keyboard behavior. There
+is no synthetic model-update event or group exclusivity contract. Disconnect releases
+activation listeners; reconnect synchronizes attributes and attaches one listener.
+
+Removing or emptying a connected `m-theme`'s `name` releases its applied tokens and theme
+marker. Switching names validates the new theme before releasing the previous one.
+Earlier inline values and priorities are restored only while the renderer still owns
+the current write; later application changes survive cleanup. Theme scopes are independent.
+Disconnection retains presentation; reconnect reconciles the current name.
+
+The root stylesheet owns these elements, shared tokens/layout utilities and its feedback
+service. It no longer supplies migrated component-family styles; select each family's CSS.
+
 ## References
 
 - [Source pattern](../architecture/06-source.md)

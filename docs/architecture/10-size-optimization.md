@@ -7,6 +7,22 @@ Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
 Complete and record each bounded task before claiming integrated acceptance.
 
+## Post-plan status
+
+September 29, 2026: the subsequent retained-root lifecycle checkpoint fixes Theme,
+Field, AccordionItem and App and removes duplicated component-family styles from root.
+It passes 5,103 tests in 146 files, 588 catalog checks and the 96-entry packed consumer.
+Complete minified root runtime is now 12,361 ESM / 12,271 classic gzip bytes; external
+root CSS is 1,678 bytes. The existing 15,000-byte runtime ceiling is unchanged.
+
+This follow-up changes only three root JavaScript files and root CSS among the 296
+measured files. Core, state, selected families and full-catalog assets remain identical
+to S6. The S0 baseline and S6 measurements below remain historical comparison points;
+the root cleanup is not an additional saving in the all-family totals. See
+[the retained-root evidence](09-production.md#retained-root-lifecycle-checkpoint)
+for the latest local verification and [the task summary](09-production.md#task-summary)
+for still-open production work. No new remote CI or release approval is implied.
+
 ## Objective and constraints
 
 Make each element's implementation as small as practical while preserving its required

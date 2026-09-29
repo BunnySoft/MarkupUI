@@ -3,12 +3,36 @@
 Status: release blocked. A shared ViewElement base and successful build do not establish
 production readiness. Every supported family needs evidence for its declared contract.
 
+## Task summary
+
+Current code and recorded local evidence as of September 29, 2026:
+
+| Workstream | Status | Remaining boundary |
+| --- | --- | --- |
+| Size optimization S0-S6 | Complete | Six sharing experiments were rejected on cold-load budgets; this is the completed S4 decision, not deferred extraction work. |
+| Selectable/full-catalog delivery | Implemented and locally verified | 89 families / 203 tags; the aggregate remains optional and ECharts application-supplied. |
+| Retained root fixes | Implemented and locally verified | Theme, Field, AccordionItem, App and root CSS ownership are covered; other retained contracts still need review. |
+| Scalar/model binding | Implemented and tested | Conditional/keyed templates, item/parent scopes, writable keyed routes and a proving consumer are not implemented; scope/contract decisions remain. |
+| Portable authoring and lifecycle | Partially accepted | Reconciled families and root fixtures use `m-*` with renderer-owned HTML; full retained-surface approval is still open. Non-Web renderers are not delivered. |
+| Browser and packed-consumer gates | Passed locally | Three engines/two layouts and isolated package consumption do not prove real-device, screen-reader or clean remote CI acceptance. |
+| Chart | Implemented; release acceptance open | Accessibility/resource acceptance and engine-inclusive payload/performance approval remain. |
+| Security and performance | Targeted checks recorded; review open | Independent review and broader large-data/update/memory acceptance remain. |
+| Remote CI and release | Blocked | Obtain clean Windows/Linux/macOS x Node 22/24 results, rerun gates after remaining changes, reconcile release notes and obtain release authorization. |
+
+The current integrated evidence is the retained-root checkpoint below: 5,103 passing
+tests, 588 passing catalog checks and 96 packed JavaScript entries. Older checkpoints
+retain their original counts and limitations; they are not current failures or blanket
+approvals. The detailed [work order](#work-order) tracks the remaining release tasks.
+
 ## Release gates
 
 - [ ] Clean, reproducible install, typecheck, build and full test suite on supported Node
   versions. No unexplained failures, unhandled errors or skipped acceptance tests.
 - [ ] Every shipped family has an approved contract and matching implementation, generated
   API documentation and working examples. Experimental or deferred features are identified.
+- [ ] Resolve structural-binding release scope explicitly, then implement and validate
+  the agreed contract or obtain an explicit scope decision. Scalar/model binding alone
+  does not complete the planned template runtime.
 - [ ] Public examples use the cross-platform `m-*` vocabulary. Native HTML is confined to
   the Web renderer and explicitly Web-specific interoperability/fallback examples.
   Primitive renderers provide real semantics; renaming tags or forwarding clicks is not
@@ -35,6 +59,63 @@ production readiness. Every supported family needs evidence for its declared con
   explicitly approved action.
 
 ## Current evidence
+
+### Retained root lifecycle checkpoint
+
+September 29, 2026, Windows / Node 22.12.0:
+
+| Check | Local result |
+| --- | --- |
+| Typecheck/build | Passed; all existing ceilings unchanged. |
+| Integrated tests | 5,103/5,103 passed across 146 files with two workers; zero failures, skips or todos. |
+| Packed consumer | 96 JavaScript entries / 2,344 files; strict NodeNext types and modular/aggregate runtime imports passed without installed ECharts. |
+| Browser catalog | 588/588 checks across 98 pages, three engines and two viewport sizes. |
+| Root interactions | ESM and classic passed in all six engine/layout combinations. |
+
+Theme now releases its own tokens/marker when `name` is removed, restoring earlier
+inline values and priorities without erasing later application writes. Field uses a
+real native label, tracks late/replaced controls and IDs, and excludes nested Fields.
+AccordionItem synchronizes live `open`/`title`, retains authored nodes and releases
+activation listeners on disconnect. App preserves pre-upgrade store assignment,
+rejects conflicting state owners and requires disconnection before store replacement.
+The [root lifecycle guide](../api/01-core.md#optional-root-lifecycle) records the precise
+baseline and limits; these fixes do not approve every retained root contract.
+
+Portable fixtures use `m-*` authoring; native labels, controls, buttons and content
+containers remain Web-renderer responsibilities. Both served ESM and classic root
+formats pass real label focus/checkbox activation, disabled behavior, Enter/Space
+disclosure, live title/open changes, late control adoption, store/action identity,
+reconnect cleanup and theme `!important` restoration in Chromium 153.0.8010.12,
+Firefox 155.0 and WebKit 26.6 at 1280x900 and 375x812. The repeated catalog passed
+588/588 checks across 98 pages. Desktop/mobile root screenshots were inspected;
+headless viewport coverage is not real-device or screen-reader acceptance.
+
+Root styling no longer duplicates migrated component-family rules. Selected families
+require their own CSS; root retains shared tokens/layout utilities, its own elements
+and scoped feedback-service styling. Complete root runtime is 12,361 gzip bytes ESM /
+12,271 classic, below the unchanged 15,000-byte ceiling. External root CSS is 1,678
+bytes. Only the three root JavaScript files and root CSS differ among the 296 measured
+files from S6; core, state, selected families and both full-catalog distributions remain
+byte-identical. No existing budget or frozen S0 baseline changed.
+
+Browser evidence is in `.vite/browser/results.json` and
+`.vite/browser/catalog-results.json`; `.vite/size/root-lifecycle.json` records costs.
+The final integrated report is `.vite/root-lifecycle-tests.json`; package evidence is
+`.vite/package/results.json`. The first full run's 5,102/5,103 result is retained in
+`.vite/root-lifecycle-tests-initial.json`: an obsolete Avatar test required duplicate
+root styling. Its correction keeps all default-style assertions against the family's
+source and published CSS, adds an absence assertion for root, and passes the final
+integrated run. No failing runtime test was waived.
+
+Reproduce with `node scripts/build.mjs`, then
+`node node_modules/vitest/vitest.mjs run --maxWorkers=2 --reporter=default --reporter=json --outputFile=.vite/root-lifecycle-tests.json`,
+`node scripts/package-check.mjs`, `node scripts/browser-check.mjs --catalog`, and
+`node scripts/size-report.mjs --output .vite/size/root-lifecycle.json`.
+Do not rebuild or run the heavy browser matrix concurrently with the full tests.
+
+Structural binding scope, remaining contract review, clean remote CI, human input/
+accessibility checks, independent security/performance review and Chart engine-inclusive
+budget approval remain release blockers.
 
 ### Size optimization checkpoint
 
@@ -280,10 +361,10 @@ independently and define the next work, not unfinished optimization tasks.
    an explicit release-scope decision; do not silently mark the planned runtime complete.
 2. Review retained root foundation/dynamic elements and optional plugins beyond shared
    inheritance: properties, pre-upgrade values, lifecycle, events and ownership.
-   DataGrid and Rating now have documented, browser-verified baselines. Remaining concrete
-   root gaps include Theme token cleanup when its name is removed, Field's real native
-   label association and live control adoption, AccordionItem's live open/title updates
-   and listener cleanup, and App's pre-upgrade store ownership.
+   DataGrid and Rating have documented, browser-verified baselines. The retained-root
+   checkpoint above closes the four identified Theme, Field, AccordionItem and App
+   lifecycle gaps, including selected-style ownership. Review the other retained
+   surfaces and approve their contracts; these corrections alone do not close this gate.
    Continue family contract review and separate native Web examples from portable
    authoring acceptance. A passing startup catalog does not settle these contracts.
 3. Expand representative interaction acceptance beyond Chart, primitives, Form and

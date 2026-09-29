@@ -4,6 +4,20 @@
 The first seven-component batch is the initial milestone. Completion is measured against
 the current Element Contract and acceptance gates.
 
+## Current implementation status
+
+September 29, 2026: shared-core delivery covers 89 selectable families / 203 tags,
+with separate root/plugin surfaces and an optional full-catalog entry. The
+[S0-S6 optimization work](10-size-optimization.md) is complete, including canonical
+behavior reconciliation, sharing experiments and integrated local acceptance.
+
+The subsequent retained-root checkpoint fixes Theme token cleanup, Field native label
+association, AccordionItem live properties/listener cleanup and App store ownership.
+Root CSS no longer duplicates migrated family styles. This is a tested implementation
+checkpoint, not approval of every retained contract or completion of the full rewrite's
+release gates. See [production readiness](09-production.md) for current evidence and
+remaining contract, accessibility, security, performance and CI work.
+
 ## 1. Target architecture
 
 Every retained public Web UI component is an unprefixed class based on `ViewElement`,
@@ -57,7 +71,7 @@ reorganization or a reason to duplicate the core in each family.
 
 | Area | Rewrite responsibility |
 | --- | --- |
-| `src/core/view-element.ts` | Shared Web base, metadata access and proven common property mechanics. |
+| `src/core/view-element.ts` | Shared Web base, registration, pre-upgrade property replay and native conversion helpers; no runtime metadata lookup. |
 | Component family folder | Concrete classes, direct accessors, CSS and public entry points. |
 | `scripts/component-api.mjs` | Build/demo-only API extraction from source. |
 | `src/components/elements.ts` | Canonical registration ownership, not competing old/new implementations. |

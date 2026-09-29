@@ -152,7 +152,7 @@ describe("native elements", () => {
     expect(styles).toContain("--m-control-height")
     expect(styles).toContain(":focus-visible")
     expect(styles).toContain("prefers-reduced-motion")
-    expect(styles).toContain("m-card[hoverable]:hover")
+    expect(styles).not.toContain("m-card")
     expect(styles).not.toContain("translateY(1px)")
   })
 
@@ -164,6 +164,7 @@ describe("native elements", () => {
         <m-field label="Name"><m-input></m-input></m-field>
       </m-main>`
     await Promise.resolve()
+    await Promise.resolve()
     expect(document.querySelector("m-main")?.getAttribute("role")).toBe("main")
     expect(document.querySelector("m-heading > h1")?.textContent).toBe("Title")
     expect(document.querySelector("m-heading")?.hasAttribute("role")).toBe(false)
@@ -172,7 +173,9 @@ describe("native elements", () => {
     for (const tag of ["m-heading", "m-text", "m-link", "m-strong", "m-code"]) expect(builtInElementNames).not.toContain(tag)
     expect(document.querySelector("m-link > a")?.getAttribute("href")).toBe("#more")
     expect(document.querySelector("m-field > [data-m-label]")?.textContent).toBe("Name")
-    expect(document.querySelector("m-input input")?.getAttribute("aria-label")).toBe("Name")
+    const label = document.querySelector<HTMLLabelElement>("m-field > label")!
+    expect(label.control).toBe(document.querySelector("m-input input"))
+    expect(document.querySelector("m-input input")?.hasAttribute("aria-label")).toBe(false)
   })
 
   it("supports compound card and dialog anatomy", async () => {

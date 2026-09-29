@@ -73,7 +73,10 @@ One root has one binding owner; overlapping roots and duplicate destinations fai
 `stop.refresh()` discovers added/removed nodes and changed directives. `stop()` releases
 ownership without reverting DOM or state. Failed initial setup cleans up subscriptions.
 The optional `m-app` explicitly owns its subtree and refreshes on child changes; reconnect
-uses the retained store. No automatic activation occurs across the document.
+uses the retained store. Pre-upgrade `store` assignment survives registration. A store
+acquired or supplied through the property cannot be combined with inline JSON state;
+disconnect before replacing an active store. Bindings and actions share that same store
+owner. No automatic activation occurs across the document.
 
 Text binding cannot own a bound subtree or an executable text container. The attribute
 channel accepts naming/ARIA/data attributes and the documented Boolean presence

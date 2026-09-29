@@ -1,12 +1,19 @@
 # Architecture
 
-**Selected design for the full Web component rewrite.** The thin shared core, Avatar and
-Button use direct property/method execution. Other components and the new binding/template runtime
-remain in progress or planned; see the [implemented API](../api/README.md).
+**Selected design and current Web implementation.** The thin shared core and 89 selectable
+families use direct property/method execution, with an optional full-catalog bundle and
+separate root/plugins. Scalar/model binding is implemented; structural templates and
+item/parent scopes are not. See the [implemented API](../api/README.md).
+
+The size optimization plan is complete through S6. Subsequent retained-root lifecycle
+and stylesheet fixes have passed local verification; full contract and production
+acceptance remain open. The [production task summary](09-production.md#task-summary)
+separates delivered work from release blockers.
 
 MarkupUI describes logical elements, properties, content, actions and data flow independently
-of a platform toolkit. Web implementations use `ViewElement`; native targets use their own
-platform bases while following the same contracts.
+of a platform toolkit. Public authoring uses `m-*`; Web implementations use `ViewElement`
+and own the native HTML mapping. Non-Web mappings remain design contracts, not delivered
+renderers; future native targets use their own platform bases.
 
 ## Reading order
 

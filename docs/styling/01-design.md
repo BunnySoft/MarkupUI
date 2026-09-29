@@ -13,6 +13,12 @@ Elements must not overwrite unrelated author styles during property updates or r
 When a supported convenience property temporarily owns a style token, removing it restores
 the prior value without erasing later application changes.
 
+The optional root's `m-theme` implements this ownership rule for its inline tokens and
+theme marker: removing/emptying `name` releases owned writes, including restoration of
+prior priorities, while later application writes survive. A new theme name is validated
+before the current theme is released. Disconnect retains presentation; reconnect
+reconciles the current name. See the [root lifecycle contract](../api/01-core.md#optional-root-lifecycle).
+
 ## Web conventions
 
 | Surface | Convention |
@@ -41,6 +47,12 @@ Standalone component styles are explicit assets. A loading mode must document an
 installation instead of silently imposing global presentation.
 Where required by an Element Contract, canonical tags have readable pre-upgrade/no-JavaScript
 presentation.
+
+The optional root stylesheet no longer includes migrated component-family rules.
+It retains root elements, shared tokens/layout utilities and scoped feedback-service
+presentation. Loading root does not replace a selected family's CSS; the optional full
+catalog provides its own complete component stylesheet. See
+[delivery and payload accounting](../architecture/07-modules.md#payload-accounting).
 
 ## Accessibility and motion
 

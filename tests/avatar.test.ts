@@ -472,9 +472,10 @@ describe("standalone Avatar", () => {
 
   describe("audited default Avatar styles", () => {
     const css = readFileSync("src/components/avatar/avatar.css", "utf8")
-    const legacy = readFileSync("src/components/styles.css", "utf8")
-    it("keeps the native and canonical legacy defaults aligned to the pinned light reference", () => {
-      for (const source of [css, legacy]) {
+    const distributed = readFileSync("dist/markup-ui-avatar.css", "utf8")
+    it("keeps source and selected distribution defaults aligned without duplicating root styles", () => {
+      expect(readFileSync("src/components/styles.css", "utf8")).not.toContain("m-avatar")
+      for (const source of [css, distributed]) {
         const compact = source.replace(/\s+/g, "")
         expect(compact).toContain("box-sizing:content-box")
         expect(compact).toContain("var(--m-avatar-size,34px)")

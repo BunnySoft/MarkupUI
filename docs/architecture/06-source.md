@@ -281,6 +281,15 @@ timing validation stays local to Dropdown; there is no additional production ent
 
 ## Entry and packaging rules
 
+The optional root's `foundation.ts` owns Theme token-scope cleanup, Field's generated
+native label and local control observer, and App's explicit store/binding/action lifecycle.
+`dynamic.ts` owns AccordionItem's retained native button/content and removable activation
+listener. They do not import selected control constructors or register component families.
+`theme/index.ts` records reversible inline token/marker writes, shared by the service and
+Theme element. Root `styles.css` owns only retained root elements, shared tokens/layout
+utilities and scoped feedback-service presentation; migrated family styles remain with
+their selected component files.
+
 Follow the [small-core/plugin delivery model](07-modules.md).
 Thin core entry files may be added within the existing core area when shared distribution
 requires them. They re-export shared code; they do not duplicate it or relocate component logic.
