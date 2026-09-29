@@ -244,7 +244,8 @@ describe("safe actions, ownership and Form coexistence", () => {
   it("rejects duplicate owners across modules and restores only owned UI state", async () => {
     const { helper, root, control, clear, output } = fixture()
     expect(() => createTimePicker(root)).toThrow("owner")
-    vi.resetModules(); const other = await import("../src/components/time-picker/index.js")
+    const other = await import("../src/components/time-picker/time-picker.js" + "?ownership-copy")
+    expect(other.createTimePicker).not.toBe(createTimePicker)
     expect(() => other.createTimePicker(root)).toThrow("owner")
     helper.setValue("12:00"); output.textContent = "Application output"; helper.disconnect()
     expect(control.value).toBe("12:00"); expect(clear.hidden).toBe(true); expect(output.textContent).toBe("Application output")

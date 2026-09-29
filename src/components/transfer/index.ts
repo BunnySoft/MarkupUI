@@ -10,4 +10,4 @@ export function registerTransfer(registry: Pick<CustomElementRegistry, "get" | "
   ViewElement.register([Transfer], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(Transfer.tag)) registerTransfer()
+if (typeof customElements !== "undefined") registerTransfer()

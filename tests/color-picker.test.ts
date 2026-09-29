@@ -63,7 +63,8 @@ describe("classic RGB value and native control ownership", () => {
   it("rejects duplicate owners across module copies and releases them", async () => {
     const { helper, root } = fixture()
     expect(() => createColorPicker(root)).toThrow("owner")
-    vi.resetModules(); const other = await import("../src/components/color-picker/index.js")
+    const other = await import("../src/components/color-picker/color-picker.js" + "?ownership-copy")
+    expect(other.createColorPicker).not.toBe(createColorPicker)
     expect(() => other.createColorPicker(root)).toThrow("owner")
     helper.disconnect(); helpers.push(other.createColorPicker(root))
   })

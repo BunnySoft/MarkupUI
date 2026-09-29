@@ -10,4 +10,4 @@ export function registerRate(registry: Pick<CustomElementRegistry, "get" | "defi
   ViewElement.register([Rate], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(Rate.tag)) registerRate()
+if (typeof customElements !== "undefined") registerRate()

@@ -55,7 +55,8 @@ describe("one native field and strict ASCII anatomy", () => {
   it("rejects duplicate owners across module copies and releases after disposal", async () => {
     const { helper, input } = fixture()
     expect(() => createInputOtp(input)).toThrow("owner")
-    vi.resetModules(); const other = await import("../src/components/input-otp/index.js")
+    const other = await import("../src/components/input-otp/input-otp.js" + "?ownership-copy")
+    expect(other.createInputOtp).not.toBe(createInputOtp)
     expect(() => other.createInputOtp(input)).toThrow("owner")
     helper.disconnect(); helpers.push(other.createInputOtp(input))
   })

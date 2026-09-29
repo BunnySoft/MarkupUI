@@ -1267,7 +1267,7 @@ describe("component-by-component demo browser", () => {
     const guide = new DOMParser().parseFromString(source, "text/html")
     expect(guide.querySelector("h1")?.textContent).toBe("Setup")
     expect([...guide.querySelectorAll("main > section")].map(section => section.id)).toEqual([
-      "classic", "modules", "styles", "local",
+      "classic", "modules", "all", "styles", "local",
     ])
     expect(guide.querySelector("script")).toBeNull()
     expect(guide.querySelector('link[href="./component-api.css"]')).not.toBeNull()

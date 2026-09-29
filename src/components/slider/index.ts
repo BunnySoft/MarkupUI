@@ -9,5 +9,5 @@ export function registerSlider(registry: Pick<CustomElementRegistry, "get" | "de
   ViewElement.register([Slider], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(Slider.tag)) registerSlider()
+if (typeof customElements !== "undefined") registerSlider()
 

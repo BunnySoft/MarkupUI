@@ -10,5 +10,5 @@ export function registerVirtualList(registry: Pick<CustomElementRegistry, "get" 
   ViewElement.register([VirtualList], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(VirtualList.tag)) registerVirtualList()
+if (typeof customElements !== "undefined") registerVirtualList()
 

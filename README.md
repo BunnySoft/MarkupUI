@@ -7,7 +7,8 @@ The application owns ECharts loading, module registration and licenses. Unrelate
 require no chart engine. See the [Chart setup examples](demo/components/chart.html#required-files).
 
 **Status: development staging; production release is blocked.** The Web implementation
-includes 89 selectable component families, the optional root facade and plugins.
+includes 89 selectable component families, an optional all-components bundle, the
+separate root facade and plugins.
 Components use the shared `ViewElement` base and direct properties; API data is generated
 separately for demos. Explicit scalar/model binding and Chart are implemented.
 Structural templates and item scopes are not implemented. Native-target mappings are
@@ -32,6 +33,13 @@ production acceptance. Services and style resources do not acquire artificial wr
 
 ## Documentation
 
+For applications that deliberately need the complete catalog, use
+`@dataengine/markup-ui/all` and `@dataengine/markup-ui/all/style.css`.
+Exports stay in family namespaces, for example `all.button.Button` and
+`all.dataTable.DataTable`. Do not mix this entry with selected component entries
+or a second full runtime. It shares core and the Chart adapter; ECharts remains
+application supplied. See [loading and costs](docs/architecture/07-modules.md#optional-full-catalog).
+
 Start with the [documentation guide](docs/README.md).
 
 | Topic | Purpose |
@@ -53,7 +61,7 @@ CI is configured for Windows, Linux and macOS on Node 22/24; browser acceptance 
 | `pnpm build` | Generate distributions and enforce payload budgets. |
 | `pnpm test` | Run the existing test suite; use focused fixtures while changing a component. |
 | `pnpm test:package` | Pack the built files and verify exports, types and imports in an isolated consumer. |
-| `pnpm test:browser` | Verify Chart, primitive, Form and HTML-policy workflows in installed Playwright browser engines. |
+| `pnpm test:browser` | Verify Chart, primitive, Form, aggregate ESM/classic and HTML-policy workflows in installed Playwright browser engines. |
 | `pnpm test:catalog` | Also check every catalog page and Virtual List scrolling in all three browser engines. |
 | `pnpm demo` | Serve the development examples. |
 

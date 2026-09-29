@@ -61,6 +61,6 @@ export function registerBox(
   )
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(Box.tag)) {
+if (typeof customElements !== "undefined") {
   registerBox()
 }

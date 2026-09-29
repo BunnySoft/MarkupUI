@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { mountExample } from "../demo/components/discrete.js"
-import { createMessageOwner } from "../src/components/message/index.js"
+import { createMessageOwner } from "../src/components/message/message.js"
 import { createNativeDialog } from "../src/components/dialog/native.js"
 
 const scopes: Awaited<ReturnType<typeof mountExample>>[] = []

@@ -10,5 +10,5 @@ export function registerInputOtp(registry: Pick<CustomElementRegistry, "get" | "
   ViewElement.register([InputOtp], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(InputOtp.tag)) registerInputOtp()
+if (typeof customElements !== "undefined") registerInputOtp()
 

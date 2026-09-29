@@ -13,4 +13,4 @@ export function registerLoadingBar(
   ViewElement.register([LoadingBar], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(LoadingBar.tag)) registerLoadingBar()
+if (typeof customElements !== "undefined") registerLoadingBar()

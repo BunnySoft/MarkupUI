@@ -334,7 +334,8 @@ describe("defaults, focus and notifications", () => {
 describe("ownership, teardown and failure", () => {
   it("enforces one owner across module copies and competing Native Select helpers", async () => {
     const { helper, root, source } = fixture()
-    vi.resetModules(); const other = await import("../src/components/transfer/index.js")
+    const other = await import("../src/components/transfer/transfer.js" + "?ownership-copy")
+    expect(other.createTransfer).not.toBe(createTransfer)
     expect(() => other.createTransfer(root)).toThrow("unowned")
     const pane = source.parentElement!.parentElement!; pane.classList.add("m-select"); pane.setAttribute("data-select", ""); source.setAttribute("data-select-control", "")
     expect(() => createSelect(pane)).toThrow("owner")

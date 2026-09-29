@@ -17,6 +17,61 @@ const server = spawn(process.execPath, ["demo/server.mjs"], {
 })
 const results = []
 const catalogResults = []
+async function verifyAll(page, origin, mode, engine, layout) {
+  const url = `${origin}/demo/all-${mode}-check.html`
+  await page.route(url, route => route.fulfill({
+    contentType: "text/html",
+    body: `<!doctype html><meta name="viewport" content="width=device-width"><title>All components</title>
+      <link rel="stylesheet" href="/dist/markup-ui-all.css"><body>
+      <m-form id="all-form">
+        <m-input name="title" value="Initial"></m-input>
+        <m-data-table id="all-table" label="Scores"
+          options='{"columns":[{"key":"score","label":"Score","sort":"number"}],"selection":{"name":"keys","scope":"all"}}'
+          data='[{"key":"a","values":[10]},{"key":"b","values":[2],"checked":true}]'></m-data-table>
+        <m-button attr-type="reset">Reset all</m-button>
+      </m-form>
+      <m-dropdown id="all-dropdown"><m-dropdown-trigger>Actions</m-dropdown-trigger><m-dropdown-menu label="Actions">
+        <m-dropdown-item key="edit">Edit</m-dropdown-item></m-dropdown-menu></m-dropdown>
+      <m-chart id="all-chart" aria-label="Aggregate chart"></m-chart>
+      </body>`,
+  }))
+  await page.goto(url)
+  if (mode === "classic") {
+    for (const name of ["core", "chart-renderer", "all"]) await page.addScriptTag({ url: `${origin}/dist/markup-ui-${name}.global.js` })
+    await page.addScriptTag({ url: `${origin}/demo/vendor/echarts.global.js` })
+    await page.evaluate(() => MarkupUIAll.chart.configureChartEngine(echarts))
+  } else await page.evaluate(async () => {
+    const all = await import("/dist/markup-ui-all.js")
+    const engine = await import("/demo/vendor/echarts.js")
+    all.chart.configureChartEngine(engine)
+  })
+  await page.evaluate(() => {
+    const chart = document.getElementById("all-chart")
+    chart.tableSource = [["x", "y"], ["A", 2], ["B", 4]]
+    chart.option = { dataset: { source: chart.tableSource }, xAxis: { type: "category" }, yAxis: { type: "value" }, series: [{ type: "bar" }] }
+    chart.refresh()
+  })
+  await page.waitForFunction(() => document.getElementById("all-chart").state === "ready")
+  assert(await page.locator("#all-chart svg path").count() > 0)
+  const table = page.locator("#all-table")
+  await table.getByRole("button", { name: "Score", exact: true }).press("Enter")
+  await page.waitForFunction(() => document.getElementById("all-table").state.visibleKeys[0] === "b")
+  assert.deepEqual(await page.locator("#all-form").evaluate(form => new FormData(form.native).getAll("keys")), ["b"])
+  await page.locator("m-input input").fill("Edited")
+  await page.getByRole("button", { name: "Reset all", exact: true }).click()
+  await page.waitForFunction(() => document.getElementById("all-table").state.sort === null)
+  assert.equal(await page.locator("m-input input").inputValue(), "Initial")
+  await page.locator("#all-dropdown m-dropdown-trigger > button").press("ArrowDown")
+  await page.waitForFunction(() => document.activeElement.matches('#all-dropdown m-dropdown-item > button'))
+  await page.keyboard.press("Enter")
+  await page.waitForFunction(() => document.getElementById("all-dropdown").value === "edit")
+  assert.equal(await table.evaluate(node => {
+    const native = node.native, parent = node.parentElement
+    node.remove(); parent.append(node)
+    return native === node.native
+  }), true)
+  await page.screenshot({ path: resolve(output, `${engine}-${layout}-all-${mode}.png`) })
+}
 async function verifyExternalChartEngine(page, origin, mode) {
   const url = `${origin}/demo/chart-engine-${mode}-check.html`
   await page.route(url, route => route.fulfill({
@@ -338,9 +393,10 @@ try {
           await verifyForm(page, origin, name, layout)
           await verifyPlugins(page, origin, name, layout)
           await verifyHtmlPolicy(page, origin, name)
+          for (const mode of ["esm", "classic"]) await verifyAll(page, origin, mode, name, layout)
           assert.deepEqual(errors, [], `${name}/${layout}: browser errors`)
           results.push({ browser: name, version: browser.version(), layout, readyMs: Math.round(readyMs), charts: geometry, canvasColoredPixels: colored, performance: performanceSample,
-            form: "passed", plugins: "passed", htmlPolicy: "passed", trustedTypes: name === "chromium" ? "fail-closed verified" : "not tested" })
+            form: "passed", plugins: "passed", all: "ESM/classic passed", htmlPolicy: "passed", trustedTypes: name === "chromium" ? "fail-closed verified" : "not tested" })
           console.log(`${name} ${browser.version()} ${layout}: passed (${Math.round(readyMs)} ms to six ready charts)`)
           if (process.argv.includes("--catalog")) {
             const failedResources = []
@@ -840,7 +896,10 @@ try {
                   .map(node => node.localName).filter(tag => tag.startsWith("m-") && !customElements.get(tag)))])
                 if (unregistered.length) errors.push(`Unregistered: ${unregistered.join(", ")}`)
                 assert.deepEqual([...errors, ...failedResources], [])
-              } catch (error) { failure = [...new Set([error.message, ...errors, ...failedResources])].join("\n") }
+              } catch (error) {
+                failure = [...new Set([error.stack ?? error.message, ...errors, ...failedResources])].join("\n")
+                await page.screenshot({ path: resolve(output, `${name}-${layout}-${slug}-failure.png`) })
+              }
               if (failure && slug === "virtual-list") {
                 failure += "\n" + JSON.stringify(await page.locator(".m-virtual-list").evaluateAll(nodes => nodes.map(node => {
                   const css = getComputedStyle(node)

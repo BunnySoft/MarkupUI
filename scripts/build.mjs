@@ -2,11 +2,12 @@ import { corePlugin as sharedCorePlugin } from "./build-boundaries.mjs"
 import { execFileSync } from "node:child_process"
 import { createHash } from "node:crypto"
 import { gzipSync } from "node:zlib"
-import { copyFile, mkdir, readFile, realpath, rm, writeFile } from "node:fs/promises"
+import { copyFile, mkdir, readFile, readdir, realpath, rm, writeFile } from "node:fs/promises"
 import { createRequire } from "node:module"
 import { dirname, relative, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { build as esbuild, transform, version as esbuildVersion } from "esbuild"
+import ts from "typescript"
 import { emitStylesheets, generateStyleModules } from "./styles.mjs"
 import { generateComponentApi } from "./component-api.mjs"
 
@@ -291,6 +292,32 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   } else await copyFile(source, output)
 }))
 
+const allTags = [...new Set((await Promise.all(components.map(async name => {
+  const directory = resolve(root, "src/components", name)
+  return Promise.all((await readdir(directory)).filter(file => file.endsWith(".ts")).map(async file => {
+    const source = ts.createSourceFile(file, await readFile(resolve(directory, file), "utf8"), ts.ScriptTarget.Latest, true)
+    const tags = []
+    function visit(node) {
+      if (ts.isPropertyDeclaration(node) && node.name.getText(source) === "tag"
+        && node.modifiers?.some(modifier => modifier.kind === ts.SyntaxKind.StaticKeyword)
+        && node.initializer && ts.isStringLiteral(node.initializer)) tags.push(node.initializer.text)
+      ts.forEachChild(node, visit)
+    }
+    visit(source)
+    return tags
+  }))
+}))).flat(2))].sort()
+const preflight = `if(typeof customElements!=="undefined"){for(const tag of ${JSON.stringify(allTags)}){if(customElements.get(tag))throw new Error("MarkupUI all cannot mix with selected entries or another full runtime: "+tag);}}`
+await Promise.all(["esm", "iife"].map(format => build({
+  ...shared, entryPoints: [resolve(root, "src/all.ts")], format, minify: true,
+  plugins: [sharedCorePlugin(root, format, { bundleNative: true })],
+  ...(format === "iife" ? { globalName: "MarkupUIAll" } : {}),
+  banner: { js: (format === "iife" ? 'if(typeof globalThis.MarkupUICore?.ViewElement!=="function"||typeof globalThis.MarkupUIChartRenderer?.configureChartEngine!=="function")throw new Error("Load core and chart-renderer before MarkupUI all.");\n' : "") + preflight },
+  outfile: resolve(dist, `markup-ui-all${format === "esm" ? ".js" : ".global.js"}`),
+})))
+await writeFile(resolve(dist, "markup-ui-all.css"),
+  (await Promise.all(components.map(name => readFile(resolve(dist, `markup-ui-${name}.css`), "utf8")))).join("\n"))
+
 await emitStylesheets(root, dist)
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
@@ -303,6 +330,10 @@ await copyFile(resolve(dirname(echartsRequire.resolve("zrender/package.json")), 
 await copyFile(resolve(dirname(echartsRequire.resolve("tslib")), "LICENSE.txt"), resolve(licenses, "tslib-LICENSE.txt"))
 await copyFile(resolve(dirname(echartsRequire.resolve("tslib")), "CopyrightNotice.txt"), resolve(licenses, "tslib-CopyrightNotice.txt"))
 const bundleBudgets = {
+  // Initial complete aggregate measurement: 314,102/312,540 runtime and 63,150 CSS.
+  "markup-ui-all.js": 315_000,
+  "markup-ui-all.global.js": 315_000,
+  "markup-ui-all.css": 64_000,
   "markup-ui-chart.js": 12_000,
   "markup-ui-chart.global.js": 12_000,
   "markup-ui-chart-renderer.js": 1_000,
@@ -641,6 +672,8 @@ for (const name of [...components, ...styleOnlyComponents]) {
 
 const entryPayloads = {}
 for (const [name, file, dependencies, css, runtimeBudget] of [
+  ["all", "markup-ui-all.js", ["markup-ui-core.js", "markup-ui-chart-renderer.js"], ["markup-ui-all.css"], 315_000],
+  ["all-classic", "markup-ui-all.global.js", ["markup-ui-core.global.js", "markup-ui-chart-renderer.global.js"], ["markup-ui-all.css"], 315_000],
   ["state", "markup-ui-state.js", [], [], 4_000],
   ["state-classic", "markup-ui-state.global.js", [], [], 4_000],
   ["root", "markup-ui.js", ["markup-ui-core.js", "markup-ui-state.js"], ["markup-ui.css"]],
@@ -661,6 +694,11 @@ for (const [name, file, dependencies, css, runtimeBudget] of [
     ...(runtimeBudget === undefined ? {} : { runtimeBudget }),
     css, cssGzipBytes, totalGzipBytes: runtimeGzipBytes + cssGzipBytes,
   }
+  if (name === "all" || name === "all-classic") Object.assign(entryPayloads[name], {
+    families: [...components].sort(), tags: allTags,
+    externalDependencies: componentPayloads.chart.externalDependencies,
+    mixing: "Do not mix with selected component entries or another full runtime. Core and Chart renderer retain shared identity.",
+  })
 }
 
 await writeFile(

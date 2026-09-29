@@ -87,8 +87,8 @@ describe("native slider ownership", () => {
   it("rejects duplicate and cross-module owners and permits explicit recreation", async () => {
     const { root, helper } = single()
     expect(() => createSlider(root)).toThrow("owner")
-    vi.resetModules()
-    const other = await import("../src/components/slider/index.js")
+    const other = await import("../src/components/slider/slider.js" + "?ownership-copy")
+    expect(other.createSlider).not.toBe(createSlider)
     expect(() => other.createSlider(root)).toThrow("owner")
     helper.disconnect(); helper.disconnect()
     helpers.push(other.createSlider(root))

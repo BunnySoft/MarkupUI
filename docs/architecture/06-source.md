@@ -292,6 +292,13 @@ must not define a separate copy of the core or replace an already loaded core.
 
 Shared source files do not automatically produce shared bundles. Implement that boundary
 in `scripts/build.mjs` and the package exports, then account for the actual dependency files.
+
+`src/all.ts` is the optional full-catalog entry, not a second component implementation.
+It re-exports each of the 89 existing family entries through a distinct camel-case namespace.
+The build deduplicates their source inside one ESM/classic file, keeping core and the Chart
+adapter external to preserve their identities. Native field helpers are internal to this
+aggregate. Selected family entries never import `all.ts`. Static registration preflight
+is emitted by the build; generated API JSON is not loaded by production code.
 The shared-core boundary is implemented across the 89 selectable families listed in the
 [element directory](../elements/05-element-index.md). Required dependencies and costs are
 recorded per family in the build manifest; shared delivery is not production acceptance.

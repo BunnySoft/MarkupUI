@@ -1,6 +1,6 @@
 import { dirname, resolve } from "node:path"
 
-export function corePlugin(root, format) {
+export function corePlugin(root, format, { bundleNative = false } = {}) {
   return {
     name: "shared-element-core",
     setup(builder) {
@@ -17,7 +17,7 @@ export function corePlugin(root, format) {
           export const { createChartRenderer, configureChartEngine } = renderer;
         `,
       }))
-      builder.onResolve({ filter: /native-select\.js$/ }, () =>
+      if (!bundleNative) builder.onResolve({ filter: /native-select\.js$/ }, () =>
         format === "esm" ? { path: "./markup-ui-native-select.js", external: true }
           : { path: "native-select", namespace: "markupui-native-select" })
       builder.onLoad({ filter: /.*/, namespace: "markupui-native-select" }, () => ({
@@ -55,7 +55,7 @@ export function corePlugin(root, format) {
           }
         `,
       }))
-      builder.onResolve({ filter: /native-input\.js$/ }, () =>
+      if (!bundleNative) builder.onResolve({ filter: /native-input\.js$/ }, () =>
         format === "esm" ? { path: "./markup-ui-native-input.js", external: true }
           : { path: "native-input", namespace: "markupui-native-input" })
       builder.onLoad({ filter: /.*/, namespace: "markupui-native-input" }, () => ({
@@ -66,7 +66,7 @@ export function corePlugin(root, format) {
           export const { createInput } = native;
         `,
       }))
-      builder.onResolve({ filter: /native-radio\.js$/ }, () =>
+      if (!bundleNative) builder.onResolve({ filter: /native-radio\.js$/ }, () =>
         format === "esm" ? { path: "./markup-ui-native-radio.js", external: true }
           : { path: "native-radio", namespace: "markupui-native-radio" })
       builder.onLoad({ filter: /.*/, namespace: "markupui-native-radio" }, () => ({

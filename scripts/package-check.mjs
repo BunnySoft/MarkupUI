@@ -45,25 +45,36 @@ for (const key of ["window", "document", "customElements", "MutationObserver", "
 for (const key of ["getComputedStyle", "requestAnimationFrame", "cancelAnimationFrame"]) globalThis[key] = window[key].bind(window);
 const core = await import("@dataengine/markup-ui/core");
 assert.equal(customElements.get("m-chart"), undefined);
-for (const entry of ${JSON.stringify(entries)}) {
+const aggregate = process.argv.includes("--all");
+for (const entry of (aggregate ? ["@dataengine/markup-ui/all"] : ${JSON.stringify(entries)}.filter(entry => !entry.endsWith("/all")))) {
   const api = await import(entry);
   if (entry !== "@dataengine/markup-ui" && !["state", "query", "advanced", "widgets"].includes(entry.split("/").at(-1))) {
     assert.equal(Object.keys(api).some(name => /^M[A-Z][a-z]/.test(name)), false, entry + " exports a compatibility alias");
   }
 }
-const root = await import("@dataengine/markup-ui");
-const chart = await import("@dataengine/markup-ui/chart");
-assert.equal(root.ViewElement, core.ViewElement);
+const all = aggregate ? await import("@dataengine/markup-ui/all") : null;
+const root = aggregate ? null : await import("@dataengine/markup-ui");
+const chart = aggregate ? all.chart : await import("@dataengine/markup-ui/chart");
+if (aggregate) {
+  assert.equal(Object.keys(all).length, 89);
+  for (const family of Object.values(all)) for (const exported of Object.values(family)) {
+    if (typeof exported === "function" && Object.hasOwn(exported, "tag")) {
+      assert.equal(customElements.get(exported.tag), exported);
+      assert.ok(exported.prototype instanceof core.ViewElement);
+    }
+  }
+  await assert.rejects(import("@dataengine/markup-ui/grid"), /different implementation|already defined/);
+} else assert.equal(root.ViewElement, core.ViewElement);
 assert.ok(chart.Chart.prototype instanceof core.ViewElement);
 assert.equal(customElements.get("m-chart"), chart.Chart);
 assert.equal(typeof chart.configureChartEngine, "function");
 assert.throws(() => chart.configureChartEngine({}), /init/);
 chart.configureChartEngine({ init() { throw new Error("Not rendered by import"); } });
-assert.equal("MElement" in root, false);
+if (root) assert.equal("MElement" in root, false);
 window.close();
-console.log("Packed runtime imports passed");
+console.log(aggregate ? "Packed aggregate runtime imports passed" : "Packed modular runtime imports passed");
 `)
-const runtime = execFileSync(process.execPath, [resolve(consumer, "runtime.mjs")], { cwd: consumer, encoding: "utf8", timeout: 60_000 })
+const runtime = [[], ["--all"]].map(args => execFileSync(process.execPath, [resolve(consumer, "runtime.mjs"), ...args], { cwd: consumer, encoding: "utf8", timeout: 60_000 })).join("")
 const result = { date: new Date().toISOString(), tarball, consumer, entries: entries.length, files: packed.files.length, size: packed.size, types: "passed", runtime: runtime.trim() }
 await writeFile(resolve(output, "results.json"), JSON.stringify(result, null, 2))
 console.log(JSON.stringify(result, null, 2))

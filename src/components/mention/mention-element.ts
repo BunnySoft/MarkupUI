@@ -239,8 +239,7 @@ export class Mention extends ViewElement {
 
 
 export function registerMention(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
-  if (registry.get(Mention.tag)) return
   ViewElement.register([Mention], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(Mention.tag)) registerMention()
+if (typeof customElements !== "undefined") registerMention()

@@ -153,7 +153,8 @@ describe("data, keys and native ownership", () => {
   })
   it("rejects competing module owners and permits rebind after disconnect", async () => {
     const { helper, root } = fixture(), options = { items: data(2), rowSize: 32, key: (item: Item) => item.id, render, update: vi.fn() }
-    vi.resetModules(); const other = await import("../src/components/virtual-list/index.js")
+    const other = await import("../src/components/virtual-list/virtual-list.js" + "?ownership-copy")
+    expect(other.createVirtualList).not.toBe(createVirtualList)
     expect(() => other.createVirtualList(root, options)).toThrow()
     helper.disconnect(); const rebound = other.createVirtualList(root, options); rebound.disconnect()
     expect(root.children).toHaveLength(1)

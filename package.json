@@ -11,6 +11,12 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./all": {
+      "types": "./dist/all.d.ts",
+      "import": "./dist/markup-ui-all.js"
+    },
+    "./all/style.css": "./dist/markup-ui-all.css",
+    "./all/classic.js": "./dist/markup-ui-all.global.js",
     "./chart": {
       "types": "./dist/components/chart/index.d.ts",
       "import": "./dist/markup-ui-chart.js"

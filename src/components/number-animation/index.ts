@@ -11,4 +11,4 @@ export function registerNumberAnimation(registry: Pick<CustomElementRegistry, "g
   ViewElement.register([NumberAnimation], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(NumberAnimation.tag)) registerNumberAnimation()
+if (typeof customElements !== "undefined") registerNumberAnimation()

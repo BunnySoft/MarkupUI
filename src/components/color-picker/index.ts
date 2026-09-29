@@ -9,4 +9,4 @@ export function registerColorPicker(registry: Pick<CustomElementRegistry, "get" 
   ViewElement.register([ColorPicker], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(ColorPicker.tag)) registerColorPicker()
+if (typeof customElements !== "undefined") registerColorPicker()

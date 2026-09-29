@@ -2,11 +2,11 @@
 
 Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags, Dynamic Input, Calendar and Tree
 and Cascader/Upload/Heatmap/Tree Select reconciliation verified September 28, 2026, with test scope and timing limitations
-recorded below. Data Table, local mechanics and the S4 sharing evaluation are verified
-below. S5-S6 remain open.
+recorded below. Data Table, local mechanics, the S4 sharing evaluation and S5 optional
+full-catalog delivery are verified below. S6 final acceptance remains open.
 Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
-The next thread should follow this plan one bounded task at a time.
+Complete and record each bounded task before claiming integrated acceptance.
 
 ## Objective and constraints
 
@@ -208,21 +208,21 @@ so removing helper exports is not their solution.
 
 ### S5. Add an optional all-components distribution
 
-- [ ] Define explicit full-entry names and a public export organization without collisions.
+- [x] Define explicit full-entry names and a public export organization without collisions.
   Do not rename the existing root facade into an apparent all-components product.
-- [ ] Build from source so shared implementations are emitted once. Cover all 89 families;
+- [x] Build from source so shared implementations are emitted once. Cover all 89 families;
   root foundation elements/plugins are separate selections unless explicitly added and
   accounted for. Keep ECharts external and CSS costs explicit.
-- [ ] Deliver and document ESM and classic loading, declarations and package exports.
+- [x] Deliver and document ESM and classic loading, declarations and package exports.
   State whether core/adapter assets are external or included and measure the full closure.
-- [ ] Settle mixing with selected entries explicitly: preserve constructor/core identity
+- [x] Settle mixing with selected entries explicitly: preserve constructor/core identity
   where supported, and reject incompatible combinations clearly without silently replacing
   registrations. Do not create competing bases or engine configuration owners.
-- [ ] Add a measured full-runtime ceiling without raising any existing ceiling.
+- [x] Add a measured full-runtime ceiling without raising any existing ceiling.
   The preliminary 282.28 KiB source experiment is a reference, not a correctness guarantee.
-- [ ] Test registration completeness, absence of vendor code, isolated packed consumers,
+- [x] Test registration completeness, absence of vendor code, isolated packed consumers,
   shared identity rules and actual browser workflows.
-- [ ] Keep single-component loading independent of this entry.
+- [x] Keep single-component loading independent of this entry.
 
 ### S6. Integrated acceptance and evidence
 
@@ -922,24 +922,83 @@ inside one file without penalizing existing cold selected-component loads.
 baseline. It passed in the final 236-test focused run alongside Dropdown/core/size
 checks. Evidence: `.vite/size/sharing.json`; it must be regenerated after later changes.
 
-## Next-thread starting point
+### S5 - Optional full-catalog distribution, September 28, 2026 (UTC)
 
-1. Read this plan and repository instructions; inspect `git status` and the latest history.
-2. Confirm the Chart external-engine baseline and current distribution measurements.
-3. S0-S1 and S2 Tags/Input/Calendar/Tree/Cascader/Upload/Heatmap/Tree Select reconciliation are complete; consult their
-   scoped implementation, integrated-suite, package and browser verification records above.
-   Keep S0 intact for cumulative comparisons. The gzip saving remains small. Input's
-   and Tree's classic runtimes have only 13 bytes of headroom; Cascader runtime and
-   Calendar CSS each have one byte.
-4. Data Table's independent element/controller gap is closed in the record above.
-   Dropdown/local mechanics and the sharing evaluation are complete. Continue S5-S6.
-   Finish S2/S3 measurements before selecting final shared-bundle boundaries.
-5. Avoid repeatedly running the entire suite during small edits: use focused checks per
-   task and the integrated gates at packaging milestones and final acceptance.
+`src/all.ts` composes all 89 existing family entries through collision-free namespaces,
+without moving or duplicating their implementations. The public entries are
+`@dataengine/markup-ui/all`, `./all/classic.js` and `./all/style.css`; ESM declarations
+retain the same namespaces, such as `all.dataTable.DataTable`. Classic exposes
+`MarkupUIAll`. The existing root facade keeps its name and separate purpose.
 
-Reference baseline verification at `cb00af1`: build passed; 4,837 tests across 131 files,
-zero failures/skips; 95 packed JavaScript entries across 2,327 files passed strict NodeNext
-and runtime imports without ECharts installed. Chart and existing browser workflows passed
-in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at 1280x900 and 375x812.
-The latest scoped Chart catalog run was 6/6; the earlier full-catalog baseline was 588/588.
-These results do not validate future changes or establish full production readiness.
+Source bundling emits shared local mechanics once inside the aggregate. Core and the
+Chart adapter stay external, preserving the sole base class and engine configuration
+owner. Native field helpers are included, not additional aggregate dependencies.
+Root foundation, state/query, plugins, themes and ECharts remain separate selections.
+Selected entries never import the aggregate, and no existing ceiling is increased.
+
+Mixing the aggregate with selected families or another full runtime is explicitly
+unsupported. A static preflight rejects any occupied catalog tag before registering
+anything. Build tooling obtains the 203 tags from TypeScript source declarations,
+not generated demo metadata. Selected entries now consistently call the existing strict
+registration API rather than silently skipping foreign constructors. Importing the
+same ESM URL still uses normal module caching.
+
+| Selection | Raw bytes | Gzip bytes |
+| --- | ---: | ---: |
+| Aggregate ESM entry | 1,137,969 | 312,385 |
+| Aggregate ESM + core + Chart adapter | 1,141,872 | 314,066 |
+| Aggregate classic entry | 1,128,402 | 310,523 |
+| Aggregate classic + core + Chart adapter | 1,132,907 | 312,492 |
+| Complete aggregate component CSS | 418,612 | 63,150 |
+
+The new aggregate-only JS entry/runtime ceiling is 315,000 gzip bytes per format;
+CSS has a separate 64,000-byte ceiling. Initial provisional 300,000/60,000 gates
+failed and were replaced with these measured new-entry gates, not changes to existing
+component budgets. The complete runtime saves 99,446 ESM / 114,530 classic gzip bytes
+(24.05% / 26.82%) versus selecting the current entire modular catalog.
+This is not a recommendation to load the catalog for a small component selection.
+
+The initial 15-file focused run passes 791/791 tests, including 93 aggregate delivery
+tests. Coverage includes every family's classic mixing in both orders, atomic rejection,
+ESM loading orders/cache identity, namespace/tag completeness, shared core/adapter/root
+identity, source-map boundaries and packed type/asset exports. Ownership-copy tests now
+import isolated passive controllers rather than resetting registered constructor graphs;
+the competing-owner checks remain intact. Discrete fixtures import Message's passive
+owner instead of mixing source registration with their built demo entry.
+
+`node scripts/package-check.mjs` passes 96 JS entries / 2,344 packed files, strict
+NodeNext checking and separate modular/aggregate runtime processes without installed
+ECharts. After the reset correction below, the final three-file Tree Select/aggregate/core
+distribution run passes 106/106. `node scripts/browser-check.mjs --catalog` passes
+588/588 catalog checks and all six engine/layout workflows, including both aggregate
+formats. Final integrated evidence is recorded in S6. The aggregate browser
+fixture uses portable `m-*` controls and real renderer-owned FormData/reset, Data Table
+sorting/reconnect, Dropdown keyboard selection and application-supplied Chart rendering
+in both ESM and classic modes.
+
+### Integrated Tree Select reset correction
+
+The first complete catalog run passed 586/588 checks and exposed a real Chromium
+reset/clear race, not a test timeout to waive. A delayed reset refresh incremented
+the action generation and discarded a newer clear click. A deterministic source
+regression reproduced the failure. Deferred reconciliation now preserves that
+generation; the reset event itself still invalidates older actions. Canceled clears,
+later explicit writes, reverse reset ordering and disconnect protections remain.
+
+Three new source regressions and both distribution formats cover this ordering.
+The four-file Tree Select/Select/Popselect run passes 161/161; the three-file
+distribution rerun passes 106/106. A local Chromium reproducer passes 12 consecutive
+reset/keyboard-clear sequences, followed by the clean 588/588 catalog run.
+Browser failures now retain stack traces and screenshots instead of only messages.
+Commit: `ec9cae4` - `fix: preserve Tree Select actions after native reset`.
+
+Tree Select entries are now 18,285 / 6,299 ESM and 18,824 / 6,534 classic raw/gzip
+bytes; full closures are 31,167 / 11,327 and 32,110 / 11,725. This adds 11/9 gzip
+bytes to its earlier record. CSS and dependencies are unchanged; every existing
+ceiling still passes. S5's measurements above include this correction.
+
+## Final acceptance pending
+
+S0-S5 are complete. The corrected source and final distribution are held stable
+for the S6 integrated suite and packed-consumer rerun. Keep the original S0 baseline
+frozen; completing this plan does not close the independent production-release gates.

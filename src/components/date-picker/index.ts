@@ -12,5 +12,5 @@ export function registerDatePicker(registry: Pick<CustomElementRegistry, "get" |
   ViewElement.register([DatePicker], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(DatePicker.tag)) registerDatePicker()
+if (typeof customElements !== "undefined") registerDatePicker()
 

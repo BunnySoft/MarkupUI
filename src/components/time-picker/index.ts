@@ -11,5 +11,5 @@ export function registerTimePicker(registry: Pick<CustomElementRegistry, "get" |
   ViewElement.register([TimePicker], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(TimePicker.tag)) registerTimePicker()
+if (typeof customElements !== "undefined") registerTimePicker()
 

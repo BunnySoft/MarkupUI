@@ -239,7 +239,8 @@ describe("clear, native events, focus and lifetime", () => {
   it("rejects duplicate binding across module copies and restores owned action/readout state", async () => {
     const { helper, root, first, output, clear } = fixture()
     expect(() => createDatePicker(root)).toThrow("owner")
-    vi.resetModules(); const other = await import("../src/components/date-picker/index.js")
+    const other = await import("../src/components/date-picker/date-picker.js" + "?ownership-copy")
+    expect(other.createDatePicker).not.toBe(createDatePicker)
     expect(() => other.createDatePicker(root)).toThrow("owner")
     helper.setValue("2024-03-01"); helper.disconnect()
     expect(first.value).toBe("2024-03-01"); expect(clear.hidden).toBe(true); expect(output.textContent).toBe("Original output")

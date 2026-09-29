@@ -291,4 +291,4 @@ export function registerAutoComplete(registry: Pick<CustomElementRegistry, "get"
   ViewElement.register([AutoComplete], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(AutoComplete.tag)) registerAutoComplete()
+if (typeof customElements !== "undefined") registerAutoComplete()

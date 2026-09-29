@@ -34,7 +34,44 @@ Dependencies must be explicit. For example, a menu component may need positionin
 but that must not pull in an entire feedback/navigation catalog. Document the required
 files and ordering in the component's API page.
 
-## Shared identity and errors
+## Optional Full Catalog
+
+`@dataengine/markup-ui/all` serves `markup-ui-all.js` with declarations in `all.d.ts`.
+It registers all 89 families / 203 tags and exports namespaces such as `button`,
+`dataTable`, `treeSelect` and `chart`, without export-name collisions. The existing
+root facade `markup-ui.min.js` retains its different purpose and name.
+
+```js
+import * as all from "@dataengine/markup-ui/all"
+import "@dataengine/markup-ui/all/style.css"
+const table = new all.dataTable.DataTable()
+```
+
+For direct ESM loading, keep `markup-ui-all.js`, `markup-ui-core.js` and
+`markup-ui-chart-renderer.js` together; imports resolve automatically. Classic loading
+is core, Chart renderer, then `markup-ui-all.global.js`, exposing `MarkupUIAll`.
+The package also exports `./all/classic.js` and `./all/style.css`.
+
+Do not mix the aggregate with selected family entries or a different aggregate copy.
+The full entry preflights every catalog tag before registration; selected entries use
+the same strict `ViewElement.register` conflict checks. Re-importing one ESM URL uses
+the normal module cache. ESM/classic versions are alternatives, not additive.
+Core and Chart engine configuration retain their shared identities. The disjoint
+root foundation, state/query and optional plugins remain separately selected and
+separately accounted; they are not included in `all`.
+
+`markup-ui-all.css` contains all 89 component styles, including their composed base
+styles. Themes/global document styling remain optional separate assets. ECharts
+remains application supplied, with no vendor code/types or automatic engine download.
+Configure it through `all.chart.configureChartEngine(echarts)` when Chart is used.
+
+The final complete measurement is 314,066 ESM / 312,492 classic gzip bytes including
+core and adapter, and 63,150 CSS bytes. The new aggregate-only runtime ceiling is
+315,000 bytes in either format; its CSS ceiling is 64,000. No existing ceiling changes.
+See the final measurements in [the optimization record](10-size-optimization.md).
+The earlier 282.28 KiB diagnostic was not a feature-validated distribution or approved ceiling.
+
+## Shared Identity and Errors
 
 Components in one application must share the same `ViewElement` implementation.
 Do not ship independent runtime copies behind apparently identical imports.
@@ -100,7 +137,7 @@ includes no other component or core copy. Input's manifest accounts for all thre
 the Input ESM/classic ceilings remain 4,000 gzip bytes each, shared native mechanics have
 4,000-byte ceilings, CSS retains 1,800 bytes, and the new combined-runtime ceiling is 7,500.
 The retained `.m-input` CSS skin is also used by unmigrated native controls; do not import
-Input registration just to access their internal helper. The aggregate no longer registers
+Input registration just to access their internal helper. The root facade no longer registers
 legacy `m-input`/`m-textarea` or styles their native fields.
 
 Checkbox imports only core. Classic loading is `markup-ui-core.global.js` then
@@ -343,8 +380,8 @@ S2 unifies Tags through its internal controller and removes the public
 duplicate policy and Web lifecycle hooks. Form examples are entirely `m-*` authored;
 Form and Button are extra demo selections, not Tags dependencies.
 
-After Input reconciliation, Dynamic Tags measures 10,979/11,125 entry gzip bytes and
-12,402/12,597 including core (ESM/classic); CSS is 1,178 bytes. The initial Tags
+After final registration cleanup, Dynamic Tags measures 10,968/11,112 entry gzip bytes and
+12,391/12,584 including core (ESM/classic); CSS is 1,178 bytes. The initial Tags
 reconciliation added 597/591 JS gzip bytes relative to S1 to close the element's
 capability and portable-configuration gaps. Input's shared-controller corrections
 add another 21/16 bytes. These are not size savings. S0 remains the frozen comparison
@@ -402,10 +439,10 @@ The 10,500-byte entry and 11,000-byte runtime ceilings are unchanged. No additio
 dependency is emitted and neither Date Picker nor Popover registration is imported.
 
 Calendar date validation now round-trips its existing native UTC Gregorian carrier
-without requiring native date-input support. The shared utility also reduces Heatmap's
-entry to 8,041/8,193 gzip bytes (9,464/9,665 with core).
+without requiring native date-input support. At that checkpoint, the shared utility reduced
+Heatmap's entry to 8,041/8,193 gzip bytes (9,464/9,665 with core).
 `buildHeatmap(options)` drops its unused Document argument; no compatibility overload
-is retained. This narrow shared-utility change does not complete Heatmap's S2 work.
+is retained. The subsequent complete Heatmap reconciliation is recorded below.
 
 ## Cascader delivery
 
@@ -456,8 +493,9 @@ registration is required. Typed/JSON options provide full paths, groups, leaf/an
 selection, independent multiple values/defaults and filtering. Mode and path settings
 are changed while disconnected; scalar presentation and data updates remain live.
 
-Entries cost 6,288/6,525 gzip bytes (ESM/classic), or 11,316/11,716 including all
-dependencies. This saves 851/850 JS gzip bytes relative to the Heatmap state.
+Entries cost 6,299/6,534 gzip bytes (ESM/classic), or 11,327/11,725 including all
+dependencies. This saves 840/841 JS gzip bytes relative to the Heatmap state,
+including the integrated reset/clear ordering correction.
 CSS is 802 gzip bytes, down from 840. The 13,000-byte runtime ceiling and all
 per-file ceilings remain unchanged. No new required dependency is introduced.
 

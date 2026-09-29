@@ -64,7 +64,8 @@ describe("native association, static fallback and ownership", () => {
   it("rejects duplicate owners across module copies and releases on disposal", async () => {
     const { helper, input } = fixture()
     expect(() => createAutoComplete(input)).toThrow("owner")
-    vi.resetModules(); const other = await import("../src/components/auto-complete/index.js")
+    const other = await import("../src/components/auto-complete/auto-complete.js" + "?ownership-copy")
+    expect(other.createAutoComplete).not.toBe(createAutoComplete)
     expect(() => other.createAutoComplete(input)).toThrow("owner")
     helper.disconnect(); helpers.push(other.createAutoComplete(input))
   })

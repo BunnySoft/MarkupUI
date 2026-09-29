@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Added optional all-components ESM/classic distributions and complete component CSS.
+  All 89 families keep collision-free namespaces and the existing shared core/Chart
+  adapter identity. ECharts, root foundation and plugins remain separate. Full and
+  selected entries reject incompatible mixing explicitly. New measured aggregate-only
+  gates do not raise any existing per-component ceiling.
+
 - Dropdown now maps portable trigger/item content into stable native actions. `href`,
   `target` and `download` map navigation semantics without native authoring. Native
   adoption remains an explicit Web escape. One element observer owns canonical menu
@@ -21,6 +27,8 @@
   supports single/multiple values, groups, leaf/any policy, filtering, independent
   defaults, missing-default diagnostics and native submission/reset. Reconnect preserves
   controls and surviving options. Native selection/clear events originate from the host.
+  Deferred reset reconciliation no longer discards a later clear action; cancellation,
+  later explicit writes and reverse reset ordering retain their original protections.
 
 - Replaced Heatmap's empty grid renderer with the canonical date/value controller.
   Typed or JSON `data`/`settings` on `m-heatmap` now provide bounded calendar data,
@@ -89,8 +97,8 @@
   Silent `configure`, explicit defaults/reset, bounds and navigation share that owner.
 - Removed native date-input dependence from Calendar's shared Gregorian date parser.
   Heatmap uses the same strict parser, and `buildHeatmap(options)` no longer accepts an
-  unused Document argument. Updated callers without a compatibility overload; Heatmap's
-  separate element/controller reconciliation remains pending. Payload ceilings are unchanged.
+  unused Document argument. Updated callers without a compatibility overload; the complete
+  Heatmap element/controller reconciliation is recorded above. Payload ceilings are unchanged.
 - Fixed Tree controller races: queued selection clicks no longer overwrite newer
   explicit selection writes or interrupt independent lazy loads. Failed loads now
   reject even when failure cleanup also throws, retaining both errors.

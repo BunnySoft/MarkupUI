@@ -17,6 +17,7 @@
       <a href="./">Components</a>
       <a href="#classic">Classic scripts</a>
       <a href="#modules">ES modules</a>
+      <a href="#all">Full catalog</a>
       <a href="#styles">Styles</a>
       <a href="#local">Local demo</a>
     </nav>
@@ -44,6 +45,31 @@ import "@dataengine/markup-ui/avatar/style.css"</code></pre>
       <p>Browser entries register their family automatically. Use one compatible core version
         and one module format per application; do not mix ESM, classic or aggregate copies.</p>
     </section>
+    <section id="all" aria-labelledby="all-heading">
+      <h2 id="all-heading">Optional full catalog</h2>
+      <p>Choose the full entry only when the complete 89-family catalog is wanted.
+        Do not also load selected component entries. The root facade, binding, plugins,
+        themes and application-owned ECharts are separate selections.</p>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-all.css"&gt;
+&lt;script type="module"&gt;
+  import * as all from "./dist/markup-ui-all.js"
+  const table = new all.dataTable.DataTable()
+&lt;/script&gt;</code></pre>
+      <p>ESM imports core and the small Chart adapter automatically. Classic uses this order:</p>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-all.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-chart-renderer.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-all.global.js"&gt;&lt;/script&gt;</code></pre>
+      <p>Classic exposes <code>MarkupUIAll</code>, with the same family namespaces.
+        Configure Chart with <code>MarkupUIAll.chart.configureChartEngine(echarts)</code>
+        only when using Chart. No engine is bundled or downloaded automatically.</p>
+      <pre><code>import * as all from "@dataengine/markup-ui/all"
+import "@dataengine/markup-ui/all/style.css"</code></pre>
+      <p>Full-runtime gzip is gated at 315,000 bytes including core and adapter; complete
+        component CSS has a separate 64,000-byte ceiling. Existing selected-component
+        ceilings are unchanged. Mixing entries fails explicitly; repeated imports of
+        the same ESM URL retain normal module caching.</p>
+    </section>
     <section id="styles" aria-labelledby="styles-heading">
       <h2 id="styles-heading">Styles and composition</h2>
       <p>Component styles are required. Themes, document styling, demo code viewers and API tables
@@ -55,8 +81,8 @@ import "@dataengine/markup-ui/avatar/style.css"</code></pre>
         APIs. Standard examples keep demo layout styles outside the component markup; custom-style
         examples identify their Web-specific styling. Native targets use their own mappings of the
         logical component properties and style resources; this implementation currently targets Web.</p>
-      <p>Use each example's code toggle for its authored markup. Preserve its native controls and
-        required regions. For dynamic content, prepare the complete subtree before connecting it;
+      <p>Use each example's code toggle for its authored markup. Preserve its m-* regions and
+        content; native controls belong to the renderer. For dynamic content, prepare the complete subtree before connecting it;
         see the component's behavior section for update and lifecycle rules.</p>
     </section>
     <section id="local" aria-labelledby="local-heading">

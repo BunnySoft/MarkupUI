@@ -9,5 +9,5 @@ export function registerDynamicTags(registry: Pick<CustomElementRegistry, "get" 
   ViewElement.register([DynamicTags], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(DynamicTags.tag)) registerDynamicTags()
+if (typeof customElements !== "undefined") registerDynamicTags()
 

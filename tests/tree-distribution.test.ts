@@ -86,7 +86,8 @@ describe("Tree selected element delivery", () => {
       expect(manifest.componentPayloads.tree[format].runtimeGzipBytes).toBeLessThanOrEqual(12000)
       for (const family of ["cascader", "tree-select"]) {
         const map = JSON.parse(readFileSync(`dist/markup-ui-${family}${suffix}.map`, "utf8"))
-        expect(map.sources).toContain("../src/components/tree/hierarchy.ts")
+        if (family === "cascader") expect(map.sources).toContain("../src/components/tree/hierarchy.ts")
+        else expect(map.sources).not.toContain("../src/components/tree/hierarchy.ts")
         expect(map.sources).not.toContain("../src/components/tree/tree.ts")
         expect(map.sources).not.toContain("../src/components/tree/tree-element.ts")
       }

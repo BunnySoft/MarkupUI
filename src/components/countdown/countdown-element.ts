@@ -257,4 +257,4 @@ export function registerCountdown(registry: Pick<CustomElementRegistry, "get" | 
   ViewElement.register([Countdown], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(Countdown.tag)) registerCountdown()
+if (typeof customElements !== "undefined") registerCountdown()
