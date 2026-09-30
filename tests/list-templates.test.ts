@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest"
 import { List, ListItem, ListTemplate, registerList } from "../src/components/list/index.js"
 import { Input } from "../src/components/input/index.js"
+import { Card } from "../src/components/card/index.js"
 import { bind, createStore, type Binding } from "../src/state/index.js"
 import { App } from "../src/components/foundation.js"
 import { readFileSync } from "node:fs"
@@ -101,6 +102,28 @@ describe("portable List template", () => {
     field.dispatchEvent(new Event("input", { bubbles: true }))
     expect(state.get("rows.1.name")).toBe("Draft")
     expect(state.get("rows.0.name")).toBe("Beta")
+  })
+
+  it("reuses captured Card chrome and surviving close owners through keyed reorder and rebind", () => {
+    const { list, state } = fixture('<m-list-item><m-card title="Source title" closable data-bind-title="$item.name">Body</m-card></m-list-item>')
+    stop = bind(list, state)
+    const cards = [...list.querySelectorAll<Card>("m-card")]
+    const close = cards.map(card => card.querySelector<HTMLButtonElement>("button[data-part=close]")!)
+    for (const card of cards) {
+      expect(card.querySelectorAll("[data-part=header]")).toHaveLength(1)
+      expect(card.querySelectorAll("[data-part=title]")).toHaveLength(1)
+      expect(card.querySelectorAll("[data-part=content]")).toHaveLength(1)
+      expect(card.querySelectorAll("button[data-part=close]")).toHaveLength(1)
+    }
+    expect(cards.map(card => card.querySelector("[data-part=title]")!.textContent)).toEqual(["Alpha", "Beta"])
+    state.set("rows", [...state.get<{ id: string; name: string }[]>("rows")].reverse())
+    expect([...list.querySelectorAll("m-card")]).toEqual([...cards].reverse())
+    stop()
+    stop = bind(list, state)
+    expect(cards.map(card => card.querySelector("button[data-part=close]"))).toEqual(close)
+    state.set("rows.0.name", "Changed")
+    expect(cards[1]!.querySelector("[data-part=title]")!.textContent).toBe("Changed")
+    for (const card of cards) expect(card.querySelectorAll("button[data-part=close]")).toHaveLength(1)
   })
 
   it("requires an explicit focus policy and can focus the surviving list", () => {

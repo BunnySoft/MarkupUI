@@ -53,7 +53,7 @@ Outstanding acceptance work is tracked in the [release gates](../architecture/09
 | Time Picker | `TimePicker` | [Demo and API](../../demo/components/time-picker.html) |
 | Transfer | `Transfer` | [Demo and API](../../demo/components/transfer.html) |
 | Tree Select | `TreeSelect` | [Demo and API](../../demo/components/tree-select.html) |
-| Upload | `Upload`, `UploadTrigger`, `UploadDragger` | [Demo and API](../../demo/components/upload.html) |
+| Upload | `Upload`, `UploadTrigger`, `UploadDragger`, `UploadFileList` | [Demo and API](../../demo/components/upload.html) |
 
 ## Data Display (20)
 
@@ -67,7 +67,7 @@ Outstanding acceptance work is tracked in the [release gates](../architecture/09
 | Descriptions | `Descriptions`, `DescriptionItem` | [Demo and API](../../demo/components/descriptions.html) |
 | Empty | `Empty`; readable fallback text, optional icons, size variants and adopted regions | [Demo and API](../../demo/components/empty.html) |
 | Image | `Image` and preview/group composition | [Demo and API](../../demo/components/image.html) |
-| List | `List`, `ListItem` | [Demo and API](../../demo/components/list.html) |
+| List | `List`, `ListItem`, `ListTemplate`; authored items or an explicitly store-bound portable item region | [Demo and API](../../demo/components/list.html) |
 | Log | `Log` | [Demo and API](../../demo/components/log.html) |
 | Number Animation | `NumberAnimation` | [Demo and API](../../demo/components/number-animation.html) |
 | Statistic | `Statistic` | [Demo and API](../../demo/components/statistic.html) |

@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { If, registerBox } from "../src/components/box/index.js"
 import { Input } from "../src/components/input/index.js"
+import { Card } from "../src/components/card/index.js"
 import "../src/components/button/index.js"
 import "../src/components/list/index.js"
 import { App } from "../src/components/foundation.js"
@@ -55,6 +56,61 @@ describe("portable conditional content", () => {
     expect(root.querySelector("m-input")).not.toBe(input)
     expect(root.querySelector<Input>("m-input")!.value).toBe("Report")
     expect(region.native.content.children).toHaveLength(1)
+  })
+
+  it.each(["generated", "authored"])("retains one Card header and close owner through captured %s regions", header => {
+    const content = '<m-input aria-label="Title" data-model-value="title" data-model-event="input" data-model-target="native"></m-input>'
+    const { root, store } = fixture(header === "generated"
+      ? `<m-card title="Report" closable>${content}</m-card>`
+      : `<m-card title="Report" closable><m-card-header>Authored heading</m-card-header><m-card-content>${content}</m-card-content></m-card>`)
+    stop = bind(root, store)
+    for (let cycle = 0; cycle < 3; cycle++) {
+      const card = root.querySelector<Card>("m-card")!
+      expect(card).toBeInstanceOf(Card)
+      expect(card.querySelectorAll("[data-part=header]")).toHaveLength(header === "generated" ? 1 : 0)
+      expect(card.querySelectorAll("[data-part=title]")).toHaveLength(header === "generated" ? 1 : 0)
+      expect(card.querySelectorAll("[data-part=content]")).toHaveLength(header === "generated" ? 1 : 0)
+      expect(card.querySelectorAll("button[data-part=close]")).toHaveLength(1)
+      expect(card.querySelectorAll("input")).toHaveLength(1)
+      const close = card.querySelector<HTMLButtonElement>("button[data-part=close]")!
+      const intent = vi.fn()
+      card.addEventListener("m:close", intent)
+      close.click()
+      expect(intent).toHaveBeenCalledOnce()
+      expect(card.isConnected).toBe(true)
+      store.set("visible", false)
+      close.click()
+      expect(intent).toHaveBeenCalledOnce()
+      store.set("visible", true)
+      expect(root.querySelector("m-card")).not.toBe(card)
+    }
+  })
+
+  it("applies initial Card bindings without retaining captured close controls or adopting authored markers", () => {
+    const { root, store } = fixture(`<m-card title="Report" closable data-bind-closable="details">
+      <m-card-header><button type="button" data-part="close">Authored action</button></m-card-header>
+      <div data-part="header">Authored body</div>
+    </m-card>`)
+    store.set("details", false)
+    stop = bind(root, store)
+    const card = root.querySelector<Card>("m-card")!
+    expect(card.closable).toBe(false)
+    expect(card.querySelector("button[data-part=close][data-state~=generated]")).toBeNull()
+    const action = card.querySelector<HTMLButtonElement>("button[data-part=close]")!
+    expect(action.textContent).toBe("Authored action")
+    expect(card.querySelector("div[data-part=header]")?.textContent).toBe("Authored body")
+    expect(card.querySelector("div[data-part=header]")?.parentElement?.getAttribute("data-part")).toBe("content")
+    const intent = vi.fn()
+    card.addEventListener("m:close", intent)
+    action.click()
+    expect(intent).not.toHaveBeenCalled()
+    store.set("details", true)
+    expect(card.querySelectorAll("button[data-part=close][data-state~=generated]")).toHaveLength(1)
+    card.querySelector<HTMLButtonElement>("button[data-state~=generated]")!.click()
+    expect(intent).toHaveBeenCalledOnce()
+    store.set("details", false)
+    expect(card.querySelector("button[data-state~=generated]")).toBeNull()
+    expect(card.querySelector("button[data-part=close]")).toBe(action)
   })
 
   it.each([null, undefined, 0, 1, "", "true", [], {}])("rejects non-Boolean conditions (%j) before removal", value => {

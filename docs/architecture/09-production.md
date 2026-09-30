@@ -135,10 +135,59 @@ not retroactively replace the earlier single-run 1082 ms evidence. Even the impr
 large-list updates are not frame-budget operations. Performance target approval remains
 open; no threshold was invented to declare release acceptance.
 
+September 30 Chromium follow-up added double-animation-frame completion observations
+without replacing the synchronous measurements. Across desktop/mobile-sized layouts and
+ESM/classic delivery, five-repetition median 100-row reorder was 12.7-14.3 ms
+synchronously and 33.0-33.5 ms through the second animation frame. At 1000 rows,
+native-condition reorder was 124.5-137.8 ms synchronously and 148.4-155.6 ms through
+the second frame; portable-condition reorder was 134.1-137.6 ms synchronously and
+153.2-158.9 ms through the second frame. These headless frame observations are not
+physical-device final-presentation measurements and do not establish an approved target.
+
 Chromium performed 30 create/toggle/dispose/remove cycles with 100 rows per cycle at
 each layout, with forced GC before/after. Both runs retained 196 DOM nodes and 45 event
 listeners: delta zero. Used JS heap changed by +15,112 and +3,004 bytes. This is not a
 leak-free guarantee or a measurement of renderer/process memory.
+
+The subsequent September 30 resource matrix covers all three engines, both layouts
+and ESM/classic delivery: 12 configurations with 40 samples each (480 total), five
+repetitions for each native/portable condition and 0/1/100/1000-row combination.
+Each sample retains synchronous mount/reorder/update/rebind/remove timings and adds
+the duration through the second animation-frame callback. The harness validates
+sample cardinality, finite nonnegative durations and frame duration >= synchronous
+duration; it does not impose an unapproved performance threshold.
+
+Ranges of the four layout/delivery configuration medians for 1000-row reorder:
+
+| Engine | Native synchronous | Native second frame | Portable synchronous | Portable second frame |
+| --- | ---: | ---: | ---: | ---: |
+| Chromium | 134.5-177.2 ms | 155.1-199.6 ms | 141.6-147.5 ms | 153.1-173.4 ms |
+| Firefox | 171-179 ms | 227-236 ms | 184-197 ms | 234-269 ms |
+| WebKit | 277-302 ms | 356-379 ms | 291-318 ms | 378-408 ms |
+
+This matrix also samples the CDP-listed processes belonging to its own Chromium
+instance through Windows `Get-Process`: browser, renderer, GPU and network service.
+Working set and private bytes are recorded per process and summed at 0/10/20/30
+100-row create/toggle/dispose/remove cycles, after forced GC. These are post-disposal
+snapshots, not peak live-workload measurements. Lifecycle sampling uses the classic
+setup left by the preceding resource configurations.
+
+| Layout | Final node/listener delta | Used heap delta | Summed working-set delta | Summed private-byte delta |
+| --- | --- | ---: | ---: | ---: |
+| Desktop | 0 / 0 | +18,276 bytes | -1,384,448 bytes | -1,462,272 bytes |
+| Mobile-sized | 0 / 0 | +17,364 bytes | -1,003,520 bytes | -180,224 bytes |
+
+Desktop's intermediate 10-cycle snapshot reported 815 nodes versus 196 at baseline;
+the 20/30-cycle snapshots returned to 196. All snapshots reported 45 listeners.
+This intermediate observation is retained rather than hidden or labeled leak-free.
+Process IDs/types remain in the report so changed process populations are visible.
+Summed working sets can double-count shared pages; process totals include browser
+services and allocations unrelated to binding. Falling totals do not prove absence
+of leaks, and forced GC does not require OS allocators to release memory.
+Firefox/WebKit memory entries explicitly report unavailable; other operating systems,
+peak memory, real-device presentation and production targets remain unaccepted.
+Conditions, plugin, Chart and Box demo checks also passed in this run; it is not a
+new full catalog sweep or a final full-suite/packed-consumer rerun.
 
 Chart samples cover SVG/canvas, 1/100/1000/10000 rows and three repetitions. At 10000
 rows, per-layout/engine medians were: SVG state-ready 342.8-706 ms and synchronous
@@ -199,6 +248,10 @@ Evidence:
 - `.vite/size/first-five-integrity.json`
 - `.vite/package/first-five-results.json`
 - `.vite/browser/first-five-final/acceptance.json` and screenshots
+- `.vite/browser/binding-final-paint/acceptance.json` for the Chromium
+  double-animation-frame follow-up
+- `.vite/browser/binding-resource-matrix-20260930/acceptance.json` for the subsequent
+  three-engine frame observations and Windows Chromium process-memory checkpoints
 - `.vite/browser/first-five-regression/` for the existing browser harness
 - `.vite/browser/first-five/acceptance.json` retains the before-batching comparison;
   `first-five-batching-check` retains the intermediate WebKit confirmation.
@@ -217,6 +270,140 @@ keyboard recovery, zoom/high-contrast inspection and readable Chart alternatives
 The release owner must define representative workload/latency/resource targets and
 obtain an independent security review. Clean remote CI and release authorization were
 not part of these first five tasks and remain open.
+
+### Initial-family Behavior Review
+
+September 30, 2026 UTC, Windows / Node 22.12.0. This is a bounded, family-by-family
+review, not blanket approval of all 89 families or real-device accessibility.
+
+| Family | Bounded result | Still open |
+| --- | --- | --- |
+| Avatar / AvatarGroup | Source/demo review covered defaults, resource fallback, content/name ownership, sizing, overflow, pre-upgrade values and reconnect; 39 existing cases passed, with no confirmed new discrepancy. | Real assistive-technology/device acceptance and formal release approval. |
+| Button / ButtonGroup | Fixed duplicate native owners and icon regions before node adoption; existing single-owner, form, disabled/loading, forwarding, motion and grouping behavior retained. | Real assistive-technology/device acceptance and full release gates. |
+| Card and its six regions | Fixed duplicate captured headers/content/titles/close controls inside portable conditions and ListTemplate; authored markers, keyed identity and documented duplicate-region preservation remain intact. | Remaining family review, real assistive-technology/device acceptance and formal release approval. |
+
+Button previously nested additional direct buttons/anchors inside its selected owner
+and accepted more than one decorative icon region despite the documented maximum.
+Preflight now rejects more than one authored direct button/anchor or icon region
+before moving content or disconnecting its observer. A generated button is excluded
+from the authored-owner count, preserving late adoption of one native control.
+Correction of invalid content permits normal initialization and a single activation;
+no new public API, dependency, runtime entry or generic property engine is introduced.
+
+Seven regressions were first recorded failing: four native-owner combinations and
+three host/native/mixed icon placements. After correction, typecheck/build and the
+Button, Button-distribution, Button-demo, aggregate-distribution, Form and Avatar
+fixtures passed 274/274 cases using two workers. The existing browser harness records
+all seven rejection/node-preservation/recovery cases across three engines and both
+layouts (42 checks); the selected Button catalog page passed 6/6 checks. Existing
+template/root/aggregate/Form/plugin/Chart workflows also ran in that harness.
+This is not a new full catalog sweep or final full-suite/packed-consumer acceptance.
+
+Button-only checkpoint gzip bytes, compared with the saved first-five checkpoint:
+
+| Selection | Previous ESM / classic | Button-only checkpoint ESM / classic |
+| --- | --- | --- |
+| Button entry | 3,836 / 3,920 | 3,933 / 4,014 |
+| Button including core | 5,259 / 5,392 | 5,356 / 5,486 |
+| Aggregate including core/Chart adapter | 315,370 / 313,757 | 315,416 / 313,796 |
+
+Button CSS remains 2,472 gzip bytes. No dependency file or recommendation changed;
+nine existing recommendations warned, including aggregate ESM at 416 bytes over
+its recommendation at this checkpoint. Frozen S0 is unchanged. The size report recorded
+work while it was uncommitted, based on `bffc769`; that historical revision field alone
+does not identify the new runtime. The follow-up commit accompanying the handoff
+identifies the source checkpoint; pushing/publication remain unauthorized.
+
+Card's standalone fixture initially passed 31 cases, but new portable-condition cases
+exposed duplicated generated headers and close controls after source capture. Card
+now adopts only its own marked chrome on a rendered Card host before property replay.
+Private native nodes use `data-part` and the `generated` token in `data-state`, not
+component-prefixed markers or production API metadata. Plain authored markers remain
+application-owned, and an initial bound `closable=false` removes captured close controls.
+The documented preservation of duplicate authored regions is unchanged.
+
+Conditional tests cover generated/authored headers, repeated destroy/recreate, native
+close cleanup and authored-marker preservation; ListTemplate tests cover keyed reorder,
+title updates and stop/rebind with surviving close-control identity. After final marker
+alignment, typecheck/build and ten existing fixtures passed 418/418 cases with two
+workers. Three engines, two layouts, ESM/classic and generated/authored headers passed
+24 configurations / 72 native keyboard-close and focus-return cycles. Actual packed
+consumption passed 96 JS entries / 2,372 files, strict NodeNext and modular/aggregate
+runtime loading without ECharts installed. This is not a final full-suite or full-catalog
+release acceptance.
+
+Final Card entry gzip is 1,961 / 2,052 bytes, including core 3,384 / 3,524
+(ESM / classic), +151 / +150 versus the Button-only checkpoint. CSS remains 2,126.
+Final aggregate including core/Chart adapter is 315,545 / 313,925 bytes. Dependency
+graphs, public exports, recommendations and frozen S0 are unchanged; nine recommendations
+warn, including aggregate ESM at +545 bytes. All 296 measured asset hashes are checked
+by the fresh size report.
+
+The first Card browser run retained an additional 619 nodes at the final desktop
+memory checkpoint, with no added listeners. That report is preserved. The harness now
+also records three fixed second-animation-frame/GC follow-up snapshots without
+overwriting the raw 0/10/20/30-cycle checkpoints. A fresh Chromium follow-up observed
+the same +619-node intermediate count at cycle 20 and baseline again at cycle 30 and
+all follow-up passes. In the final three-engine run, both Chromium layouts retained
+199 nodes / 47 listeners throughout the checkpoints and follow-up passes, with final
+node/listener deltas zero and used-heap deltas +14,892 / +6,072 bytes. Different fixture
+selections prevent treating earlier baselines as directly comparable. These observations
+do not establish leak freedom or close the production resource/device gate.
+
+Evidence:
+
+- `.vite/size/avatar-contract-20260930.json`
+- `.vite/size/button-contract-initial-20260930.json`
+- `.vite/size/button-contract-regressions-20260930.json`
+- `.vite/size/button-contract-focused-20260930.json`
+- `.vite/size/button-contract-final-20260930.json`
+- `.vite/browser/button-contract-20260930/button-contract-results.json`
+- `.vite/browser/button-contract-20260930/catalog-results.json`
+- `.vite/size/card-contract-20260930.json`
+- `.vite/size/card-condition-initial-20260930.json`
+- `.vite/size/card-source-focused-20260930.json`
+- `.vite/size/initial-family-contract-verified-20260930.json`
+- `.vite/size/initial-family-contract-verified-20260930-size.json`
+- `.vite/browser/card-contract-20260930/acceptance.json` preserves the +619-node result
+- `.vite/browser/card-contract-memory-followup-20260930/acceptance.json`
+- `.vite/browser/initial-family-verified-20260930/acceptance.json`
+- `.vite/package/initial-family-verified-20260930.json`; preceding reports remain in
+  `pre-initial-family-20260930.json` and `pre-card-marker-20260930.json`
+
+### Component Documentation Consistency Follow-up
+
+September 30, 2026 UTC, Windows / Node 22.12.0. Structural checks cover all 89
+selectable families / 205 tags, their directory/demo links, optional root/plugin
+separation and inventory-declared companion names. Inventory now explicitly includes
+ListTemplate and UploadFileList. These checks do not approve all family behavior,
+portable semantics, accessibility or lifecycle contracts.
+
+The API extractor previously used TypeScript symbol documentation, which inherited
+browser DOM descriptions for overridden names. ListItem.prefix was incorrectly
+described as a read-only namespace prefix; Card.title and other title accessors
+received the generic browser tooltip description. The extractor now reads getter
+JSDoc from component source only, preserving declarations inherited from component
+base classes while stopping browser documentation leakage.
+
+The original and corrected extractors were compared over all families in the existing
+build order: 18 incorrect descriptions across 16 families changed; every other API
+field is identical. An initial alphabetically ordered comparison changed TypeScript
+union/enum presentation order, so it was not used as a contract-equivalence result.
+The report preserves that initial failure and the successful build-order comparison.
+Runtime sources, distribution assets, payload recommendations and frozen S0 are unchanged.
+
+The new regression was first reproduced failing in the existing demo-index fixture.
+After the fix, the demo-index, element-directory and native-demo fixtures passed
+195/195 cases using two workers, and typecheck passed. No new test file/project was
+created; existing inherited Input descriptions and source-authored ListTemplate
+descriptions remain covered. This is focused documentation/structure evidence,
+not a new full-suite, packed-consumer or full browser-catalog acceptance.
+
+Evidence:
+
+- `.vite/size/contract-docs-initial-20260930.json`
+- `.vite/size/component-contract-focused-20260930.json`
+- `.vite/size/component-contract-api-20260930.json`
 
 ### Scoped Action Checkpoint
 
@@ -922,6 +1109,9 @@ independently and define the next work, not unfinished optimization tasks.
    implemented; broader resource acceptance remains pending. Scoped actions now read
    through the explicit live binding. Define representative workload/latency/resource
    targets and complete final-paint and process-memory/device measurements.
+   September 30 evidence adds three-engine second-animation-frame observations and
+   Windows Chromium post-disposal process snapshots, not final physical presentation,
+   peak-memory or cross-engine/platform resource approval.
    Generic portable conditions are implemented, not the next missing feature;
    do not silently mark broader acceptance complete.
    The [structural delivery plan](../binding/05-delivery-plan.md) records the

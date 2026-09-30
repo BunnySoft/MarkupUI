@@ -28,6 +28,7 @@ export class Card extends ViewElement {
   public connectedCallback(): void {
     if (!this.upgraded) {
       this.upgraded = true
+      if (this.dataset.part === "card") this.adoptCapturedChrome()
       this.upgradeProperties()
     }
     this.dataset.part = "card"
@@ -76,6 +77,14 @@ export class Card extends ViewElement {
       element instanceof HTMLElement && element !== except && element.localName === `m-card-${name}`)
   }
 
+  private adoptCapturedChrome(): void {
+    this.generatedHeader = this.querySelector<HTMLElement>(":scope > div[data-part=header][data-state~=generated]") ?? undefined
+    this.generatedContent = this.querySelector<HTMLElement>(":scope > div[data-part=content][data-state~=generated]") ?? undefined
+    this.generatedTitle = this.generatedHeader?.querySelector<HTMLSpanElement>(":scope > span[data-part=title][data-state~=generated]") ?? undefined
+    const header = this.region("header") ?? this.generatedHeader
+    this.closeButton = header?.querySelector<HTMLButtonElement>(":scope > button[data-part=close][data-state~=generated]") ?? undefined
+  }
+
   private synchronize(): void {
     this.observer?.disconnect()
     if (this.generatedHeader?.parentNode !== this) this.generatedHeader = undefined
@@ -86,6 +95,7 @@ export class Card extends ViewElement {
     if (!header && (this.title || this.closable || extras.length)) {
       header = this.ownerDocument.createElement("div")
       header.dataset.part = "header"
+      header.dataset.state = "generated"
       this.generatedHeader = header
       const cover = this.region("cover")
       if (cover) cover.after(header)
@@ -101,6 +111,7 @@ export class Card extends ViewElement {
       if (!this.generatedTitle) {
         this.generatedTitle = this.ownerDocument.createElement("span")
         this.generatedTitle.dataset.part = "title"
+        this.generatedTitle.dataset.state = "generated"
       }
       if (this.generatedTitle.textContent !== this.title) this.generatedTitle.textContent = this.title
       if (this.generatedTitle.parentNode !== header) header.prepend(this.generatedTitle)
@@ -116,6 +127,7 @@ export class Card extends ViewElement {
         this.closeButton = this.ownerDocument.createElement("button")
         this.closeButton.type = "button"
         this.closeButton.dataset.part = "close"
+        this.closeButton.dataset.state = "generated"
         const icon = this.ownerDocument.createElement("span")
         icon.setAttribute("aria-hidden", "true")
         this.closeButton.append(icon)
@@ -149,6 +161,7 @@ export class Card extends ViewElement {
       if (!content) {
         content = this.ownerDocument.createElement("div")
         content.dataset.part = "content"
+        content.dataset.state = "generated"
         this.generatedContent = content
         this.insertBefore(content, this.region("footer") ?? this.region("action") ?? null)
       }

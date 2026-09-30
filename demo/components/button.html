@@ -514,6 +514,10 @@
         <code>variant</code>, <code>type="text"</code>, and overlapping appearance/shape
         boolean switches are not aliases. Use <code>appearance="text"</code> instead.</p>
       <h3>Names and icons</h3>
+      <p>Author at most one direct native button or anchor and one decorative icon region.
+        Multiple native owners or icon regions are rejected before content is moved.
+        A late authored owner may replace the generated button; it must not be appended
+        beside another authored owner.</p>
       <p>Text normally supplies the accessible name. For an icon-only control, supply
         <code>label</code>, host <code>aria-label</code>/<code>aria-labelledby</code>, or a
         name on the native control. <code>label</code> overrides the host's aria-label;

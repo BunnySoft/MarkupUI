@@ -199,9 +199,14 @@ export class Button extends ViewElement {
     void this.bordered
     void this.formMethod
     void this.formEnctype
+    const authoredControls = [...this.querySelectorAll<Control>(":scope > button, :scope > a")]
+      .filter(candidate => candidate !== this.generatedControl)
+    if (authoredControls.length > 1) throw new TypeError("Button accepts at most one native button or anchor.")
+    if (this.querySelectorAll(":scope > [data-part=icon], :scope > button > [data-part=icon], :scope > a > [data-part=icon]").length > 1) {
+      throw new TypeError("Button accepts at most one icon region.")
+    }
     this.observer?.disconnect()
-    let control = [...this.querySelectorAll<Control>(":scope > button, :scope > a")]
-      .find(candidate => candidate !== this.generatedControl)
+    let control = authoredControls[0]
       ?? this.querySelector<Control>(":scope > button")
     if (!control) {
       control = this.ownerDocument.createElement("button")

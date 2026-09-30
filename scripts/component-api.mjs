@@ -103,7 +103,8 @@ export async function generateComponentApi(root, families) {
         : helper?.expression.name.text === "booleanAttribute" ? "boolean" : null,
       values, min: null, max: null, exclusiveMin: false, integer: tags(getter, "integer").length > 0,
     }
-    const description = ts.displayPartsToString(checker.getSymbolAtLocation(getter.name)?.getDocumentationComment(checker))
+    const description = ts.getJSDocCommentsAndTags(getter).filter(ts.isJSDoc)
+      .map(doc => ts.getTextOfJSDocComment(doc.comment)).filter(Boolean).join("\n\n")
     if (description) result.description = description
     if (writable && helper) {
       const method = helper.expression.name.text

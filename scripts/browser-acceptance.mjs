@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import { spawn } from "node:child_process"
+import { execFileSync, spawn } from "node:child_process"
 import { mkdir, writeFile } from "node:fs/promises"
 import { resolve } from "node:path"
 import { cpus, totalmem, platform, release } from "node:os"
@@ -12,11 +12,14 @@ await mkdir(output, { recursive: true })
 const server = spawn(process.execPath, ["demo/server.mjs"], {
   env: { ...process.env, PORT: "0" }, windowsHide: true, stdio: ["ignore", "pipe", "pipe"],
 })
-const results = { date: new Date().toISOString(), conditions: [], resources: [], plugins: [], charts: [], memory: [],
+const results = { date: new Date().toISOString(), conditions: [], cards: [], resources: [], plugins: [], charts: [], memory: [],
   environment: { node: process.version, platform: platform(), release: release(), cpu: cpus()[0]?.model, logicalCpus: cpus().length, memoryBytes: totalmem() },
   versions: {},
   limits: ["No real IME, device, screen reader or browser-zoom acceptance.",
     "Synthetic timing and forced-GC observations are not production approval.",
+    "Binding paint timings use two animation frames in headless browsers; they are not physical-device presentation measurements.",
+    "OS process-memory sampling covers CDP-listed processes of this Chromium instance on Windows only; summed working sets can double-count shared pages.",
+    "Process memory includes the browser, renderer, GPU and services, not only binding allocations; forced GC does not guarantee release of OS allocations.",
     "Chart timings measure state-ready and synchronous refresh, not completed progressive rendering or final paint."] }
 const save = () => writeFile(resolve(output, "acceptance.json"), JSON.stringify(results, null, 2))
 
@@ -24,7 +27,7 @@ async function conditions(page, origin, mode, browser, layout) {
   const url = `${origin}/demo/acceptance-${mode}.html`
   await page.route(url, route => route.fulfill({ contentType: "text/html", body: `<!doctype html>
     <html lang="en"><head><meta name="viewport" content="width=device-width"><title>Conditional report</title>
-    ${["box", "input", "button", "form", "list"].map(name => `<link rel="stylesheet" href="/dist/markup-ui-${name}.css">`).join("")}
+    ${["box", "input", "button", "card", "form", "list"].map(name => `<link rel="stylesheet" href="/dist/markup-ui-${name}.css">`).join("")}
     <style>body{font:16px system-ui;margin:16px;color:#222;background:white}m-input{max-width:100%}input{max-width:100%;box-sizing:border-box}</style></head><body>
     <m-box id="workspace" display="flex" direction="column" gap="12">
       <m-form><m-button id="return">Close editor</m-button>
@@ -42,14 +45,14 @@ async function conditions(page, origin, mode, browser, layout) {
     </m-box></body></html>` }))
   await page.goto(url)
   if (mode === "classic") {
-    for (const name of ["core", "state", "box", "native-input", "input", "button", "form", "list"]) {
+    for (const name of ["core", "state", "box", "native-input", "input", "button", "card", "form", "list"]) {
       await page.addScriptTag({ url: `${origin}/dist/markup-ui-${name}.global.js` })
     }
     await page.addScriptTag({ url: `${origin}/dist/markup-ui.global.js` })
     await page.evaluate(() => { window.acceptState = MarkupUIState; window.acceptApi = m })
   } else await page.evaluate(async () => {
     window.acceptState = await import("/dist/markup-ui-state.js")
-    for (const name of ["box", "input", "button", "form", "list"]) await import(`/dist/markup-ui-${name}.js`)
+    for (const name of ["box", "input", "button", "card", "form", "list"]) await import(`/dist/markup-ui-${name}.js`)
     window.acceptApi = (await import("/dist/markup-ui.min.js")).m
   })
   await page.evaluate(() => {
@@ -120,11 +123,77 @@ async function conditions(page, origin, mode, browser, layout) {
   results.conditions.push({ browser, layout, mode, profiles, status: "passed" })
 }
 
+async function cardConditions(page, browser, layout, mode) {
+  for (const header of ["generated", "authored"]) {
+    try {
+      await page.evaluate(header => {
+        const root = document.createElement("m-box")
+        root.id = "card-capture-check"
+        root.innerHTML = `<m-button id="card-return">Return to Card</m-button>
+          <m-if data-if="visible" focus-target="card-return">
+            <m-card title="Source title" closable close-label="Close captured Card"
+              data-bind-title="title" data-bind-closable="allowClose">
+              ${header === "authored" ? "<m-card-header>Authored heading</m-card-header><m-card-content>Body</m-card-content>" : "Body"}
+            </m-card>
+          </m-if>`
+        document.body.append(root)
+        window.cardStore = acceptState.createStore({ visible: true, title: "Bound title", allowClose: false })
+        window.cardCloseCalls = 0
+        root.addEventListener("m:close", event => {
+          if (event.target.localName !== "m-card") throw new Error("Foreign Card close owner")
+          window.cardCloseCalls++
+          cardStore.set("visible", false)
+        })
+        window.cardBinding = acceptState.bind(root, cardStore)
+      }, header)
+      const root = page.locator("#card-capture-check")
+      for (let cycle = 0; cycle < 3; cycle++) {
+        const card = root.locator("m-card")
+        assert.deepEqual(await card.evaluate(card => ({
+          title: card.title,
+          headers: card.querySelectorAll("[data-part=header]").length,
+          titles: card.querySelectorAll("[data-part=title]").length,
+          content: card.querySelectorAll("[data-part=content]").length,
+          closes: card.querySelectorAll("button[data-part=close]").length,
+        })), { title: "Bound title", headers: header === "generated" ? 1 : 0,
+          titles: header === "generated" ? 1 : 0, content: header === "generated" ? 1 : 0, closes: 0 })
+        await page.evaluate(() => cardStore.set("allowClose", true))
+        const close = root.getByRole("button", { name: "Close captured Card", exact: true })
+        assert.equal(await close.count(), 1)
+        await close.focus()
+        await close.press(cycle % 2 ? "Space" : "Enter")
+        assert.equal(await root.locator("m-card").count(), 0)
+        assert.equal(await page.evaluate(() => cardCloseCalls), cycle + 1)
+        assert(await root.getByRole("button", { name: "Return to Card", exact: true }).evaluate(button => button === document.activeElement))
+        await page.evaluate(() => {
+          cardStore.set("allowClose", false)
+          cardStore.set("visible", true)
+        })
+      }
+      results.cards.push({ browser, layout, mode, header, cycles: 3, status: "passed" })
+    } finally {
+      await page.evaluate(() => {
+        window.cardBinding?.()
+        document.getElementById("card-capture-check")?.remove()
+        delete window.cardBinding
+        delete window.cardStore
+        delete window.cardCloseCalls
+      })
+    }
+  }
+}
+
 async function resources(page, browser, layout, mode) {
   const samples = await page.evaluate(async () => {
     document.getElementById("workspace").remove()
     const samples = []
-    const measure = action => { const start = performance.now(); action(); return performance.now() - start }
+    const measure = async action => {
+      const start = performance.now()
+      action()
+      const sync = performance.now() - start
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+      return { sync, paint: performance.now() - start }
+    }
     for (const portable of [false, true]) for (const count of [0, 1, 100, 1000]) {
       for (let repetition = 0; repetition < 5; repetition++) {
         const root = document.createElement("div")
@@ -136,54 +205,124 @@ async function resources(page, browser, layout, mode) {
         const store = acceptState.createStore({ rows: Array.from({ length: count }, (_, id) => ({ id, editable: true, field: `field-${id}`, name: `Row ${id}` })) })
         document.body.append(root)
         let stop
-        const mount = measure(() => { stop = acceptState.bind(root, store) })
+        const mount = await measure(() => { stop = acceptState.bind(root, store) })
         const input = root.querySelector("input")
-        const reorder = measure(() => store.set("rows", [...store.get("rows")].reverse()))
+        const reorder = await measure(() => store.set("rows", [...store.get("rows")].reverse()))
         if (input && root.querySelectorAll("input")[count - 1] !== input) throw new Error("Resource fixture lost identity")
-        const update = measure(() => { if (count) store.set("rows.0.name", "Updated") })
-        const rebind = measure(() => { stop(); stop = acceptState.bind(root, store) })
-        const remove = measure(() => store.set("rows", []))
+        const update = await measure(() => { if (count) store.set("rows.0.name", "Updated") })
+        const rebind = await measure(() => { stop(); stop = acceptState.bind(root, store) })
+        const remove = await measure(() => store.set("rows", []))
         if (root.querySelector("input")) throw new Error("Resource fixture retained removed instances")
         stop()
         root.remove()
-        samples.push({ portable, count, repetition, mount, reorder, update, rebind, remove })
+        samples.push({ portable, count, repetition,
+          mount: mount.sync, mountPaint: mount.paint,
+          reorder: reorder.sync, reorderPaint: reorder.paint,
+          update: update.sync, updatePaint: update.paint,
+          rebind: rebind.sync, rebindPaint: rebind.paint,
+          remove: remove.sync, removePaint: remove.paint })
         await new Promise(resolve => setTimeout(resolve, 0))
       }
     }
     return samples
   })
-  results.resources.push({ browser, layout, mode, unit: "ms", samples })
+  assert.equal(samples.length, 40)
+  for (const portable of [false, true]) for (const count of [0, 1, 100, 1000]) {
+    const group = samples.filter(sample => sample.portable === portable && sample.count === count)
+    assert.deepEqual(group.map(sample => sample.repetition), [0, 1, 2, 3, 4])
+    for (const sample of group) for (const operation of ["mount", "reorder", "update", "rebind", "remove"]) {
+      assert(Number.isFinite(sample[operation]) && sample[operation] >= 0, `Invalid ${operation} timing`)
+      assert(Number.isFinite(sample[`${operation}Paint`]) && sample[`${operation}Paint`] >= sample[operation],
+        `Invalid ${operation} frame observation`)
+    }
+  }
+  results.resources.push({ browser, layout, mode, unit: "ms",
+    timing: { synchronous: "Action invocation through return",
+      paint: "Action invocation through the second requestAnimationFrame callback; not verified final presentation" },
+    samples })
+}
+
+async function processMemory(session) {
+  if (!session) return { status: "unavailable", reason: "OS process-memory sampling requires Windows and Chromium CDP." }
+  const { processInfo } = await session.send("SystemInfo.getProcessInfo")
+  assert(processInfo.length > 0, "Chromium returned no processes")
+  const ids = processInfo.map(info => info.id)
+  assert(ids.every(id => Number.isSafeInteger(id) && id > 0), "Invalid Chromium process ID")
+  assert.equal(new Set(ids).size, ids.length, "Duplicate Chromium process ID")
+  const command = `$ErrorActionPreference = 'Stop'; @(Get-Process -Id ${ids.join(",")} | Select-Object Id,WorkingSet64,PrivateMemorySize64) | ConvertTo-Json -Compress`
+  const sampledAt = new Date().toISOString()
+  const counters = JSON.parse(execFileSync("powershell.exe", ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", command],
+    { encoding: "utf8", windowsHide: true, timeout: 15000 }))
+  const readings = Array.isArray(counters) ? counters : [counters]
+  assert.equal(readings.length, ids.length, "Missing Chromium process-memory readings")
+  const processes = processInfo.map(({ id, type }) => {
+    const reading = readings.find(reading => reading.Id === id)
+    assert(reading, `Missing memory reading for Chromium process ${id}`)
+    assert(Number.isSafeInteger(reading.WorkingSet64) && reading.WorkingSet64 >= 0, `Invalid working set for ${id}`)
+    assert(Number.isSafeInteger(reading.PrivateMemorySize64) && reading.PrivateMemorySize64 >= 0, `Invalid private memory for ${id}`)
+    return { id, type, workingSetBytes: reading.WorkingSet64, privateBytes: reading.PrivateMemorySize64 }
+  })
+  return { status: "measured", sampledAt, unit: "bytes", processes,
+    workingSetBytes: processes.reduce((total, process) => total + process.workingSetBytes, 0),
+    privateBytes: processes.reduce((total, process) => total + process.privateBytes, 0) }
 }
 
 async function memory(page, context, browser, layout) {
-  if (browser !== "chromium") return
+  if (browser !== "chromium") {
+    results.memory.push({ browser, layout, status: "unavailable",
+      reason: "Forced-GC DOM/heap and OS process-memory sampling require Chromium CDP." })
+    return
+  }
   const cdp = await context.newCDPSession(page)
+  let processSession
   try {
-    await cdp.send("HeapProfiler.collectGarbage")
-    const before = await cdp.send("Memory.getDOMCounters")
-    const heapBefore = await cdp.send("Runtime.getHeapUsage")
-    await page.evaluate(async () => {
-      for (let cycle = 0; cycle < 30; cycle++) {
-        const root = document.createElement("div")
-        root.innerHTML = '<m-if data-if="visible"><div><template data-each="rows" data-each-key="id"><input data-model-value="$item.name" data-model-event="input"></template></div></m-if>'
-        const store = acceptState.createStore({ visible: true, rows: Array.from({ length: 100 }, (_, id) => ({ id, name: "Memory" })) })
-        document.body.append(root)
-        const stop = acceptState.bind(root, store)
-        store.set("visible", false)
-        store.set("visible", true)
-        stop()
-        root.remove()
-        await new Promise(resolve => setTimeout(resolve, 0))
-      }
-    })
-    await cdp.send("HeapProfiler.collectGarbage")
-    const after = await cdp.send("Memory.getDOMCounters")
-    const heapAfter = await cdp.send("Runtime.getHeapUsage")
-    results.memory.push({ browser, layout, cycles: 30, rows: 100, before, after,
+    if (platform() === "win32") processSession = await context.browser().newBrowserCDPSession()
+    const snapshot = async () => {
+      await cdp.send("HeapProfiler.collectGarbage")
+      const dom = await cdp.send("Memory.getDOMCounters")
+      const heap = await cdp.send("Runtime.getHeapUsage")
+      return { dom, heap, processMemory: await processMemory(processSession) }
+    }
+    const checkpoints = []
+    for (let cycles = 0; cycles <= 30; cycles += 10) {
+      if (cycles) await page.evaluate(async () => {
+        for (let cycle = 0; cycle < 10; cycle++) {
+          const root = document.createElement("div")
+          root.innerHTML = '<m-if data-if="visible"><div><template data-each="rows" data-each-key="id"><input data-model-value="$item.name" data-model-event="input"></template></div></m-if>'
+          const store = acceptState.createStore({ visible: true, rows: Array.from({ length: 100 }, (_, id) => ({ id, name: "Memory" })) })
+          document.body.append(root)
+          const stop = acceptState.bind(root, store)
+          store.set("visible", false)
+          store.set("visible", true)
+          stop()
+          root.remove()
+          await new Promise(resolve => setTimeout(resolve, 0))
+        }
+      })
+      checkpoints.push({ cycles, ...await snapshot() })
+    }
+    const settling = []
+    for (let pass = 1; pass <= 3; pass++) {
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+      settling.push({ pass, ...await snapshot() })
+    }
+    const { dom: before, heap: heapBefore, processMemory: processBefore } = checkpoints[0]
+    const { dom: after, heap: heapAfter, processMemory: processAfter } = checkpoints[3]
+    const final = settling[2]
+    results.memory.push({ browser, layout, status: "measured", mode: "classic", cycles: 30, rows: 100, before, after, checkpoints, settling,
       delta: { nodes: after.nodes - before.nodes, listeners: after.jsEventListeners - before.jsEventListeners,
         usedHeap: heapAfter.usedSize - heapBefore.usedSize },
-      note: "Forced-GC synthetic observation; no process-memory or leak-free guarantee." })
-  } finally { await cdp.detach() }
+      settledDelta: { nodes: final.dom.nodes - before.nodes, listeners: final.dom.jsEventListeners - before.jsEventListeners,
+        usedHeap: final.heap.usedSize - heapBefore.usedSize },
+      processDelta: processBefore.status === "measured" ? {
+        workingSetBytes: processAfter.workingSetBytes - processBefore.workingSetBytes,
+        privateBytes: processAfter.privateBytes - processBefore.privateBytes,
+      } : { status: "unavailable", reason: processBefore.reason },
+      note: "Raw forced-GC checkpoints and three fixed post-frame/GC samples are retained. Process counts/shared pages may change. No leak-free or production-acceptance guarantee." })
+  } finally {
+    try { if (processSession) await processSession.detach() }
+    finally { await cdp.detach() }
+  }
 }
 
 async function plugins(page, origin, browser, layout) {
@@ -294,9 +433,10 @@ try {
           page.on("pageerror", error => errors.push(error.stack ?? error.message))
           for (const mode of ["esm", "classic"]) {
             await conditions(page, origin, mode, name, layout)
+            await cardConditions(page, name, layout, mode)
             await resources(page, name, layout, mode)
             await save()
-            console.log(`${name}/${layout}/${mode}: conditions and resource samples passed`)
+            console.log(`${name}/${layout}/${mode}: conditions, Card capture and resource samples passed`)
           }
           await memory(page, context, name, layout)
           await plugins(page, origin, name, layout)

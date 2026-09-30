@@ -60,6 +60,23 @@ afterEach(() => {
 })
 
 describe("metadata-based component documentation", () => {
+  it("uses component source descriptions instead of inherited DOM documentation for overrides", async () => {
+    const [cardDocs, listDocs] = await generateComponentApi(resolve("."), ["card", "list"])
+    const card = cardDocs.elements.find((element: { type: string }) => element.type === "Card")
+    const item = listDocs.elements.find((element: { type: string }) => element.type === "ListItem")
+    const template = listDocs.elements.find((element: { type: string }) => element.type === "ListTemplate")
+    expect(card.properties.title).toMatchObject({ writable: true, attribute: "title", default: "" })
+    expect(card.properties.title).not.toHaveProperty("description")
+    expect(item.properties.prefix).toMatchObject({ writable: true, attribute: "prefix", default: null })
+    expect(item.properties.prefix).not.toHaveProperty("description")
+    expect(template.properties.label.description).toBe("Accessible name of the generated list, not of the inert source.")
+    const target = document.createElement("div")
+    renderComponentApi(target, [...cardDocs.elements, ...listDocs.elements])
+    expect(target.textContent).not.toContain("namespace prefix")
+    expect(target.textContent).not.toContain("HTMLElement.title")
+    expect(target.textContent).toContain("Accessible name of the generated list")
+  })
+
   it("extracts Tag properties, events and checkable/closable features without inventing runtime metadata", async () => {
     const [docs] = await generateComponentApi(resolve("."), ["tag"])
     expect(docs.elements).toHaveLength(1)

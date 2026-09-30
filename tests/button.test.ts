@@ -483,6 +483,52 @@ describe("standalone Button", () => {
     expect(native.textContent).toBe("ActionLate appended")
   })
 
+  it.each(["button button", "button a", "a button", "a a"])("rejects multiple native owners before moving authored nodes: %s", names => {
+    const element = document.createElement("m-button") as Button
+    const controls = names.split(" ").map(name => {
+      const control = document.createElement(name)
+      control.textContent = "Action"
+      return control
+    })
+    element.append(...controls)
+    expect(() => element.connectedCallback()).toThrow("Button accepts at most one native button or anchor.")
+    expect([...element.children]).toEqual(controls)
+    expect(element.control).toBeNull()
+    controls[1]!.remove()
+    document.body.append(element)
+    expect(element.control).toBe(controls[0])
+    const click = vi.fn((event: Event) => event.preventDefault())
+    element.addEventListener("click", click)
+    element.click()
+    expect(click).toHaveBeenCalledOnce()
+  })
+
+  it.each(["host", "native", "mixed"])("rejects multiple icon regions before moving authored nodes: %s", placement => {
+    const element = document.createElement("m-button") as Button
+    const control = document.createElement("button")
+    control.type = "button"
+    control.textContent = "Save"
+    const icons = [document.createElement("span"), document.createElementNS("http://www.w3.org/2000/svg", "svg")]
+    icons.forEach(icon => icon.setAttribute("data-part", "icon"))
+    element.append(control)
+    if (placement === "native") control.append(...icons)
+    else if (placement === "mixed") {
+      control.append(icons[0]!)
+      element.append(icons[1]!)
+    } else element.append(...icons)
+    const children = [...element.children]
+    const content = [...control.childNodes]
+    expect(() => element.connectedCallback()).toThrow("Button accepts at most one icon region.")
+    expect([...element.children]).toEqual(children)
+    expect([...control.childNodes]).toEqual(content)
+    expect(element.control).toBeNull()
+    icons[1]!.remove()
+    document.body.append(element)
+    expect(element.control).toBe(control)
+    expect(control.querySelector("[data-part=icon]")).toBe(icons[0])
+    expect(element.querySelectorAll("[data-part=icon]")).toHaveLength(1)
+  })
+
   it("preserves native default submit, validation, submitter and form data semantics", () => {
     const element = button('<form><input name="title" required><m-button type="primary"><button name="action" value="save">Save</button></m-button></form>')
     const form = document.querySelector("form")!

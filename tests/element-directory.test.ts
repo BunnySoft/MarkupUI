@@ -6,11 +6,25 @@ import { advancedElementNames } from "../src/plugins/advanced.js"
 import { widgetElementNames } from "../src/plugins/widgets.js"
 
 const directory = readFileSync(resolve("docs/elements/05-element-index.md"), "utf8")
+const inventory = readFileSync(resolve("docs/elements/03-inventory.md"), "utf8")
 const apiFiles = readdirSync(resolve("demo/api")).filter(file => file.endsWith(".json")).sort()
 const rows = [...directory.matchAll(/^\| \[([a-z-]+)\]\(([^)]+)\) \| ([^|]+) \|$/gm)]
 const tags = (text: string): string[] => [...text.matchAll(/`(m-[a-z-]+)`/g)].map(match => match[1]!)
 
 describe("public element directory", () => {
+  it("keeps inventory families and declared companion names aligned with generated source", () => {
+    const inventoryRows = [...inventory.matchAll(/^\| [^|]+ \| ([^|]+) \| \[Demo and API\]\(\.\.\/\.\.\/demo\/components\/([a-z-]+)\.html\)/gm)]
+    expect(inventoryRows.map(row => `${row[2]}.json`).sort()).toEqual(apiFiles)
+    for (const [, scope, family] of inventoryRows) {
+      const api = JSON.parse(readFileSync(resolve("demo/api", `${family}.json`), "utf8"))
+      const names = api.elements.map((element: { type: string }) => element.type)
+      for (const [, name] of scope!.matchAll(/`([A-Z][A-Za-z]+)`/g)) expect(names, family).toContain(name)
+    }
+    for (const [family, companion] of [["list", "ListTemplate"], ["upload", "UploadFileList"]]) {
+      expect(inventoryRows.find(row => row[2] === family)?.[1], family).toContain(`\`${companion}\``)
+    }
+  })
+
   it("lists exactly the source-generated families and their actual tags", () => {
     expect(rows.map(row => `${row[1]}.json`).sort()).toEqual(apiFiles)
     const allTags: string[] = []

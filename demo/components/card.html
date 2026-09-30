@@ -342,6 +342,11 @@
         replaces its generated wrapper and keeps surviving authored nodes and listeners.
         An explicit header takes precedence over the text title. Templates, scripts and styles are
         not adopted as content. Reconnection retains authored state and only reinstalls Card's own listeners.</p>
+      <p>When conditional or repeated sources capture an already-rendered Card, new instances
+        reuse its marked generated wrappers and Close control instead of duplicating them.
+        Plain authored <code>data-part</code> markers are not sufficient to claim generated
+        ownership; <code>data-state="generated"</code> on these internal nodes is a private
+        renderer marker, not an authoring API.</p>
       <h3>Finite segmentation</h3>
       <p><code>segmented</code> enables top separators for content, footer and action.
         Each <code>segmentedContent</code>, <code>segmentedFooter</code> or

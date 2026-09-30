@@ -23,6 +23,7 @@ const listTemplateResults = []
 const sourceResults = []
 const idResults = []
 const actionResults = []
+const buttonContractResults = []
 async function verifyRoot(page, origin, mode, engine, layout) {
   const url = `${origin}/demo/root-${mode}-check.html`
   await page.route(url, route => route.fulfill({
@@ -588,7 +589,45 @@ try {
                 const api = page.locator(`#${slug}-api`)
                 if (await api.count()) await page.waitForFunction(id => document.getElementById(id).classList.contains("component-api"), `${slug}-api`)
                 assert.deepEqual(errors, [])
-                if (slug === "tree") {
+                if (slug === "button") {
+                  const checks = await page.evaluate(() => {
+                    const scenarios = [
+                      ...["button button", "button a", "a button", "a a"].map(names => ({
+                        content: names.split(" ").map(name => `<${name}>Action</${name}>`).join(""),
+                        expected: "Button accepts at most one native button or anchor.",
+                      })),
+                      ...[
+                        '<button type="button">Save</button><span data-part="icon">+</span><svg data-part="icon"></svg>',
+                        '<button type="button">Save<span data-part="icon">+</span><svg data-part="icon"></svg></button>',
+                        '<button type="button">Save<span data-part="icon">+</span></button><svg data-part="icon"></svg>',
+                      ].map(content => ({ content, expected: "Button accepts at most one icon region." })),
+                    ]
+                    return scenarios.map(({ content, expected }) => {
+                      const element = document.createElement("m-button")
+                      element.innerHTML = content
+                      let message
+                      try { element.connectedCallback() }
+                      catch (error) {
+                        if (!(error instanceof TypeError)) throw error
+                        message = error.message
+                      }
+                      const intact = element.innerHTML === content
+                      element.replaceChildren(document.createTextNode("Recovered action"))
+                      document.body.append(element)
+                      try {
+                        let clicks = 0
+                        element.addEventListener("click", event => { event.preventDefault(); clicks++ })
+                        element.click()
+                        return { rejected: message === expected, intact,
+                          recovered: element.control === element.firstElementChild
+                            && element.querySelectorAll("button").length === 1 && clicks === 1 }
+                      } finally { element.remove() }
+                    })
+                  })
+                  assert.deepEqual(checks, Array.from({ length: 7 }, () => ({ rejected: true, intact: true, recovered: true })))
+                  buttonContractResults.push({ browser: name, version: browser.version(), layout, checks })
+                  await writeFile(resolve(output, "button-contract-results.json"), JSON.stringify({ date: new Date().toISOString(), results: buttonContractResults }, null, 2))
+                } else if (slug === "tree") {
                   const selected = page.locator("#selectable-tree")
                   await selected.getByRole("button", { name: "Report.docx", exact: true }).click()
                   await page.waitForFunction(() => document.getElementById("selectable-tree").selectedKeys[0] === "doc-2")

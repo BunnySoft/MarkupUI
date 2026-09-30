@@ -1,13 +1,15 @@
 # MarkupUI session handoff
 
-Snapshot: September 30, 2026, Asia/Shanghai. Verification below was recorded
-September 29, 2026 UTC during the same local session.
+Snapshot: September 30, 2026, Asia/Shanghai. Original checkpoint verification was
+recorded September 29, 2026 UTC; resource, contract-documentation and initial-family
+behavior follow-ups were recorded September 30 UTC.
 Workspace: `D:\repos\MarkupUI`; Windows / PowerShell / Node 22.12.0.
-Base HEAD before this checkpoint commit: `2384748`.
-
-The user authorized updating documentation and committing the accumulated implementation,
-tests, demos and size-policy changes. This handoff accompanies that local commit; use
-`git log -1` for its revision. No push or publication is authorized.
+Base HEAD before the original checkpoint commit: `2384748`.
+Original closing implementation commit: `bffc769`. The user now authorizes one local
+checkpoint commit of the resource/browser harness, API extractor, Button/Card runtime,
+existing fixture and documentation follow-ups, then continuation with Carousel.
+This handoff accompanies that follow-up commit; use `git log -1` for its revision
+immediately after committing. No push, publication or subsequent commit is authorized.
 This snapshot is not architecture authority or production release approval.
 
 ## Start here
@@ -30,8 +32,10 @@ Their remaining release gates are not automatically approved by passing local te
 | Workstream | Completed | Remaining |
 | --- | --- | --- |
 | Portable conditions | Box-owned `If` / `m-if`, nested scopes, strict Boolean paths, exact root-local `focus-target`, models/actions/IDs, cleanup/rebind and demo. | No non-Web renderer or platform-neutral reusable definition is delivered. |
-| Binding performance/resources | Repeated 0/1/100/1000-row measurements, batched fallback moves and Chromium forced-GC lifecycle checks. | Representative workload/latency targets, final-paint and process-memory/device measurements. |
+| Binding performance/resources | Repeated 0/1/100/1000-row measurements, batched fallback moves, three-engine second-frame observations and Windows Chromium post-disposal process-memory snapshots. | Representative workload/latency target approval, real final presentation, peak/cross-engine/platform process-memory and device acceptance. |
 | Retained root/plugin contracts | Bounded review of 15 root and 3 plugin tags; role/Spacer and captured primitive ownership fixes. | Full-family contract approval. |
+| Component documentation consistency | All 89 families / 205 tags structurally checked; 18 DOM-inherited descriptions in 16 families corrected; ListTemplate/UploadFileList inventory updated. | Full semantic, portable, accessibility and lifecycle contract approval is not inferred from these checks. |
+| Initial-family behavior review | Avatar bounded review found no confirmed new discrepancy; Button rejects duplicate native owners/icons; Card reuses captured owned chrome without duplicating titles/close controls. | Remaining 86 families, formal full-family approval and real assistive-technology/device acceptance. |
 | Interaction/accessibility | Three-engine keyboard, labels/forms, focus, synthetic composition, RTL, emulated forced colors and text scaling. | Real devices, screen readers, real IME, actual browser/OS zoom and high contrast. |
 | Security and Chart | Plain-data boundary hardening, stale callback guard, dependency audit, SVG/canvas and engine-inclusive resource measurements. | Independent security review and approved Chart payload/performance targets. |
 | Clean CI | Existing Windows/Linux/macOS x Node 22/24 workflow configuration retained. | Actual clean matrix results for the committed revision. |
@@ -58,6 +62,11 @@ and failures, rather than being repeated here as current status.
 - Box `native-content.ts` and `primitives.ts`: adopt captured native shells/summary
   rather than nesting labels or disclosures. An actual browser label-click failure
   drove this fix; preserve the regression.
+- Card `card.ts`: adopts captured chrome only on a rendered Card host with owner-scoped
+  `data-part` / `data-state="generated"` markers, before property replay. Plain authored
+  markers remain application-owned; bound `closable=false` removes captured controls.
+- Button `button.ts`: preflights one authored native button/anchor and one icon region,
+  excluding its own generated control so late native adoption still works.
 - `src/actions/index.ts`: typed `m-arg-*` reads from an explicit live binding.
   Literal `m-param-*`, nested event ownership, sync/async errors and App initialization
   cleanup are covered. Actions remain in the optional root facade.
@@ -98,10 +107,89 @@ The first full run passed 5446/5447 because the old root CSS hash rejected the i
 Spacer rule. The corrected test asserts that exact rule and checks all remaining CSS
 against the original hash; the final full rerun above passed. Preserve initial failures.
 
-This closing documentation pass does not change runtime/build/test code or rerun the
-full suite/browser matrix. It verified 301 local links/anchors across 22 changed Markdown
+The original closing documentation pass did not change runtime/build/test code or rerun
+the full suite/browser matrix. It verified 301 local links/anchors across 22 changed Markdown
 files, saved passing test/browser/audit evidence, all 296 current asset hashes, frozen S0
 and `git diff --check` using the repository's normal line-ending settings.
+The resource/documentation follow-ups changed the existing acceptance harness,
+demo-only API extractor, existing fixtures and related documentation, not production
+runtime. The subsequent Button/Card behavior review changes their existing runtime owners,
+demo, browser harness and fixture, then rebuilds distribution assets. These bounded
+checks do not replace the recorded full suite or package checkpoint, and do not add
+a new full catalog acceptance result.
+
+### Initial-family behavior follow-up
+
+Avatar/AvatarGroup source, demo and existing fixture were reviewed for defaults,
+resources, authored content/name ownership, sizing, overflow and lifecycle. Its
+39 existing cases passed with no confirmed new discrepancy in this bounded review.
+
+Button previously nested multiple authored native owners and accepted duplicate icon
+regions. It now rejects both before moving nodes or disconnecting the observer.
+Generated controls are excluded from the authored count, preserving one late native
+owner's adoption. Seven initial failing regressions are saved; corrected content
+recovers normal rendering and single activation. No new API, dependency or entry is added.
+
+Typecheck/build and six existing fixtures passed 274/274 cases with two workers.
+The existing browser harness verified all seven rejection/preservation/recovery
+cases in three engines and both layouts (42 checks), and the selected Button catalog
+page passed 6/6 checks. This does not close real-device or full-family approval.
+
+Button entry gzip is now 3,933 / 4,014 bytes; including core, 5,356 / 5,486 bytes
+(ESM / classic), +97 / +94 versus the saved first-five checkpoint. CSS stays 2,472.
+Aggregate including core/Chart adapter is 315,416 / 313,796 bytes, +46 / +39.
+Dependencies, recommendations and frozen S0 are unchanged; nine recommendations warn.
+The original dependency-size table below remains historical first-five evidence.
+
+Card's original standalone fixture passed 31 cases; two new conditional cases then
+failed because already-rendered source chrome was duplicated. It now adopts only its
+marked generated wrappers/title/close control, with private `data-state="generated"`
+tokens following the existing naming convention. Conditional capture, initial
+`closable=false`, authored-marker protection, keyed ListTemplate reorder and rebind
+are covered without changing the documented duplicate-authored-region policy.
+
+The final marker-aligned run passed typecheck/build and 418/418 cases in ten existing
+fixtures with two workers. Browser coverage passed 24 Card configurations / 72 keyboard
+close/focus-return cycles across three engines, two layouts, both delivery formats and
+generated/authored headers. Packed consumption passed 96 entries / 2,372 files,
+strict NodeNext and modular/aggregate loading without installed ECharts.
+No final full-suite or full catalog acceptance is claimed.
+
+Final Card entry gzip is 1,961 / 2,052; core-inclusive 3,384 / 3,524; CSS 2,126.
+Final aggregate including core/Chart adapter is 315,545 / 313,925 (ESM / classic).
+Graphs, public exports, recommendations and frozen S0 are unchanged; nine recommendations
+warn, including aggregate ESM +545. Fresh size evidence verifies all 296 measured assets.
+
+An initial Card browser run reported +619 desktop nodes after 30 memory cycles,
+without added listeners. Preserve that raw report. The harness adds three fixed
+post-frame/GC snapshots alongside, not instead of, raw checkpoints. A fresh follow-up
+showed the same +619-node count at cycle 20 and baseline again at cycle 30/settling.
+The final run retained 199 nodes / 47 listeners at every checkpoint/pass in both
+Chromium layouts, delta zero; used heap changed by +14,892 / +6,072 bytes.
+These different fixture selections/baselines are not directly interchangeable and
+do not establish leak freedom or close production resource/device approval.
+Next continue the initial catalog with Carousel; 86 families remain unreviewed in
+this bounded per-family pass.
+
+### Component documentation follow-up
+
+September 30 structural checks cover all 89 selectable families / 205 tags, directory
+links, optional root/plugin separation and inventory-declared companions. ListTemplate
+and UploadFileList are now explicit in the inventory. Formal full-family approval
+remains open; production performance and real-device gates are also still pending.
+
+`scripts/component-api.mjs` now reads getter descriptions from component source JSDoc,
+not TypeScript symbol documentation inherited from browser DOM properties. This corrects
+18 misleading title/prefix descriptions in 16 families while retaining descriptions
+declared on component bases. In the existing build order, every other generated API
+field is identical to the original extractor. An initial alphabetically ordered
+comparison changed TypeScript union/enum presentation order; preserve its recorded
+failure rather than treating it as equivalent to the build-order comparison.
+
+The new regression first failed in the existing demo-index fixture. The final
+demo-index/element-directory/native-demo run passed 195/195 cases with two workers,
+and typecheck passed. No new test file/project or runtime/build dependency was added.
+Generated `demo/api` remains ignored build output and must not be edited manually.
 
 ### Resource observations
 
@@ -114,6 +202,35 @@ These large updates still are not frame-budget operations.
 Chromium 30 x 100-row mount/toggle/dispose cycles retained 196 nodes and 45 listeners
 before/after in both layouts; used heap changed by +15,112 / +3,004 bytes after forced GC.
 This does not establish general leak freedom or process-memory acceptance.
+
+The September 30 Chromium follow-up records synchronous and double-animation-frame
+binding timings in `.vite/browser/binding-final-paint/acceptance.json`. Across both
+layouts and ESM/classic delivery, 100-row reorder medians were 12.7-14.3 ms synchronous
+and 33.0-33.5 ms through the second frame. At 1000 rows, native-condition reorder was
+124.5-137.8 / 148.4-155.6 ms and portable-condition reorder was
+134.1-137.6 / 153.2-158.9 ms (synchronous / second frame). These are headless frame
+observations, not physical-device final-presentation acceptance.
+
+The subsequent three-engine matrix records 480 samples (12 engine/layout/delivery
+configurations, 40 samples each) in
+`.vite/browser/binding-resource-matrix-20260930/acceptance.json`. Five repetitions
+cover each native/portable condition and 0/1/100/1000-row combination. At 1000 rows,
+native/portable second-frame reorder medians span 155.1-199.6 / 153.1-173.4 ms in
+Chromium, 227-236 / 234-269 ms in Firefox and 356-379 / 378-408 ms in WebKit.
+All synchronous fields remain available; no production threshold was introduced.
+
+Windows Chromium memory snapshots use only that browser's CDP-listed process IDs,
+with per-process working set/private bytes at 0/10/20/30 post-disposal cycles.
+Final node/listener deltas were zero in both layouts; used heap changed by
++18,276 / +17,364 bytes. Summed working set changed by -1,384,448 / -1,003,520 bytes
+and private bytes by -1,462,272 / -180,224 bytes (desktop / mobile-sized).
+Desktop's 10-cycle snapshot temporarily reported 815 nodes versus 196 at baseline;
+the 20/30-cycle snapshots returned to 196. The intermediate result remains in evidence.
+Lifecycle sampling uses classic delivery. Working sets may double-count shared pages,
+and totals include browser/GPU/network services, not binding alone. Firefox/WebKit
+memory sampling explicitly reports unavailable. These are not peak-memory measurements,
+real-device acceptance or a leak-free guarantee. Existing condition/plugin/Chart/Box
+checks passed across the matrix.
 
 At 10000 Chart rows, SVG state-ready medians were 342.8-706 ms and synchronous refresh
 151.2-292 ms; canvas was 43-222 ms and 24.4-93 ms. These are not final-paint or completed
@@ -148,6 +265,24 @@ Generated evidence is local and ignored, not guaranteed in a fresh checkout:
 - `.vite/size/first-five-{focused,full-tests,final,audit,integrity}.json`
 - `.vite/package/first-five-results.json`
 - `.vite/browser/first-five-final/acceptance.json` and screenshots
+- `.vite/browser/binding-final-paint/acceptance.json` for the initial Chromium follow-up
+- `.vite/browser/binding-resource-matrix-20260930/acceptance.json` for the subsequent
+  three-engine frame observations and Windows Chromium process-memory checkpoints
+- `.vite/size/contract-docs-initial-20260930.json` for the reproduced description failure
+- `.vite/size/component-contract-focused-20260930.json` for the focused documentation run
+- `.vite/size/component-contract-api-20260930.json` for the 89-family extractor comparison
+- `.vite/size/avatar-contract-20260930.json` for the bounded Avatar fixture
+- `.vite/size/button-contract-{initial,regressions,focused,final}-20260930.json`
+- `.vite/browser/button-contract-20260930/button-contract-results.json` for 42 browser
+  rejection/preservation/recovery checks, plus `catalog-results.json` for the selected page
+- `.vite/size/card-contract-20260930.json` and `card-condition-initial-20260930.json`
+- `.vite/size/initial-family-contract-verified-20260930.json`
+- `.vite/size/initial-family-contract-verified-20260930-size.json`
+- `.vite/browser/card-contract-20260930/acceptance.json` retains the initial +619 nodes
+- `.vite/browser/card-contract-memory-followup-20260930/acceptance.json`
+- `.vite/browser/initial-family-verified-20260930/acceptance.json`
+- `.vite/package/initial-family-verified-20260930.json` for final packing; previous results are preserved as
+  `pre-initial-family-20260930.json` and `pre-card-marker-20260930.json`
 - `.vite/browser/first-five-regression/` for the original browser harness
 - `.vite/browser/first-five/acceptance.json` for before-batching measurements
 - `.vite/size/first-five-full-tests-initial.json` and
@@ -155,7 +290,9 @@ Generated evidence is local and ignored, not guaranteed in a fresh checkout:
 
 Reports record pre-commit HEAD `2384748` because the tested implementation was then
 uncommitted. That field is not proof that the old committed revision contains the new
-behavior. The asset hashes and this closing commit identify the implementation checkpoint.
+behavior. September 30 size reports similarly record `bffc769`, the HEAD before the
+follow-up work was committed. Keep those historical fields unchanged; the asset hashes
+and accompanying follow-up commit identify the implementation checkpoint.
 
 Run verification sequentially, choosing fresh output paths to preserve existing evidence:
 

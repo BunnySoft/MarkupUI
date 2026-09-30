@@ -182,6 +182,11 @@ scopes, placement and cleanup. State accesses the ordinary native accessor throu
 type-only import; Box never imports state. `native-content.ts` adopts cloned primitive
 chrome captured by a template so Label and Details retain one native semantic owner.
 
+Card's existing `card.ts` owner similarly adopts captured headers, content, titles and
+close controls before replaying properties. Adoption requires a rendered Card host and
+owner-scoped `data-part` / `data-state="generated"` markers; plain authored `data-part`
+nodes are not claimed. Binding still owns instances, not Card's native chrome.
+
 Dynamic Tags' element in `dynamic-tags/dynamic-tags-element.ts` now owns only direct
 properties and native renderer construction. Its internal `dynamic-tags.ts` owns tag
 policy, draft transactions, events and lifecycle; it delegates collection mutation to
