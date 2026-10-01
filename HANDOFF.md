@@ -1,16 +1,190 @@
 # MarkupUI session handoff
 
-Snapshot: September 30, 2026, Asia/Shanghai. Original checkpoint verification was
+Snapshot: October 1, 2026, Asia/Shanghai. Original checkpoint verification was
 recorded September 29, 2026 UTC; resource, contract-documentation and initial-family
 behavior follow-ups were recorded September 30 UTC.
 Workspace: `D:\repos\MarkupUI`; Windows / PowerShell / Node 22.12.0.
 Base HEAD before the original checkpoint commit: `2384748`.
-Original closing implementation commit: `bffc769`. The user now authorizes one local
-checkpoint commit of the resource/browser harness, API extractor, Button/Card runtime,
-existing fixture and documentation follow-ups, then continuation with Carousel.
-This handoff accompanies that follow-up commit; use `git log -1` for its revision
-immediately after committing. No push, publication or subsequent commit is authorized.
+Original closing implementation commit: `bffc769`. The requested resource/API/Button/Card
+follow-up checkpoint was committed locally as `abbd4a7`, without pushing. The subsequent
+Carousel review/fix, canonical owner unification, shared presentation correction and
+October 1 NumberAnimation/TreeSelect/Chart fixes are included in the subsequently
+authorized local closing commit. Pre-closing HEAD was abbd4a7.
+On October 1 the user explicitly requested "commit if you have fixed or complted".
+This authorizes committing the completed work locally, not pushing, publication or
+release approval. Earlier no-new-commit statements below refer to their historical
+verification checkpoints, before this explicit authorization.
 This snapshot is not architecture authority or production release approval.
+
+## Current focus
+
+User direction remains functionality and coherent API/architecture first. On October 1
+the user explicitly resumed the entire remaining task list and selected library-functional
+acceptance, not production workload/performance, real-device or publication approval.
+The confirmed library-functional backlog completed 127 tasks including five follow-ups.
+The user's subsequent local-release-gates selection added three gate tasks and one
+consumer correction, now also complete: 131 tasks at the pre-commit verification checkpoint.
+All 89 families have separate bounded source/demo/existing-fixture review records.
+These finite reviews do not approve every contract or constitute an all-catalog dynamic sweep.
+Implementation keeps one concrete behavior owner, existing source areas, selected loading
+and the optional aggregate; no generic controller/provider/property engine was introduced.
+
+### October 1 all-task closure
+
+The remaining family reviews were completed in three synchronous read-only groups plus
+the main session, reusing current implementation evidence where available. Missing old
+agent reports were not counted as completed evidence. Initial Avatar/Button/Card/Carousel
+results and the later family reports are retained individually in the session ledger.
+Coverage gaps were recorded as unverified, not mislabeled as functional defects.
+Image's configured src versus actual fallback URL and Thing's private-marker reassignment
+candidates were excluded against the current contract and existing fixtures.
+
+NumberAnimation's stale pause/reconnect accounting was reproduced. The user selected
+explicit replay/resume: play always starts from from; resume continues a paused run;
+reconnect starts anew; idle pause is a no-op. Source, existing demo controls/API and the
+existing fixture are updated, with 107 cases passing. Generated API lists play, pause,
+resume and reset. No compatibility alias or new animation framework was added.
+
+TreeSelect's detached multiple value/default arrays and Chart's encode/direct-series
+arrays previously skipped sparse holes during some-based preflight. Three initial
+failures are retained in `.vite/size/catalog-sparse-preflight-initial-20261001.json`.
+Both owners now inspect every array entry before mutation. Related existing fixtures
+passed 45 TreeSelect and 64 Chart cases; native/configuration identity and accepted
+values/defaults remain unchanged. No new test file/project was created.
+
+| Final library-functional evidence | Result |
+| --- | --- |
+| Type/build/API | TypeScript and full current distribution/API rebuild passed. |
+| Changed/direct-consumer fixtures | 384 cases in 10 existing files, four workers; `.vite/size/all-task-final-integrated-20261001.json`. Not a full-suite claim. |
+| Actual packed consumer | 96 JS entries / 2,384 files; strict NodeNext and modular/optional-aggregate consumers passed, without installed ECharts. Current `.vite/package/results.json`; prior report retained as `before-all-task-closure-20261001.json`. |
+| Existing browser workflows | Chromium 153.0.8010.12, Firefox 155.0, WebKit 26.6; desktop/mobile-sized layouts; template/ListTemplate/source/paired-ID/scoped-action matrices each contain 12 ESM/classic runs, plus six Chart/Form/plugin/root/aggregate/HTML-policy workflow runs. |
+| Changed demo | NumberAnimation page passed six engine/layout checks, not an 89-page catalog sweep. |
+| Browser evidence | `.vite/browser/all-task-functional-20261001/` retains results and screenshots without replacing prior checkpoints. |
+| Payload policy | Aggregate complete runtime 333,023 / 331,539 gzip bytes (ESM/classic); the 315,000 recommendation warns, not a reason to remove behavior. Other overages remain recorded in the manifest. |
+| Git / S0 | Git configuration/newline policy and frozen S0 unchanged. At this verification checkpoint no new commit/push/publication had occurred; the later local commit is explicitly authorized above. |
+
+The user-confirmed scope decision closes the former scope/workflow blockers for this
+library-functional task list. Real devices, screen readers, actual IME/OS settings,
+production performance, independent security review, clean remote CI and publication
+remain separate release boundaries, not approvals inferred from this completion.
+The checkpoints below retain their historical scope and measurements.
+
+### Subsequent local release gates
+
+The user separately selected local-release-gates after the 127-task closure. The first
+full suite passed 5,752 of 5,753 cases, with one stale Slider demo consumer assertion:
+it assumed four m-slider elements with authored native inputs. The approved demo has
+five portable single/range elements whose renderer creates controls, plus a separate
+native-Web interoperability section. The existing native-demo fixture now checks those
+two contracts separately, including each native label/output association. Runtime and
+demo features were not changed; no new test file was created.
+
+The two relevant existing fixtures passed 198 cases. The second full suite then passed
+5,754 cases in 153 files with four workers, no failures or pending tests, in 171.41 seconds.
+Initial failure and verified full-suite JSON remain separate:
+`.vite/size/local-release-full-suite-20261001.json` and
+`.vite/size/local-release-full-suite-verified-20261001.json`.
+Focused evidence: `.vite/size/local-release-slider-consumer-20261001.json`.
+
+The seven direct development dependency specifiers/resolved versions agree between
+package.json, pnpm-lock.yaml and the installed tree; mandatory runtime dependencies
+remain zero. No install or lockfile change was made. The existing size reporter verified
+296 shipped runtime/CSS measurements, JS hashes/metafiles, byte/gzip totals and dependency
+closures. Sixty-one recommendation overages remain advisory and recorded; recommendations
+and frozen S0 were not changed. The seven changed Markdown files had 171 inline local
+target/active-anchor checks with no failures. External links and archived anchors were
+not checked; this is not a whole-documentation semantic approval or dependency security audit.
+Evidence: `.vite/size/local-release-integrity-20261001.json` and
+`.vite/size/local-release-consistency-20261001.json`.
+
+Current packed-consumer evidence was reused because runtime/package outputs did not
+change in this gate follow-up. These results apply to this Windows / Node 22.12.0 checkout;
+clean installations on other supported Node/OS combinations and independent security,
+device/accessibility and publication gates remain open. HEAD was abbd4a7 during verification.
+The user first asked about commit status, then explicitly authorized the local closing
+commit recorded above. No push or publication is authorized.
+
+The owner-unification implementation now also covers TimePicker, InputOTP, Mention,
+AutoComplete, Rate and Slider in their existing source areas. Their public elements
+map typed configuration/native structure to the existing owner, not a second editing
+model. Live/default/dirty state, empty values, schema changes, events, forms and reconnect
+are explicitly documented in each current demo/source API. Initial public/factory
+event/value differences are reconciled without old event aliases or a generic base.
+Type/declaration/API and focused existing fixtures were verified per bounded sample;
+TimePicker 105, InputOTP 98, Mention 100, AutoComplete 108, Rate/style 60 plus three
+Form caller cases and Slider 74 were reported by implementation agents. Several initially
+used isolated `.vite/*-validation` builds. The combined worktree subsequently passed
+typecheck, a full distribution/API rebuild and 17 existing changed/direct-consumer
+fixtures (1,054 cases, four workers); `.vite/size/api-owner-integrated-20260930.json`
+records that finite integration run. It was not the full suite/catalog or performance
+matrix. Build recommendation overages remain advisory; Git and S0 are unchanged.
+
+DatePicker and ColorPicker initially returned real feature-contract blockers without
+source edits. The user then explicitly selected retain-full for both; those blockers
+are now implemented, not silently reduced to their previous native subsets.
+DatePicker preserves all seven public modes and native week/ranges through its existing
+owner. Year is integer 1..9999; quarter is YYYY-Q1..Q4 (0001..9999). Native date strings
+and range tuples include empty endpoints; invalid user drafts expose null plus
+state.draft/badInput, while invalid program writes fail before host/native mutation.
+Value is live, defaults/markup are reset configuration, range markup is JSON tuple
+without old comma/slash aliases, and initialized schema changes use explicit configure.
+Format remains an honest hint, not a fabricated formatting engine.
+
+ColorPicker retains real HEX/RGB/HSL/alpha behavior through the same owner using native
+fallback controls independent of browser color-picker alpha support. Its string value
+is empty, opaque lowercase hex or canonical rgba; formattedValue is the selected mode
+representation. Bounded HEX6/8 and comma-form RGB(A)/HSL(A) parsing rejects unsupported/
+out-of-range values before mutation; documented RGB/HSL/alpha rounding is explicit.
+Defaults, drafts/dirty, canonical FormData, required/readonly/disabled, reset, identity
+and lifecycle are retained. Local model/native utilities do not form a generic framework.
+
+After both full-feature implementations, combined TypeScript/build and 19 existing
+changed/direct-consumer fixtures passed 1,301 cases with four workers:
+`.vite/size/retain-full-api-integrated-20260930.json`. Agents also performed single-page
+functional browser checks, not performance or full multi-engine acceptance.
+All runtime recommendation/S0/Git policies remain unchanged, with measured overages
+reported rather than deleting features. No subsequent commit/push/publication occurred.
+
+The bounded canonical API consumer closure is also complete. The central API index
+now describes these nine current contracts instead of superseded formatting/value/
+event summaries. The existing packed-consumer harness exercises their typed values,
+defaults, schemas and selected native-owner behavior from an offline-installed package.
+Strict NodeNext declarations and both modular/optional-aggregate runtime consumers
+passed with 96 JS entries and 2,384 packed files, without installed ECharts:
+`.vite/package/results.json`. The preceding package report is retained in
+`.vite/package/before-canonical-consumer-20261001.json`.
+Two initial harness failures were corrected in the consumer, not hidden by runtime
+changes: Mention uses prefix (not prefixes), and OTP completion requires a native
+incomplete-to-complete edit, not an input event after a silent complete write.
+The three existing API-index/element-directory/aggregate fixtures passed 165 cases:
+`.vite/size/canonical-api-consumer-20261001.json`. No new test file/project was added.
+This completes the currently confirmed bounded architecture implementation/delivery
+work; the deferred all-family audit, workload, device and release gates stay deferred.
+
+Candidate outcomes: DynamicInput custom names are retained (titles[]/notes[], no default
+items[] override); the candidate is excluded with an existing-fixture regression.
+FloatButton/Group markup enum synchronization now reports errors through the existing
+Custom Element error channel rather than an empty catch, preserving last valid rendering
+and recovery; existing fixture coverage confirms it. Collapse's two API candidates are
+confirmed and fixed: already-rendered clones adopt their marked details/summary/arrow
+and public regions through the same owner, retaining captured expansion and explicit
+expanded/default-key precedence. Sparse key arrays fail before state mutation.
+The existing targeted cases and an actual Chromium page cover native exclusivity,
+key activation, disabled focus, cancellation, focus recovery and reconnect.
+No shared template engine or new test file was created.
+
+Shared presentation is now a separate API channel: `viewStyle` writes only inline CSS
+and reads a detached inline-style snapshot. It never rewrites same-named component
+attributes (for example Carousel direction/gap). Box maps only changed layout attributes,
+including detached writes, and reconnect does not overwrite later styles. Shared
+source-declared presentation properties now participate in pre-upgrade replay without
+walking DOM-library accessors. No new markup vocabulary or runtime entry is introduced.
+The initial regression report retains 11 failures; final type/build and seven existing
+related fixtures pass 287 cases. Broad performance/full-catalog/human gates remain deferred.
+Evidence: `.vite/size/view-style-boundary-{initial,focused,verified,final,size}-20260930.json`.
+Core gzip is 1,571 / 1,622; Transfer including this corrected core is now
+10,339 / 10,536 (ESM / classic). Original recommendations/S0/Git policy are unchanged;
+new recommendation overages warn rather than causing behavior cuts or artificial splitting.
 
 ## Start here
 
@@ -35,11 +209,37 @@ Their remaining release gates are not automatically approved by passing local te
 | Binding performance/resources | Repeated 0/1/100/1000-row measurements, batched fallback moves, three-engine second-frame observations and Windows Chromium post-disposal process-memory snapshots. | Representative workload/latency target approval, real final presentation, peak/cross-engine/platform process-memory and device acceptance. |
 | Retained root/plugin contracts | Bounded review of 15 root and 3 plugin tags; role/Spacer and captured primitive ownership fixes. | Full-family contract approval. |
 | Component documentation consistency | All 89 families / 205 tags structurally checked; 18 DOM-inherited descriptions in 16 families corrected; ListTemplate/UploadFileList inventory updated. | Full semantic, portable, accessibility and lifecycle contract approval is not inferred from these checks. |
-| Initial-family behavior review | Avatar bounded review found no confirmed new discrepancy; Button rejects duplicate native owners/icons; Card reuses captured owned chrome without duplicating titles/close controls. | Remaining 86 families, formal full-family approval and real assistive-technology/device acceptance. |
+| Initial-family behavior review | Avatar bounded review found no confirmed new discrepancy; Button/Card ownership fixed; Carousel now cancels unsafe automatic targets before scrolling. | Remaining 85 families, formal full-family approval and real assistive-technology/device acceptance. |
 | Interaction/accessibility | Three-engine keyboard, labels/forms, focus, synthetic composition, RTL, emulated forced colors and text scaling. | Real devices, screen readers, real IME, actual browser/OS zoom and high contrast. |
 | Security and Chart | Plain-data boundary hardening, stale callback guard, dependency audit, SVG/canvas and engine-inclusive resource measurements. | Independent security review and approved Chart payload/performance targets. |
 | Clean CI | Existing Windows/Linux/macOS x Node 22/24 workflow configuration retained. | Actual clean matrix results for the committed revision. |
 | Release | Current scope, evidence and limitations documented. | Remaining gates, final rerun and explicit release authorization. |
+
+### Transfer architecture implementation
+
+`transfer-element.ts` no longer implements separate movement/filtering or an options
+button-list mode. It projects typed data to one native fieldset and delegates the
+existing `transfer.ts` owner. The explicit `createTransfer` Web entry is retained
+and shares the same rules. `value` always denotes target members; staged highlights,
+locks, order, default/reset, missing defaults, required validity, FormData and native
+disabled/form semantics remain available. Surviving options and the owner/defaults
+survive data updates and reconnect.
+
+New public typed capabilities expose that owner through `defaultValue`, `name`,
+`required`, `state`, Web-only `native`, reset/filter/staging/appendTo methods.
+Membership name changes need disconnect. Value assignment is silent; public movement
+methods retain `m:change`, native accepted clicks are asynchronous, and highlights
+emit `m:stage`. Disabled uses native fieldset inheritance without erasing authored
+individual disables. Direct callers/demo code have been updated, without compatibility
+shims or new runtime entries.
+
+Initial reports preserve four outdated expectation failures and an added-await
+non-async caller transform failure. Final typecheck/build and five existing related
+fixtures passed 239 cases; one real Chromium Transfer-demo smoke checked the functional
+closure. This was not a performance run or full browser/suite matrix.
+Transfer runtime including core is 10,190 / 10,387 gzip bytes, CSS 1,217;
+the unchanged 10,000 recommendation warns at +190 / +387. Frozen S0/Git settings are
+unchanged. No new test file/project was created; no subsequent commit or push is made.
 
 There is no pending generic-condition implementation task. Portable ListTemplate,
 reusable Web sources, paired IDs and scoped actions are also implemented.
@@ -168,8 +368,36 @@ The final run retained 199 nodes / 47 listeners at every checkpoint/pass in both
 Chromium layouts, delta zero; used heap changed by +14,892 / +6,072 bytes.
 These different fixture selections/baselines are not directly interchangeable and
 do not establish leak freedom or close production resource/device approval.
-Next continue the initial catalog with Carousel; 86 families remain unreviewed in
-this bounded per-family pass.
+These three-family changes are in `abbd4a7`. Carousel is covered in the subsequent
+uncommitted follow-up below; 85 families remain unreviewed in this bounded pass.
+
+### Carousel safety follow-up
+
+Four initial regressions reproduced unwanted completion of pending automatic moves
+after disabling autoplay, activating reduced motion, hiding the rotation control
+during reconfiguration, or disabling looping at the final item. The existing controller
+now rechecks its pause conditions before an automatic scroll, using its existing
+cancellation path. Manual pending moves and quiet nearest-item settling remain intact;
+no public API, dependency, entry or wrapper layer is added.
+
+The Carousel fixture passed 83 cases and the focused Carousel/demo-index/aggregate
+run passed 244 cases with two workers after typecheck/build. Focused browsers passed
+12 configurations / 60 cases across three engines, two layouts and ESM/classic.
+Native scrolling and media emulation are real; media cases suppress scrollend only
+to exercise the supported debounce path. Initial broad browser assertions incorrectly
+required unchanged final indices and could miss a pending transition. Keep those
+failures and raw diagnostics; nearest-item changes are legitimate, not a forced
+automatic completion.
+
+Use `node scripts/browser-check.mjs --carousel-only --browser=chromium` (or firefox /
+webkit) with a fresh output directory. Do not repeat unrelated full browser workflows
+for this bounded check. No new full-suite, packed-consumer or full catalog result is claimed.
+
+Carousel core-inclusive gzip is 8,337 / 8,449 bytes, +17 / +13 versus the saved
+`abbd4a7` checkpoint; CSS stays 1,059. Aggregate is 315,557 / 313,939.
+Graphs/exports/recommendations/S0 are unchanged; aggregate ESM warns at +557 bytes.
+These Carousel changes are not committed or pushed. Next initial-catalog family is
+Collapse; production scope/resource/device/security/CI/release gates remain open.
 
 ### Component documentation follow-up
 
@@ -283,6 +511,11 @@ Generated evidence is local and ignored, not guaranteed in a fresh checkout:
 - `.vite/browser/initial-family-verified-20260930/acceptance.json`
 - `.vite/package/initial-family-verified-20260930.json` for final packing; previous results are preserved as
   `pre-initial-family-20260930.json` and `pre-card-marker-20260930.json`
+- `.vite/size/carousel-{autoplay-initial,autoplay-focused,contract-final,contract-size}-20260930.json`
+- `.vite/size/transfer-owner-{initial,focused,final,final-retry,verified,verified-size}-20260930.json`
+- `.vite/browser/carousel-contract-20260930/catalog-results.json` retains initial browser failures
+- `.vite/browser/carousel-focused-diagnostic-20260930/carousel-contract-results.json`
+- `.vite/browser/carousel-focused-{chromium,firefox,webkit}-20260930/carousel-contract-results.json`
 - `.vite/browser/first-five-regression/` for the original browser harness
 - `.vite/browser/first-five/acceptance.json` for before-batching measurements
 - `.vite/size/first-five-full-tests-initial.json` and

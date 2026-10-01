@@ -11,6 +11,8 @@ const selectedBrowser = process.argv.find(arg => arg.startsWith("--browser="))?.
 if (selectedBrowser) assert(Object.hasOwn(engines, selectedBrowser), `Unknown browser: ${selectedBrowser}`)
 const selectedPage = process.argv.find(arg => arg.startsWith("--page="))?.slice("--page=".length)
 if (selectedPage) assert(components.some(component => component.slug === selectedPage), `Unknown page: ${selectedPage}`)
+const carouselOnly = process.argv.includes("--carousel-only")
+if (carouselOnly) assert(!selectedPage || selectedPage === "carousel", "--carousel-only cannot select another page")
 const output = resolve(process.argv.find(arg => arg.startsWith("--output="))?.slice("--output=".length) ?? ".vite/browser")
 await mkdir(output, { recursive: true })
 const server = spawn(process.execPath, ["demo/server.mjs"], {
@@ -24,6 +26,154 @@ const sourceResults = []
 const idResults = []
 const actionResults = []
 const buttonContractResults = []
+const carouselContractResults = []
+
+async function verifyCarousel(context, origin, engine, layout) {
+  const page = await context.newPage()
+  const errors = []
+  let activeRun
+  const save = () => writeFile(resolve(output, "carousel-contract-results.json"), JSON.stringify({ date: new Date().toISOString(), results: carouselContractResults }, null, 2))
+  page.on("pageerror", error => errors.push(error.stack ?? error.message))
+  try {
+    await page.emulateMedia({ reducedMotion: "no-preference" })
+    for (const mode of ["esm", "classic"]) {
+      const url = `${origin}/demo/carousel-contract-${mode}.html`
+      await page.route(url, route => route.fulfill({ contentType: "text/html", body: `<!doctype html>
+        <html lang="en" data-m-theme="light"><head><meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="/dist/markup-ui-carousel.css">
+        <style>body{font:16px system-ui;margin:16px}</style><title>Carousel safety</title></head><body></body></html>` }))
+      await page.goto(url)
+      if (mode === "classic") {
+        await page.addScriptTag({ url: `${origin}/dist/markup-ui-core.global.js` })
+        await page.addScriptTag({ url: `${origin}/dist/markup-ui-carousel.global.js` })
+      } else await page.evaluate(() => import("/dist/markup-ui-carousel.js"))
+      const samples = []
+      activeRun = { browser: engine, layout, mode, status: "running", samples }
+      carouselContractResults.push(activeRun)
+      for (const kind of ["autoplay-off", "reduced-motion", "hidden-control", "loop-boundary", "manual-reduced-motion"]) {
+        await page.emulateMedia({ reducedMotion: "no-preference" })
+        await page.mouse.move(0, 0)
+        try {
+          await page.evaluate(kind => {
+            const root = document.createElement("m-carousel")
+            root.setAttribute("aria-label", "Safety sample")
+            root.style.cssText = "inline-size:4000px;--m-carousel-height:80px"
+            root.autoplay = kind !== "manual-reduced-motion"
+            root.interval = 1000
+            if (kind === "loop-boundary") root.currentIndex = 2
+            root.innerHTML = `<m-carousel-viewport id="contract-viewport" tabindex="0" aria-label="Safety slides">
+              <m-carousel-item>First</m-carousel-item><m-carousel-item>Second</m-carousel-item><m-carousel-item>Third</m-carousel-item>
+              </m-carousel-viewport><m-carousel-controls hidden>
+              <button type="button" data-part="toggle">Rotation</button></m-carousel-controls>
+              <m-carousel-readout>Scroll through slides.</m-carousel-readout>`
+            const viewport = root.querySelector("m-carousel-viewport")
+            const matchMedia = window.matchMedia
+            const media = matchMedia.call(window, "(prefers-reduced-motion: reduce)")
+            const state = window.carouselCase = { root, viewport, events: [], moves: [], started: false, completed: false, inAction: false }
+            const capture = () => {
+              const position = viewport.scrollLeft
+              const start = root.items[0].offsetLeft
+              const points = root.items.map(item => item.offsetLeft - start)
+              const nearest = points.reduce((best, point, index) =>
+                Math.abs(point - position) < Math.abs(points[best] - position) ? index : best, 0)
+              return { index: root.currentIndex, target: root.state.targetIndex,
+                position, nearest, reasons: [...root.state.pauseReasons] }
+            }
+            const begin = () => { state.before = capture(); state.inAction = true }
+            const changed = () => {
+              if (media.matches && kind.includes("reduced-motion")) {
+                begin()
+                state.mediaChanged = true
+              }
+            }
+            media.addEventListener("change", changed)
+            // Exercise the documented debounce path while native scrolling/media remain real.
+            const holdScrollend = event => {
+              if (kind.includes("reduced-motion") && !state.mediaChanged) event.stopImmediatePropagation()
+            }
+            viewport.addEventListener("scrollend", holdScrollend, { capture: true })
+            root.addEventListener("m:current-changed", event => state.events.push({
+              index: event.detail.index, previousIndex: event.detail.previousIndex, reason: event.detail.reason,
+              reduced: media.matches, inAction: state.inAction,
+            }))
+            const nativeScroll = viewport.scrollTo.bind(viewport)
+            viewport.scrollTo = options => {
+              if (state.inAction) state.moves.push({ left: options.left, behavior: options.behavior,
+                position: viewport.scrollLeft, reduced: media.matches, index: root.currentIndex, target: root.state.targetIndex })
+              nativeScroll(options)
+              if (options.behavior !== "smooth" || state.started) return
+              state.started = true
+              state.startedSample = capture()
+              if (kind.includes("reduced-motion")) return
+              queueMicrotask(() => {
+                begin()
+                if (kind === "autoplay-off") root.autoplay = false
+                else if (kind === "hidden-control") {
+                  root.querySelector('[data-part="toggle"]').style.display = "none"
+                  root.gap = 20
+                } else root.loop = false
+                state.completed = true
+              })
+            }
+            // Share a real query object solely to observe its native event before the controller.
+            window.matchMedia = query => query === "(prefers-reduced-motion: reduce)" ? media : matchMedia.call(window, query)
+            try { document.body.append(root) }
+            finally { window.matchMedia = matchMedia }
+            state.capture = capture
+            state.cleanup = () => {
+              root.remove()
+              media.removeEventListener("change", changed)
+              viewport.removeEventListener("scrollend", holdScrollend, { capture: true })
+            }
+            if (kind === "manual-reduced-motion") requestAnimationFrame(() => requestAnimationFrame(() => root.to(2)))
+          }, kind)
+          await page.waitForFunction(() => window.carouselCase.started, undefined, { polling: 10 })
+          if (kind.includes("reduced-motion")) {
+            await page.emulateMedia({ reducedMotion: "reduce" })
+            await page.waitForFunction(() => window.carouselCase.mediaChanged && window.carouselCase.root.state.targetIndex === null)
+          } else await page.waitForFunction(() => window.carouselCase.completed)
+          await page.waitForFunction(() => !window.carouselCase.root.state.pauseReasons.includes("scroll"))
+          const sample = await page.evaluate(kind => {
+            const state = window.carouselCase
+            return { kind, started: state.startedSample, before: state.before, after: state.capture(), events: state.events, moves: state.moves, status: "observed" }
+          }, kind)
+          samples.push(sample)
+          await save()
+          const detail = `${engine}/${layout}/${mode}/${kind}: ${JSON.stringify(sample)}`
+          const manual = kind === "manual-reduced-motion"
+          const initial = kind === "loop-boundary" ? 2 : 0
+          const expectedTarget = manual ? 2 : kind === "loop-boundary" ? 0 : 1
+          assert.equal(sample.before.index, initial, detail)
+          assert.equal(sample.before.target, expectedTarget, detail)
+          assert.equal(sample.after.target, null)
+          if (manual) {
+            assert.equal(sample.after.index, 2)
+            assert.deepEqual(sample.events.map(({ index, previousIndex, reason }) => ({ index, previousIndex, reason })),
+              [{ index: 2, previousIndex: 0, reason: "api" }], detail)
+          } else {
+            assert.equal(sample.after.index, sample.after.nearest, detail)
+            assert.deepEqual(sample.events, [], detail)
+            const pendingMoves = sample.moves.filter(move => move.index === initial && move.target === expectedTarget)
+            assert(pendingMoves.length > 0 && pendingMoves.every(move => move.behavior === "instant"
+              && Math.abs(move.left - move.position) <= 1), `${detail}: forced an unsafe automatic target`)
+          }
+          sample.status = "passed"
+          await save()
+        } finally {
+          await page.evaluate(() => { window.carouselCase?.cleanup(); delete window.carouselCase })
+        }
+      }
+      assert.deepEqual(errors, [])
+      activeRun.status = "passed"
+      await save()
+    }
+  } catch (error) {
+    if (activeRun) { activeRun.status = "failed"; activeRun.failure = String(error.stack ?? error) }
+    await save()
+    throw error
+  } finally { await page.close() }
+}
+
 async function verifyRoot(page, origin, mode, engine, layout) {
   const url = `${origin}/demo/root-${mode}-check.html`
   await page.route(url, route => route.fulfill({
@@ -408,6 +558,11 @@ try {
         const context = await browser.newContext({ viewport, reducedMotion: "reduce" })
         context.setDefaultTimeout(15_000)
         try {
+          if (carouselOnly) {
+            await verifyCarousel(context, origin, name, layout)
+            console.log(`${name}/${layout}: Carousel safety checks passed`)
+            continue
+          }
           const page = await context.newPage()
           const errors = []
           page.on("pageerror", error => errors.push(error.stack ?? error.message))
@@ -627,6 +782,8 @@ try {
                   assert.deepEqual(checks, Array.from({ length: 7 }, () => ({ rejected: true, intact: true, recovered: true })))
                   buttonContractResults.push({ browser: name, version: browser.version(), layout, checks })
                   await writeFile(resolve(output, "button-contract-results.json"), JSON.stringify({ date: new Date().toISOString(), results: buttonContractResults }, null, 2))
+                } else if (slug === "carousel") {
+                  await verifyCarousel(context, origin, name, layout)
                 } else if (slug === "tree") {
                   const selected = page.locator("#selectable-tree")
                   await selected.getByRole("button", { name: "Report.docx", exact: true }).click()

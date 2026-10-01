@@ -13,6 +13,31 @@ Elements must not overwrite unrelated author styles during property updates or r
 When a supported convenience property temporarily owns a style token, removing it restores
 the prior value without erasing later application changes.
 
+## Shared presentation API
+
+`ViewElement.viewStyle` is separate from each component's logical property/attribute
+channel. In the Web renderer, assignment updates only the supplied inline CSS fields;
+it never writes `direction`, `gap`, `width` or other same-named component attributes.
+For example, Carousel's horizontal/vertical direction and slide gap do not change when
+the host receives a row/column presentation direction or CSS gap.
+
+Web getters return a detached complete snapshot of these inline declarations, as
+CSS strings or `null` for absent values. They do not infer presentation from behavior
+attributes, computed styles or theme resources. Numeric lengths map to pixels, including
+fractional values. `wrap: true/false` maps to wrap/nowrap; `null` clears that individual
+style. Assignment is a partial update, not replacement of unrelated author CSS.
+Use the typed `borderRadius` spelling, not a second hyphenated object-key alias.
+Unknown properties, invalid primitive values and nonfinite numbers fail before any
+declaration is applied. There is no generic property engine or new attribute DSL.
+
+Box/Div's existing layout attributes remain their own declared convenience surface.
+An attribute change maps only that declaration, including while detached. Reconnection
+does not replay all attributes over later application style writes. Presentation
+assignment does not rewrite the Box configuration attributes: the most recent explicit
+write to a CSS declaration controls its inline presentation. Shared properties are
+replayed on pre-upgrade through the ordinary `ViewElement` accessors, never DOM-library
+getters or documentation metadata.
+
 The optional root's `m-theme` implements this ownership rule for its inline tokens and
 theme marker: removing/emptying `name` releases owned writes, including restoration of
 prior priorities, while later application writes survive. A new theme name is validated

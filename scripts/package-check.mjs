@@ -40,7 +40,20 @@ await writeFile(resolve(consumer, "types.ts"), entries.map((entry, index) => `im
   + `import { List, ListTemplate } from "@dataengine/markup-ui/list";\n`
   + `const list = new List(); const region = new ListTemplate(); region.focusOnRemove = true; region.label = "Tasks";\n`
   + `const source: HTMLTemplateElement = region.native; const items: readonly import("@dataengine/markup-ui/list").ListItem[] = list.items;\n`
-  + `import { If } from "@dataengine/markup-ui/box"; const condition = new If(); condition.focusTarget = "edit"; const inert: HTMLTemplateElement = condition.native;\n`)
+  + `import { If } from "@dataengine/markup-ui/box"; const condition = new If(); condition.focusTarget = "edit"; const inert: HTMLTemplateElement = condition.native;\n`
+  + `import { Transfer, type TransferOption, type TransferState } from "@dataengine/markup-ui/transfer";\n`
+  + `const transfer = new Transfer(); const transferData: readonly TransferOption[] = [{ value: "a", label: "Alpha" }]; transfer.options = transferData; transfer.value = ["a"]; transfer.defaultValue = ["a"]; transfer.required = true; transfer.name = "members"; const members: readonly string[] = transfer.value; const transferState: TransferState = transfer.state;\n`
+  + `import { TimePicker, type TimePickerState } from "@dataengine/markup-ui/time-picker"; const time = new TimePicker(); time.value = "09:30"; time.defaultValue = "08:00"; const timeText: string = time.value; const timeState: TimePickerState = time.state;\n`
+  + `import { InputOtp, type InputOtpSchema } from "@dataengine/markup-ui/input-otp"; const otp = new InputOtp(); otp.characters = "digits"; otp.value = "1234"; otp.defaultValue = ""; const otpText: string = otp.value; const otpSchema: InputOtpSchema = { length: 4, characters: "digits" };\n`
+  + `import { Mention, type MentionConfiguration } from "@dataengine/markup-ui/mention"; const mention = new Mention(); const mentionSettings: MentionConfiguration = { prefix: ["@"], options: [{ value: "ada", label: "Ada" }] }; mention.configure(mentionSettings); mention.value = "@ada"; const mentionText: string = mention.value;\n`
+  + `import { AutoComplete, type AutoCompleteSuggestion } from "@dataengine/markup-ui/auto-complete"; const auto = new AutoComplete(); const suggestions: readonly AutoCompleteSuggestion[] = [{ value: "Alpha", label: "Alpha" }]; auto.options = suggestions; auto.defaultValue = "Alpha"; auto.value = ""; const autoText: string = auto.value;\n`
+  + `import { Rate } from "@dataengine/markup-ui/rate"; const rate = new Rate(); rate.count = 12; rate.allowHalf = true; rate.value = 3.5; rate.defaultValue = null; const score: number | null = rate.value; const cleared: boolean = rate.clear();\n`
+  + `import { Slider, type SliderValue, type SliderDefaultValue, type SliderStep } from "@dataengine/markup-ui/slider"; const slider = new Slider(); slider.range = true; slider.value = [20, 80]; const sliderValue: SliderValue = slider.value; const sliderDefault: SliderDefaultValue = slider.defaultValue; const sliderStep: SliderStep = "any"; slider.step = sliderStep;\n`
+  + `import { DatePicker, type DatePickerValue, type DatePickerElementConfiguration } from "@dataengine/markup-ui/date-picker"; const date = new DatePicker(); date.type = "year"; date.value = 2026; const dateValue: DatePickerValue | null = date.value; const dateConfiguration: DatePickerElementConfiguration = { type: "quarter", value: "2026-Q4", defaultValue: "" }; date.configure(dateConfiguration);\n`
+  + `import { ColorPicker, type ColorMode, type ColorPickerOptions } from "@dataengine/markup-ui/color-picker"; const color = new ColorPicker(); const colorMode: ColorMode = "hsl"; const colorSettings: ColorPickerOptions = { modes: ["hex", "rgb", colorMode], showAlpha: true, value: "rgba(255, 0, 0, 0.5)" }; color.configure(colorSettings); const colorText: string = color.value; const colorRepresentation: string = color.formattedValue;\n`
+  + `import { NumberAnimation } from "@dataengine/markup-ui/number-animation"; const animation = new NumberAnimation(); animation.play(); animation.pause(); animation.resume(); animation.reset();\n`
+  + `import { TreeSelect, type TreeSelectValue } from "@dataengine/markup-ui/tree-select"; const tree = new TreeSelect(); tree.multiple = true; tree.value = ["a"]; tree.defaultValue = ["a"]; const treeValue: TreeSelectValue = tree.value;\n`
+  + `import { Chart, ChartEncode } from "@dataengine/markup-ui/chart"; const chart = new Chart(); chart.option = { series: [{ type: "pie" }] }; const encode = new ChartEncode(); encode.x = ["month", 0];\n`)
 await writeFile(resolve(consumer, "tsconfig.json"), JSON.stringify({
   compilerOptions: { module: "NodeNext", moduleResolution: "NodeNext", target: "ES2022", lib: ["ES2022", "DOM", "DOM.Iterable"], strict: true, noEmit: true, types: [] },
   files: ["types.ts"],
@@ -83,6 +96,105 @@ assert.equal(typeof chart.configureChartEngine, "function");
 assert.throws(() => chart.configureChartEngine({}), /init/);
 chart.configureChartEngine({ init() { throw new Error("Not rendered by import"); } });
 if (root) assert.equal("MElement" in root, false);
+const errors = [];
+window.addEventListener("error", event => { errors.push(event.error ?? new Error(event.message)); event.preventDefault(); });
+const apiWorkspace = document.createElement("m-box");
+document.body.append(apiWorkspace);
+const mount = (tag, configure) => {
+  const element = document.createElement(tag);
+  configure?.(element);
+  apiWorkspace.append(element);
+  return element;
+};
+const transfer = mount("m-transfer", element => {
+  element.options = [{ value: "a", label: "Alpha" }, { value: "b", label: "Beta" }];
+  element.defaultValue = ["a"];
+});
+let membershipEvents = 0;
+transfer.addEventListener("m:change", () => membershipEvents++);
+transfer.value = ["b"];
+assert.deepEqual(transfer.value, ["b"]);
+assert.equal(transfer.native.querySelector("[data-transfer-target]").options[0].value, "b");
+assert.equal(membershipEvents, 0);
+const transferNative = transfer.native;
+transfer.remove(); apiWorkspace.append(transfer);
+assert.equal(transfer.native, transferNative);
+assert.deepEqual(transfer.defaultValue, ["a"]);
+transfer.reset();
+assert.deepEqual(transfer.value, ["a"]);
+const time = mount("m-time-picker", element => element.setAttribute("value", "09:30"));
+time.value = "10:45";
+assert.equal(time.native.value, "10:45");
+assert.equal(time.defaultValue, "09:30");
+assert.equal(time.getAttribute("value"), "09:30");
+const otp = mount("m-input-otp", element => { element.length = 4; element.characters = "digits"; });
+let complete;
+otp.addEventListener("m:input-otp-complete", event => { complete = event.detail; });
+otp.value = "1234";
+assert.equal(otp.native.value, "1234");
+assert.equal(complete, undefined);
+otp.value = "123";
+otp.native.value = "1234";
+otp.native.dispatchEvent(new Event("input", { bubbles: true }));
+await new Promise(resolve => setTimeout(resolve, 0));
+assert.deepEqual(complete, { length: 4, characters: "digits" });
+const mention = mount("m-mention");
+mention.value = "@ada";
+assert.equal(mention.native.value, "@ada");
+assert.equal(mention.defaultValue, "");
+const auto = mount("m-auto-complete", element => { element.options = ["Alpha", "Beta"]; });
+auto.value = "Alpha";
+assert.equal(auto.native.value, "Alpha");
+assert.equal(auto.defaultValue, "");
+const rate = mount("m-rate", element => { element.count = 12; element.allowHalf = true; element.value = 3.5; });
+assert.equal(rate.value, 3.5);
+assert.equal(rate.native.querySelector('input[type="radio"]:checked').value, "3.5");
+assert.equal(rate.clear(), true);
+assert.equal(rate.value, null);
+const slider = mount("m-slider", element => { element.range = true; element.value = [20, 80]; });
+assert.deepEqual(slider.value, [20, 80]);
+assert.deepEqual(slider.native.map(input => input.valueAsNumber), [20, 80]);
+const year = mount("m-date-picker", element => { element.type = "year"; element.value = 2026; });
+assert.equal(year.value, 2026);
+assert.equal(year.native[0].value, "2026");
+year.configure({ type: "quarter", value: "2026-Q4", defaultValue: "2026-Q1" });
+assert.equal(year.value, "2026-Q4");
+assert.equal(year.native[0].value, "2026-Q4");
+const dateRange = mount("m-date-picker", element => { element.type = "daterange"; element.value = ["2026-10-01", ""]; });
+assert.deepEqual(dateRange.value, ["2026-10-01", ""]);
+assert.equal(dateRange.native.length, 2);
+const color = mount("m-color-picker", element => { element.showAlpha = true; element.value = "rgba(255, 0, 0, 0.5)"; });
+assert.equal(color.value, "rgba(255, 0, 0, 0.5)");
+assert.equal(color.alphaControl.value, "0.5");
+color.mode = "hsl";
+assert.match(color.formattedValue, /^hsla?\\(/);
+assert.equal(color.value, "rgba(255, 0, 0, 0.5)");
+const tree = document.createElement("m-tree-select");
+tree.multiple = true;
+tree.options = [{ value: "a", label: "Alpha" }];
+tree.value = ["a"];
+tree.defaultValue = ["a"];
+assert.throws(() => { tree.value = new Array(1); }, TypeError);
+assert.throws(() => { tree.defaultValue = new Array(1); }, TypeError);
+assert.deepEqual(tree.value, ["a"]);
+assert.deepEqual(tree.defaultValue, ["a"]);
+const encode = document.createElement("m-chart-encode");
+encode.x = ["month"];
+assert.throws(() => { encode.x = new Array(1); }, TypeError);
+assert.deepEqual(encode.x, ["month"]);
+const directChart = document.createElement("m-chart");
+const directOption = { series: [{ type: "pie" }] };
+directChart.option = directOption;
+assert.throws(() => { directChart.option = { series: new Array(1) }; }, TypeError);
+assert.equal(directChart.option, directOption);
+apiWorkspace.viewStyle = { direction: "row", gap: 2.5 };
+assert.equal(apiWorkspace.hasAttribute("direction"), false);
+assert.equal(apiWorkspace.viewStyle.gap, "2.5px");
+apiWorkspace.remove(); document.body.append(apiWorkspace);
+assert.equal(apiWorkspace.viewStyle.gap, "2.5px");
+apiWorkspace.remove();
+await new Promise(resolve => setTimeout(resolve, 0));
+assert.deepEqual(errors, []);
 const state = await import("@dataengine/markup-ui/state");
 const conditional = document.createElement("m-box");
 conditional.innerHTML = '<m-button id="packed-return">Edit</m-button><m-if data-if="visible" focus-target="packed-return"><m-input data-model-value="title" data-model-event="input" data-model-target="native"></m-input></m-if>';

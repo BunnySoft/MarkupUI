@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { DynamicInput, DynamicInputTemplate, registerDynamicInput } from "../src/components/dynamic-input/index.js"
 import { createDynamicInput } from "../src/components/dynamic-input/dynamic-input.js"
 import type { DynamicInputOptions } from "../src/components/dynamic-input/dynamic-input.js"
-import { Input } from "../src/components/input/index.js"
+import { Input, Textarea } from "../src/components/input/index.js"
 import "../src/components/box/index.js"
 import "../src/components/form/index.js"
 import "../src/components/button/index.js"
@@ -437,10 +437,10 @@ describe("reset, nested scopes and explicit Form/Input resources", () => {
 
 describe("canonical DynamicInput ViewElement", () => {
   it("maps an all-m-* multi-field template to native submission, reset, focus and surviving identity", async () => {
-    document.body.innerHTML = `<m-form><m-dynamic-input min="1" max="3">
+    document.body.innerHTML = `<m-form><m-dynamic-input min="1" max="4">
       <m-dynamic-input-template>
-        <m-label>Title <m-input name="titles[]" value="A, B" required></m-input></m-label>
-        <m-label>Note <m-textarea name="notes[]" value="Default"></m-textarea></m-label>
+        <m-label>Title <m-input name="titles[]" value="First item" required></m-input></m-label>
+        <m-label>Note <m-textarea name="notes[]" value="Default note" rows="2"></m-textarea></m-label>
       </m-dynamic-input-template>
     </m-dynamic-input><m-button attr-type="submit">Save</m-button><m-button attr-type="reset">Reset</m-button></m-form>`
     const el = document.querySelector<DynamicInput>("m-dynamic-input")!
@@ -448,31 +448,127 @@ describe("canonical DynamicInput ViewElement", () => {
     expect(el.connected).toBe(true)
     expect(el.querySelector("m-input")).toBeInstanceOf(Input)
     const form = document.querySelector("form")!, first = el.rows[0]!, input = control(first.element)
-    expect(new FormData(form).getAll("titles[]")).toEqual(["A, B"])
-    expect(new FormData(form).getAll("notes[]")).toEqual(["Default"])
+    const note = first.element.querySelector<Textarea>("m-textarea")!.native
+    const template = el.querySelector<DynamicInputTemplate>("m-dynamic-input-template")!.native
+    const assertCustomNames = () => {
+      expect(el.querySelectorAll("[data-dynamic-field]")).toHaveLength(0)
+      expect(template.content.querySelectorAll("[data-dynamic-field]")).toHaveLength(0)
+      for (const row of el.rows) {
+        const title = row.element.querySelector<Input>("m-input")!, textarea = row.element.querySelector<Textarea>("m-textarea")!
+        expect(title.getAttribute("name")).toBe("titles[]")
+        expect(textarea.getAttribute("name")).toBe("notes[]")
+        expect(title.native).toBe(control(row.element))
+        expect(textarea.native).toBe(row.element.querySelector("textarea"))
+        expect(title.native.name).toBe("titles[]")
+        expect(textarea.native.name).toBe("notes[]")
+        expect(title.native.hasAttribute("data-input-control")).toBe(true)
+        expect(textarea.native.hasAttribute("data-input-control")).toBe(true)
+        expect(title.native.hasAttribute("aria-label")).toBe(false)
+        expect(textarea.native.hasAttribute("aria-label")).toBe(false)
+      }
+      expect(new FormData(form).has("items[]")).toBe(false)
+      expect(new FormData(form).has("collection[]")).toBe(false)
+    }
+    expect(el.hasAttribute("name")).toBe(false)
+    expect(el.name).toBe("items[]")
+    assertCustomNames()
+    expect([...new FormData(form)]).toEqual([["titles[]", "First item"], ["notes[]", "Default note"]])
+    expect(note.rows).toBe(2)
+    expect(input.defaultValue).toBe("First item")
+    expect(note.defaultValue).toBe("Default note")
     expect(input.labels![0]!.textContent).toBe("Title ")
     const changed = vi.fn()
     input.addEventListener("input", changed)
     input.value = "Edited, intact"
+    note.value = "Edited note"
     input.focus(); input.setSelectionRange(2, 5)
+    el.name = "collection[]"
+    el.fieldLabel = "Collection field"
+    assertCustomNames()
     const second = el.add()!
     el.move(first.key, 1)
     expect(el.rows).toEqual([second, first])
+    expect(control(first.element)).toBe(input)
+    expect(first.element.querySelector("textarea")).toBe(note)
+    assertCustomNames()
     expect(document.activeElement).toBe(input)
     expect([input.selectionStart, input.selectionEnd]).toEqual([2, 5])
-    expect(new FormData(form).getAll("titles[]")).toEqual(["A, B", "Edited, intact"])
+    expect([...new FormData(form)]).toEqual([
+      ["titles[]", "First item"], ["notes[]", "Default note"],
+      ["titles[]", "Edited, intact"], ["notes[]", "Edited note"],
+    ])
+    el.removeAttribute("name")
+    el.removeAttribute("field-label")
+    el.refresh()
+    assertCustomNames()
     input.dispatchEvent(new Event("input", { bubbles: true }))
     expect(changed).toHaveBeenCalledOnce()
     form.addEventListener("reset", event => event.preventDefault(), { once: true })
     form.reset(); expect(input.value).toBe("Edited, intact")
-    form.reset(); expect(input.value).toBe("A, B")
+    expect(note.value).toBe("Edited note")
+    form.reset(); expect(input.value).toBe("First item")
+    expect(note.value).toBe("Default note")
+    expect(el.rows).toEqual([second, first])
+    assertCustomNames()
     el.removeRow(second.key)
-    expect(new FormData(form).getAll("titles[]")).toEqual(["A, B"])
+    expect([...new FormData(form)]).toEqual([["titles[]", "First item"], ["notes[]", "Default note"]])
+    el.remove()
+    form.append(el)
+    await flush()
+    expect(el.rows[0]!.key).toBe(first.key)
+    expect(el.rows[0]!.element).toBe(first.element)
+    expect(control(first.element)).toBe(input)
+    expect(first.element.querySelector("textarea")).toBe(note)
+    el.name = "collection[]"
+    el.fieldLabel = "Reconnected collection"
+    assertCustomNames()
     expect(el.querySelector("m-dynamic-input-template")!.querySelectorAll("input,textarea")).toHaveLength(0)
     const add = el.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
     add.focus(); add.click(); await flush()
     expect(document.activeElement).toBe(control(el.rows[1]!.element))
+    assertCustomNames()
+    expect([...new FormData(form)]).toEqual([
+      ["titles[]", "First item"], ["notes[]", "Default note"],
+      ["titles[]", "First item"], ["notes[]", "Default note"],
+    ])
     expect(el.error).toBeNull()
+  })
+
+  it("forwards collection names and labels to marked default fields without replacing native owners", async () => {
+    const form = document.createElement("form"), el = new DynamicInput()
+    form.append(el); document.body.append(form)
+    const first = el.add()!, input = control(first.element), template = el.querySelector("template")!
+    expect(input.hasAttribute("data-dynamic-field")).toBe(true)
+    expect(input.hasAttribute("data-input-control")).toBe(false)
+    expect(input.name).toBe("items[]")
+    expect(input.getAttribute("aria-label")).toBe("Item")
+    expect([...new FormData(form)]).toEqual([["items[]", ""]])
+    input.value = "Edited"
+    el.name = "entries[]"
+    el.fieldLabel = "Entry"
+    const second = el.add()!
+    for (const field of [input, control(second.element), template.content.querySelector("input")!]) {
+      expect(field.hasAttribute("data-dynamic-field")).toBe(true)
+      expect(field.name).toBe("entries[]")
+      expect(field.getAttribute("aria-label")).toBe("Entry")
+    }
+    expect(control(first.element)).toBe(input)
+    expect(input.defaultValue).toBe("")
+    expect([...new FormData(form)]).toEqual([["entries[]", "Edited"], ["entries[]", ""]])
+    el.removeAttribute("name")
+    el.removeAttribute("field-label")
+    el.move(first.key, 1)
+    expect(control(first.element)).toBe(input)
+    expect([...new FormData(form)]).toEqual([["items[]", ""], ["items[]", "Edited"]])
+    form.reset()
+    expect(el.rows).toEqual([second, first])
+    expect(input.value).toBe("")
+    el.remove(); form.append(el); await flush()
+    expect(el.rows[1]!.key).toBe(first.key)
+    expect(control(el.rows[1]!.element)).toBe(input)
+    expect(input.name).toBe("items[]")
+    expect(input.getAttribute("aria-label")).toBe("Item")
+    expect(template.content.querySelector("input")!.name).toBe("items[]")
   })
   it("focuses a click-added field when the browser leaves body active, without stealing outside focus", async () => {
     const { helper, add } = fixture()

@@ -28,7 +28,8 @@
 <body>
   <main data-demo-page class="component-docs">
     <h1>Mention</h1>
-    <p>Suggestions triggered by prefix characters in text inputs and textareas.</p>
+    <p>Prefix suggestions with one actual text input or textarea owning editing, caret, defaults and forms.
+      The element and the explicit native-Web <code>createMention</code> enhancement use the same behavior owner.</p>
     <nav class="component-docs-nav" aria-label="Mention documentation">
       <a href="#basic-title">Examples</a>
       <a href="#required-files">Setup</a>
@@ -51,7 +52,8 @@
       </header>
       <div data-demo-preview>
         <m-mention id="basic-mention" prefix="@">
-          <textarea class="m-mention__editor" placeholder="Type @ to mention someone..."></textarea>
+          <label for="basic-editor">Message</label>
+          <textarea id="basic-editor" class="m-mention__editor" placeholder="Type @al to mention someone..."></textarea>
           <m-option value="alice">alice</m-option>
           <m-option value="alex">alex</m-option>
           <m-option value="bob">bob</m-option>
@@ -69,7 +71,8 @@
       </header>
       <div data-demo-preview>
         <m-mention id="tag-mention" prefix="#">
-          <input class="m-mention__editor" type="text" placeholder="Type # for tags...">
+          <label for="tag-editor">Topic</label>
+          <input id="tag-editor" class="m-mention__editor" type="text" placeholder="Type #ge for tags...">
           <m-option value="announcements">announcements</m-option>
           <m-option value="general">general</m-option>
           <m-option value="random">random</m-option>
@@ -87,12 +90,107 @@
       </header>
       <div data-demo-preview>
         <m-mention id="disabled-mention" disabled value="Fixed value">
-          <textarea class="m-mention__editor" disabled>Disabled mention editor</textarea>
+          <label for="disabled-editor">Availability example</label>
+          <textarea id="disabled-editor" class="m-mention__editor" disabled></textarea>
         </m-mention>
         <m-box margin="8 0 0 0">
           <m-button id="toggle-disabled-btn">Toggle Disabled</m-button>
+          <m-button id="toggle-readonly-btn">Toggle Readonly</m-button>
         </m-box>
       </div>
+    </section>
+
+    <section data-demo-example="async" aria-labelledby="async-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="async-title">Multiple prefixes, custom labels and cancellable loading</h2>
+          <p>Type @ or # followed by a fragment. Moving the caret, editing, closing or disconnecting cancels stale work.
+            Loader and filter callbacks are explicit native-Web enhancement points, not a second editor model.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-mention id="async-mention">
+          <label for="async-editor">Search people or topics</label>
+          <textarea id="async-editor" placeholder="Try @al or #ge" maxlength="100"></textarea>
+        </m-mention>
+        <m-p id="async-output">No search yet.</m-p>
+        <m-button id="close-search-btn">Close / cancel search</m-button>
+      </div>
+      <pre><code>mention.configure({
+  prefix: ["@", "#"],
+  load: ({ prefix, query, signal }) => lookup(prefix, query, signal),
+  minQueryLength: 1,
+  debounce: 120
+})</code></pre>
+    </section>
+
+    <section data-demo-example="forms" aria-labelledby="forms-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="forms-title">Native defaults, live text and reset</h2>
+          <p>This Web interoperability example adopts the original named textarea and label.
+            The value attribute configures reset text; live property writes and user editing do not change it.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <form id="mention-form">
+          <label for="form-editor">Message body</label>
+          <m-mention id="form-mention" value="Hello @al">
+            <textarea id="form-editor" name="body" aria-describedby="form-help"></textarea>
+            <m-option value="alice" label="alice (design)">alice</m-option>
+            <m-option value="alex">alex</m-option>
+            <m-option value="albert" disabled>albert (unavailable)</m-option>
+          </m-mention>
+          <p id="form-help">Tab into an available choice, then Enter or Space to insert. Ordinary editor keys stay native.</p>
+          <button type="submit">Read FormData</button>
+          <button type="reset">Native reset</button>
+          <button id="clear-live-btn" type="button">Set live text to empty</button>
+        </form>
+        <m-p id="form-output">The native owner alone contributes body to FormData.</m-p>
+      </div>
+    </section>
+
+    <section aria-labelledby="behavior-title">
+      <h2 id="behavior-title">Canonical API and behavior</h2>
+      <ul>
+        <li><code>value: string</code> reads live native text; <code>""</code> is empty, not null.
+          Property assignments are silent, reject nonstrings and never reflect a second host value.
+          <code>defaultValue</code> is separate native reset text. The host <code>value</code> attribute maps to it,
+          following native pristine/dirty value rules; removing the attribute sets an empty default.</li>
+        <li><code>native</code> exposes the actual Web editor for native name, required, validity, selection and form association.
+          Original node identity, author labels, ARIA and listeners survive configuration and reconnect.
+          Native readonly, disabled and disabled-fieldset eligibility govern suggestions.</li>
+        <li><code>configure(configuration)</code> explicitly replaces the configuration atomically.
+          Static <code>options</code> and an async <code>load</code> are mutually exclusive.
+          <code>setOptions(options)</code> updates static data; switching data sources requires <code>configure</code>.
+          No schema change rebuilds the editor or clears text, defaults, caret or composition state.
+          <code>prefix</code> reads the first configured prefix; assigning it replaces the set with one character.
+          Its attribute declares a single prefix; multiple prefixes use typed configuration.</li>
+        <li>Prefixes are 1–8 unique nonwhitespace BMP characters; separator is one distinct BMP character.
+          Defaults: prefix @, separator space, maxResults 20, minQueryLength 1, maxQueryLength 64 and debounce 120 ms.
+          Maximum results are 1–100, query bounds 0–256 (maximum at least 1), debounce 0–1000 ms.
+          Invalid settings/options fail rather than truncating, coercing or inventing a parser.</li>
+        <li>Static matching is case-sensitive label/value <code>startsWith</code>; a custom filter must return a boolean.
+          Loaders receive the unchanged prefix/query, original UTF-16 caret bounds, native control and AbortSignal.
+          Option labels are plain text, custom classes are supported, and only the validated option value is inserted.
+          IME, Unicode boundaries, maxlength, selection ranges and text after the caret are preserved.</li>
+        <li>Selection emits one bubbling native <code>input</code> with <code>insertReplacementText</code>,
+          then one bubbling noncancelable <code>m:select</code> from that same editor with
+          <code>{ value, option, prefix }</code>. No synthetic change event or host redispatch exists.
+          Search/results/error/visibility/reject notifications also bubble from the native editor.
+          Programmatic writes and reset do not emit fake input/selection events.</li>
+        <li><code>query()</code> returns an updated/skipped/aborted result and rejects unexpected loader errors;
+          <code>context</code>, <code>error</code> and <code>connected</code> expose owner state.
+          <code>close()</code>, <code>refresh()</code>, editing, reset and configuration invalidate pending and queued selection work.
+          The named adjacent panel uses ordinary native buttons, not a fake combobox, caret mirror or popup geometry engine.
+          No-JS native editing/forms remain available; screen-reader and real-device acceptance are not claimed.</li>
+      </ul>
+      <p>Minimum runtime is shared core plus Mention and its CSS; Button, Box and Typography are extra demo selections.
+        Portable <code>&lt;m-mention&gt;</code> creates a textarea and panel when no editor is authored.
+        Raw editor, label, form and panel markup above is the explicit Web adoption surface.
+        Author at most one text/search input or textarea and one hidden named panel with an empty
+        <code>[data-mention-options]</code> list and optional nonlive <code>[data-mention-status]</code>.
+        Invalid anatomy fails visibly instead of silently disabling enhancement.</p>
     </section>
 
     <section aria-labelledby="api-heading">

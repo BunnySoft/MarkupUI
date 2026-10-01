@@ -25,7 +25,7 @@
 <body>
   <main data-demo-page class="component-docs">
     <h1>Color Picker</h1>
-    <p>Classic native RGB color picker with optional hex drafts and ViewElement lifecycle.</p>
+    <p>Bounded sRGB colors, real HEX/RGB/HSL editing modes and cross-browser alpha controls, coordinated by one native owner.</p>
     <nav class="component-docs-nav" aria-label="Color Picker documentation">
       <a href="#basic-title">Examples</a>
       <a href="#required-files">Setup</a>
@@ -43,7 +43,7 @@
       <header data-demo-header>
         <div>
           <h2 id="basic-title">Basic</h2>
-          <p>Standard color selection with default configuration.</p>
+          <p>The native color chooser edits RGB. Labelled native text and mode fields support deliberate Apply and Restore draft without a custom popup.</p>
         </div>
       </header>
       <div data-demo-preview>
@@ -56,12 +56,13 @@
       <header data-demo-header>
         <div>
           <h2 id="states-title">Disabled and Alpha</h2>
-          <p>Support for disabling user interaction and enabling alpha transparency.</p>
+          <p>Alpha is a native 0-1 range with 0.001 steps, not an input-alpha browser hint. Hiding the range retains transparency.</p>
         </div>
       </header>
       <div data-demo-preview>
         <m-color-picker id="disabled-picker" value="#336699" disabled></m-color-picker>
-        <m-color-picker id="alpha-picker" value="#008844" show-alpha></m-color-picker>
+        <m-color-picker id="alpha-picker" value="rgba(0, 136, 68, 0.5)" show-alpha></m-color-picker>
+        <m-p id="alpha-value">Committed: rgba(0, 136, 68, 0.5)</m-p>
         <m-button id="toggle-disabled">Toggle Disabled</m-button>
       </div>
     </section>
@@ -70,12 +71,36 @@
       <header data-demo-header>
         <div>
           <h2 id="native-title">Modes and preview</h2>
-          <p>Color modes and preview selection using canonical ViewElement.</p>
+          <p>Switch the actual draft syntax. RGB/HSL include alpha; HEX projects RGB with the independent alpha range. Dirty invalid text is preserved until corrected or restored.</p>
         </div>
       </header>
       <div data-demo-preview>
-        <m-color-picker id="accent-picker" value="#336699" modes="hex,rgb,hsl"></m-color-picker>
+        <m-color-picker id="accent-picker" value="hsla(210, 50%, 40%, 0.75)" modes="hex,rgb,hsl" mode="hsl" show-alpha></m-color-picker>
       </div>
+    </section>
+
+    <section data-demo-example="form" aria-labelledby="form-title">
+      <header data-demo-header><div>
+        <h2 id="form-title">Native Web form and defaults</h2>
+        <p>This explicit Web interoperability example submits exactly one canonical string, not the RGB projection or pending text draft. Empty is different from black; required blocks an empty color.</p>
+      </div></header>
+      <div data-demo-preview>
+        <form id="color-form">
+          <m-color-picker id="form-picker" name="accent" value="rgba(51, 102, 153, 0.5)" show-alpha required></m-color-picker>
+          <button type="submit">Read FormData</button>
+          <button type="reset">Reset to default</button>
+        </form>
+        <m-p id="form-value">Default: rgba(51, 102, 153, 0.5)</m-p>
+      </div>
+    </section>
+
+    <section aria-labelledby="behavior-title">
+      <h2 id="behavior-title">Value, syntax and lifecycle contract</h2>
+      <p><code>value</code> remains a string: <code>""</code> for empty, lowercase <code>#rrggbb</code> for opaque colors, or <code>rgba(r, g, b, a)</code> for transparency. The initial/default color is black unless authored. Programmatic value writes are silent and preserve dirty drafts; <code>value</code> markup defines the default, not a live mirror. <code>defaultValue</code> updates a clean current value; reset restores the default silently and clears live/draft dirtiness. Cancelled resets retain both.</p>
+      <p>Accepted syntax is exactly six/eight-digit HEX, comma-separated <code>rgb(r,g,b)</code>/<code>rgba(r,g,b,a)</code>, and <code>hsl(h,s%,l%)</code>/<code>hsla(h,s%,l%,a)</code>. RGB channels are integers 0-255. HSL hue is 0-360 (optional deg), saturation/lightness 0-100%, and alpha 0-1; decimal channels allow at most three fractional digits. HSL is rounded to eight-bit sRGB. Eight-digit HEX alpha is converted to the nearest thousandth; other numeric alpha is retained exactly. No shorthand, named colors, percentage RGB, slash syntax, variables, wide-gamut CSS, negative values, surrounding whitespace or line breaks. Invalid nonempty values fail before mutation, never clamp to black or drop alpha.</p>
+      <p><code>formattedValue</code> is the selected-mode projection, not the form value. HEX shows RGB only; six-digit HEX draft edits preserve the existing/range alpha, while eight-digit HEX supplies explicit alpha. RGB/HSL drafts can include alpha even when the range is hidden. Apply or Enter commits a valid draft; Restore draft replaces it deliberately; Clear commits empty unless interaction is locked. An alpha range change commits after its input draft, with cancellation/newer-work checks. Clean projection commits do not quantize the committed color again.</p>
+      <p>The existing concrete owner handles all parsing, drafts, notifications, validation, forms, reset and reconnect. <code>configure(record)</code> validates the complete record before any update. Modes/showAlpha update in place without rebuilding state or native controls. Readonly locks editing while retaining form submission; disabled and ancestor fieldsets use native disabling. Authored native nodes, labels, datalists, ARIA, listeners and text selection survive scalar updates. Disconnect releases listeners, observers and queued actions; reconnect reuses the same owner and controls.</p>
+      <p>Real accepted user changes emit one <code>m:change</code> with the canonical value; deliberate commit/clear also send one native RGB-owner input/change pair, guarded against reentrant supersession. Native RGB input/change are not duplicated. Unsupported native alpha/colorspace anatomy reports <code>m:color-picker-error</code> and withdraws enhancement. No chooser, clipboard or EyeDropper is opened by setup or setters. Validation uses the labelled native draft field, preserving application custom validity. No screen-reader or real-device acceptance is claimed.</p>
     </section>
 
     <section aria-labelledby="api-heading">

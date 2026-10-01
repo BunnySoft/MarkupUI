@@ -166,7 +166,9 @@ store.set("report.sales", nextSales);</code></pre>
         kinds. Assign new data or call refresh() after an in-place edit. Null cells are
         missing values; non-finite numbers, functions, accessors, hidden symbols,
         custom array prototypes and unsafe keys are rejected. Dimensions use dense
-        arrays of safe, unique names; absent record cells never read inherited values.</m-p>
+        arrays of safe, unique names; absent record cells never read inherited values.
+        Encode vectors and direct series arrays must also be dense; invalid programmatic
+        inputs fail before replacing configuration.</m-p>
       <m-p>Remote data is limited to same-origin HTTP(S), JSON content types and 1 MiB.
         Credentials and redirects are disabled. Requests time out after 15 seconds and
         are cancelled on source changes and disconnect. reload() reports failure through

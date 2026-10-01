@@ -8,50 +8,36 @@ function initialize() {
   const basicOtp = document.getElementById("basic-otp")
   const basicStatus = document.getElementById("basic-status")
   const completeStatus = document.getElementById("complete-status")
-  const clearBasic = document.getElementById("clear-basic")
-  const fillBasic = document.getElementById("fill-basic")
-
-  if (basicOtp) {
-    basicOtp.addEventListener("m:change", event => {
-      const detail = event.detail
-      if (basicStatus) basicStatus.textContent = `Current value: ${detail?.value || "(empty)"}`
-      if (completeStatus && !detail?.value) completeStatus.textContent = "Status: Incomplete"
-    })
-    basicOtp.addEventListener("m:complete", event => {
-      const detail = event.detail
-      if (completeStatus) completeStatus.textContent = `Status: Complete (${detail?.value})`
-    })
+  function presentBasic() {
+    basicStatus.textContent = `${basicOtp.value.length} native characters entered.`
+    completeStatus.textContent = basicOtp.complete ? "Format complete; not authenticated." : "Status: Incomplete"
   }
-
-  clearBasic?.addEventListener("click", () => {
-    if (basicOtp) {
-      basicOtp.clear()
-      if (basicStatus) basicStatus.textContent = "Current value: (empty)"
-      if (completeStatus) completeStatus.textContent = "Status: Incomplete"
-    }
-  })
-
-  fillBasic?.addEventListener("click", () => {
-    if (basicOtp) {
-      basicOtp.value = "123456"
-      if (basicStatus) basicStatus.textContent = "Current value: 123456"
-      if (completeStatus) completeStatus.textContent = "Status: Complete (123456)"
-    }
-  })
+  basicOtp.addEventListener("input", presentBasic)
+  basicOtp.addEventListener("change", presentBasic)
+  basicOtp.addEventListener("m:input-otp-complete", presentBasic)
+  document.getElementById("clear-basic").addEventListener("click", () => { basicOtp.clear(); presentBasic() })
+  document.getElementById("fill-basic").addEventListener("click", () => { basicOtp.value = "123456"; presentBasic() })
+  presentBasic()
 
   const maskOtp = document.getElementById("mask-otp")
-  const toggleMask = document.getElementById("toggle-mask")
-  toggleMask?.addEventListener("click", () => {
-    if (maskOtp) maskOtp.mask = !maskOtp.mask
-  })
-
+  document.getElementById("toggle-mask").addEventListener("click", () => { maskOtp.mask = !maskOtp.mask })
   const disabledOtp = document.getElementById("disabled-otp")
-  const toggleDisabled = document.getElementById("toggle-disabled")
-  toggleDisabled?.addEventListener("click", () => {
-    if (disabledOtp) disabledOtp.disabled = !disabledOtp.disabled
+  document.getElementById("toggle-disabled").addEventListener("click", () => { disabledOtp.disabled = !disabledOtp.disabled })
+
+  const form = document.getElementById("otp-form")
+  function presentForm() {
+    const values = new FormData(form).getAll("code[0].text")
+    document.getElementById("form-status").textContent = `FormData has ${values.length} named field; ${String(values[0] ?? "").length} native characters.`
+  }
+  form.addEventListener("input", presentForm)
+  form.addEventListener("reset", () => queueMicrotask(presentForm))
+  presentForm()
+
+  const owner = api.createInputOtp(document.getElementById("enhance-code"), {
+    length: 4, status: document.getElementById("enhance-status"),
   })
+  window.addEventListener("pagehide", () => owner.disconnect(), { once: true })
 }
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true })
 else initialize()
-

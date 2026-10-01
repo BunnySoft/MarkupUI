@@ -25,7 +25,7 @@
 <body>
   <main data-demo-page class="component-docs">
     <h1>Auto Complete</h1>
-    <p>A text input component providing dynamic suggestions and autocomplete options.</p>
+    <p>Free-text input with native suggestions. The canonical element and the explicit native-Web helper share one input/datalist behavior owner; no custom popup or selection engine is installed.</p>
     <nav class="component-docs-nav" aria-label="Auto Complete documentation">
       <a href="#basic-title">Examples</a>
       <a href="#required-files">Setup</a>
@@ -47,7 +47,8 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-auto-complete id="basic-auto-complete" placeholder="Type a city...">
+        <m-p id="basic-label">City</m-p>
+        <m-auto-complete id="basic-auto-complete" aria-labelledby="basic-label" placeholder="Type a city...">
           <m-option value="London">United Kingdom</m-option>
           <m-option value="Paris">France</m-option>
           <m-option value="Tokyo">Japan</m-option>
@@ -65,7 +66,7 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-auto-complete id="clearable-auto-complete" placeholder="Select framework..." value="Vue" clearable>
+        <m-auto-complete id="clearable-auto-complete" aria-label="Framework" placeholder="Select framework..." value="Vue" clearable>
           <m-option value="React">React</m-option>
           <m-option value="Vue">Vue</m-option>
           <m-option value="Angular">Angular</m-option>
@@ -83,15 +84,15 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-auto-complete size="small" placeholder="Small size">
+        <m-auto-complete size="small" aria-label="Small example" placeholder="Small size">
           <m-option value="Option 1">Option 1</m-option>
           <m-option value="Option 2">Option 2</m-option>
         </m-auto-complete>
-        <m-auto-complete size="medium" placeholder="Medium size">
+        <m-auto-complete size="medium" aria-label="Medium example" placeholder="Medium size">
           <m-option value="Option 1">Option 1</m-option>
           <m-option value="Option 2">Option 2</m-option>
         </m-auto-complete>
-        <m-auto-complete size="large" placeholder="Large size">
+        <m-auto-complete size="large" aria-label="Large example" placeholder="Large size">
           <m-option value="Option 1">Option 1</m-option>
           <m-option value="Option 2">Option 2</m-option>
         </m-auto-complete>
@@ -101,13 +102,16 @@
     <section data-demo-example="states" aria-labelledby="states-title">
       <header data-demo-header>
         <div>
-          <h2 id="states-title">Disabled State</h2>
-          <p>Disabled auto complete input preventing user interaction.</p>
+          <h2 id="states-title">Disabled and read-only</h2>
+          <p>Native availability is retained. Read-only and disabled controls do not query or clear; programmatic value assignment remains silent.</p>
         </div>
       </header>
       <div data-demo-preview>
-        <m-auto-complete id="disabled-auto-complete" placeholder="Disabled" disabled value="Fixed value"></m-auto-complete>
+        <m-auto-complete id="disabled-auto-complete" aria-label="Disabled example" placeholder="Disabled" disabled value="Fixed value"></m-auto-complete>
         <m-button id="toggle-disabled-btn">Toggle Disabled</m-button>
+        <m-auto-complete aria-label="Read-only example" readonly clearable value="Read-only text">
+          <m-option value="Read-only text">A suggestion is not a value restriction</m-option>
+        </m-auto-complete>
       </div>
     </section>
 
@@ -119,12 +123,69 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-auto-complete placeholder="Choose a fruit...">
+        <m-auto-complete aria-label="Fruit" placeholder="Choose a fruit...">
           <m-option value="Apple">Apple</m-option>
           <m-option value="Banana">Banana</m-option>
           <m-option value="Cherry">Cherry</m-option>
         </m-auto-complete>
       </div>
+    </section>
+
+    <section data-demo-example="async" aria-labelledby="async-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="async-title">Typed options and async queries</h2>
+          <p>Type any text to load suggestions, or “error” to see a rejected query. Changing the value/data, resetting or disconnecting aborts obsolete work.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-auto-complete id="async-auto-complete" aria-label="Async place" placeholder="Query a place or type error"
+          value="Paris" name="place" required clearable min-length="1" max-results="5" debounce="100"></m-auto-complete>
+        <m-button id="query-btn">Query now</m-button>
+        <m-p id="async-output">No query yet.</m-p>
+      </div>
+      <pre><code>const field = document.querySelector("#async-auto-complete")
+field.options = Object.freeze([
+  Object.freeze({ value: "Paris", label: "France" }),
+  Object.freeze({ value: "Tokyo", label: "Japan" })
+])
+field.load = async (query, { input, signal }) =&gt; {
+  const response = await fetch(`/places?q=${encodeURIComponent(query)}`, { signal })
+  if (!response.ok) throw new Error("Suggestions could not be loaded")
+  return response.json() // validated unique value/label/disabled data
+}
+await field.query() // rejects on loader/data failure; no value write or synthetic selection
+field.value = "Unlisted" // silent live write, not a reset default
+field.defaultValue = "Tokyo" // native dirty-value/reset rules
+field.refresh() // restore configured suggestions and cancel pending work</code></pre>
+    </section>
+
+    <section aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Value, events and native ownership</h2>
+      <ul>
+        <li><code>value</code> always reads the actual native string, including silent native edits and free text; empty is <code>""</code>, never <code>null</code>. Property writes are silent and do not mirror the <code>value</code> attribute. That attribute and <code>defaultValue</code> configure the native reset default, without overwriting an already dirty value.</li>
+        <li>The browser owns filtering, the datalist popup, keyboard/Enter, selection, focus, validation, <code>name</code>/<code>form</code> association and submission. Suggestions are not an enumeration constraint. Disabled suggestions can still be typed as free text. Native <code>input</code>/<code>change</code> remain unchanged.</li>
+        <li><code>m:change { value }</code> is emitted once on native commit or an available <code>clear()</code> action, including clearing an already empty field. Clear focuses the native input but does not synthesize native <code>input</code>/<code>change</code>. All <code>m:*</code> notifications bubble, are noncancelable and are not composed.</li>
+        <li>The existing <code>m:select { value }</code> notification now belongs to the shared owner in both entries. It means an available, noncomposing native <code>input</code> value matches a currently enabled suggestion, including text typed manually; it is not proof of choosing from the popup. Empty, disabled and composing matches do not notify. Browsers expose no source-specific datalist selection event, and neither entry invents a selection origin.</li>
+        <li>Only the shared owner runs debounce, IME coordination, availability checks, <code>AbortSignal</code>, generation/freshness checks and reset cleanup. <code>query()</code> returns an immutable updated/skipped/aborted result with a live <code>current</code> flag; unexpected failures reject and emit <code>m:auto-complete-error</code>, including unexpected late rejections. Expected abort is not an error. Successful queries emit <code>m:auto-complete-results</code> without changing value.</li>
+        <li><code>maxResults</code> bounds explicit transient <code>setSuggestions()</code> and loader results (oversized results reject, not truncate). Static configured/native options are not capped. Refresh, native reset and disconnect restore baseline options; canceled reset preserves settled data/value.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="content-heading">
+      <h2 id="content-heading">Data and content regions</h2>
+      <p>Direct <code>m-option</code> children are inert suggestion configuration, not interactive option regions. Their <code>value</code> attribute (or trimmed text fallback), <code>label</code> attribute (or text label) and boolean-presence <code>disabled</code> map onto native datalist options. The original configuration nodes remain hidden while connected, with identity/listeners retained, and their data is available again after reconnect. Late configuration edits are projected by the same owner.</p>
+      <p><code>options</code> is property-only immutable data: strings or records with a unique nonempty string <code>value</code>, optional string <code>label</code> and optional boolean <code>disabled</code> (strings up to 2048 characters). Invalid/sparse/duplicate data fails before replacement. The setter copies/freezes records and arrays; assigning it makes that schema authoritative over markup configuration. It never writes value. Surviving projected native options retain identity. <code>setSuggestions()</code> is a temporary result, not a second configured data source.</p>
+      <p>Ordinary phrasing content is retained. The Web interoperability content region can adopt one actual native input and one associated datalist; directly authored native options are moved, not cloned, and their labels/listeners/template content are retained. Permissive native fallback options (including empty/duplicate values) remain native, independently of the strict portable data schema. Nested AutoComplete families are not consumed by their parent.</p>
+      <p>An optional Web-only <code>p</code>, <code>span</code> or <code>div[data-auto-complete-status]</code> must be plain, nonlive, nonfocusable text with no element children. Otherwise a plain status is generated. Loading/error/empty text never becomes a selectable pseudo-option. Original status text and renderer-owned attributes are restored on cleanup without erasing later application changes.</p>
+    </section>
+
+    <section aria-labelledby="accessibility-heading">
+      <h2 id="accessibility-heading">Accessibility and Web interoperability</h2>
+      <p>Provide a label for the actual control. Host <code>aria-label</code>, <code>aria-labelledby</code> and <code>aria-describedby</code> are projected onto the stable native input; adopted native labels and descriptions survive. The host is not focusable and no artificial combobox/listbox role, expanded state or active-descendant model is added. Native datalist presentation and assistive-technology support depend on the browser; those broader acceptance checks are not claimed by the unit fixtures.</p>
+      <p><code>native</code>, <code>datalist</code>, <code>status</code>, <code>form</code> and native validity methods are explicit Web inspection/interoperability surfaces. Native constraints beyond the typed host settings can be authored on an adopted input or assigned through <code>native</code>. Host mappings are reversible; reconnect retains native identity and live/default values without duplicated callbacks.</p>
+      <p>The optional <code>createAutoComplete(input, options)</code> entry uses exactly the same owner as the element. Supply one connected text/search/email/url/tel input, an explicit <code>list</code> association and an exclusive connected datalist with a stable unique id. Competing managed writers, changed anatomy or replacement popup ARIA semantics fail/disconnect rather than taking over. Its <code>setOptions()</code>, <code>value</code>, <code>defaultValue</code>, <code>configure()</code>, query/reset lifecycle and notifications are the element's behavior, not a separate native implementation.</p>
+      <p>The family loads only core, AutoComplete runtime and its CSS. Button/Typography are additional demo selections. Public CSS tokens customize native field paint; Input-owned <code>.m-input</code> fields keep their own paint and sizing. No Input registration, binding package or aggregate bundle is required.</p>
     </section>
 
     <section aria-labelledby="api-heading">

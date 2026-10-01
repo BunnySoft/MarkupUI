@@ -21,6 +21,24 @@ function install(): void {
   style.textContent = css
   document.head.append(style)
 }
+function expectAttributeError(action: () => void, message: string): void {
+  const errors: ErrorEvent[] = []
+  const listener = (event: ErrorEvent): void => {
+    if (event.error instanceof RangeError && event.error.message === message) {
+      errors.push(event)
+      event.preventDefault()
+    }
+  }
+  window.addEventListener("error", listener)
+  try {
+    action()
+    expect(errors).toHaveLength(1)
+    expect(errors[0]!.message).toContain(message)
+    expect(errors[0]!.type).toBe("error")
+  } finally {
+    window.removeEventListener("error", listener)
+  }
+}
 afterEach(() => {
   style?.remove()
   style = undefined
@@ -264,9 +282,16 @@ describe("canonical FloatButton ViewElement", () => {
       expect(element.dataset.type).toBe(t)
     }
 
-    expect(() => { element.type = "invalid" as any }).toThrow(RangeError)
-    element.setAttribute("type", "invalid")
+    expect(() => Reflect.set(element, "type", "invalid")).toThrow(RangeError)
+    expect(element.getAttribute("type")).toBe("error")
+    expect(element.dataset.type).toBe("error")
+    expectAttributeError(() => element.setAttribute("type", "invalid"), "Invalid type.")
+    expect(element.getAttribute("type")).toBe("invalid")
+    expect(element.dataset.type).toBe("error")
     expect(() => element.type).toThrow(RangeError)
+    element.setAttribute("type", "primary")
+    expect(element.type).toBe("primary")
+    expect(element.dataset.type).toBe("primary")
     element.removeAttribute("type")
     expect(element.type).toBe("default")
     expect(element.dataset.type).toBe("default")
@@ -288,11 +313,19 @@ describe("canonical FloatButton ViewElement", () => {
     expect(element.getAttribute("shape")).toBe("circle")
     expect(element.dataset.shape).toBe("circle")
 
-    expect(() => { element.shape = "round" as any }).toThrow(RangeError)
-    element.setAttribute("shape", "round")
+    expect(() => Reflect.set(element, "shape", "round")).toThrow(RangeError)
+    expect(element.getAttribute("shape")).toBe("circle")
+    expect(element.dataset.shape).toBe("circle")
+    expectAttributeError(() => element.setAttribute("shape", "round"), "Invalid shape.")
+    expect(element.getAttribute("shape")).toBe("round")
+    expect(element.dataset.shape).toBe("circle")
     expect(() => element.shape).toThrow(RangeError)
+    element.setAttribute("shape", "square")
+    expect(element.shape).toBe("square")
+    expect(element.dataset.shape).toBe("square")
     element.removeAttribute("shape")
     expect(element.shape).toBe("circle")
+    expect(element.dataset.shape).toBe("circle")
   })
 
   it("handles right property string, number, null, and CSS custom property synchronization", () => {
@@ -459,7 +492,93 @@ describe("canonical FloatButton ViewElement", () => {
     expect(group.getAttribute("shape")).toBe("square")
     expect(group.dataset.shape).toBe("square")
 
-    expect(() => { group.shape = "invalid" as any }).toThrow(RangeError)
+    expect(() => Reflect.set(group, "shape", "invalid")).toThrow(RangeError)
+    expect(group.getAttribute("shape")).toBe("square")
+    expect(group.dataset.shape).toBe("square")
+    expectAttributeError(() => group.setAttribute("shape", "round"), "Invalid shape.")
+    expect(group.getAttribute("shape")).toBe("round")
+    expect(group.dataset.shape).toBe("square")
+    expect(() => group.shape).toThrow(RangeError)
+    group.setAttribute("shape", "circle")
+    expect(group.shape).toBe("circle")
+    expect(group.dataset.shape).toBe("circle")
+    group.removeAttribute("shape")
+    expect(group.shape).toBe("circle")
+    expect(group.dataset.shape).toBe("circle")
+  })
+
+  it.each([
+    ["type", "shape", "square", "primary"],
+    ["shape", "type", "primary", "square"],
+  ] as const)("keeps invalid %s from blocking valid %s updates", (invalidAttribute, validAttribute, valid, correction) => {
+    const element = new FloatButton()
+    document.body.append(element)
+    const previous = element.dataset[invalidAttribute]
+    expectAttributeError(() => element.setAttribute(invalidAttribute, "invalid"), `Invalid ${invalidAttribute}.`)
+
+    expect(() => Reflect.set(element, validAttribute, valid)).not.toThrow()
+    expect(element.getAttribute(validAttribute)).toBe(valid)
+    expect(element.dataset[validAttribute]).toBe(valid)
+    expect(element.dataset[invalidAttribute]).toBe(previous)
+    expect(() => Reflect.get(element, invalidAttribute)).toThrow(RangeError)
+
+    element.setAttribute(validAttribute, validAttribute === "type" ? "warning" : "circle")
+    expect(element.dataset[validAttribute]).toBe(element.getAttribute(validAttribute))
+    expect(element.dataset[invalidAttribute]).toBe(previous)
+    expect(() => Reflect.set(element, invalidAttribute, correction)).not.toThrow()
+    expect(element.dataset[invalidAttribute]).toBe(correction)
+  })
+
+  it("replays valid pre-upgrade properties beside invalid markup and recovers activation", () => {
+    const element = new FloatButton()
+    element.setAttribute("shape", "invalid")
+    Object.defineProperty(element, "type", { configurable: true, value: "primary" })
+    expectAttributeError(() => document.body.append(element), "Invalid shape.")
+    expect(Object.hasOwn(element, "type")).toBe(false)
+    expect(element.type).toBe("primary")
+    expect(element.dataset.type).toBe("primary")
+    expect(element.dataset.shape).toBeUndefined()
+
+    element.shape = "square"
+    expect(element.dataset.shape).toBe("square")
+    const clickHandler = vi.fn()
+    element.addEventListener("m:click", clickHandler)
+    element.click()
+    expect(clickHandler).toHaveBeenCalledTimes(1)
+  })
+
+  it.each([
+    [FloatButton.tag, "type", "primary"],
+    [FloatButton.tag, "shape", "square"],
+    [FloatButtonGroup.tag, "shape", "square"],
+  ] as const)("reports invalid initial %s %s markup and recovers without duplicate listeners", (tag, attribute, valid) => {
+    const element = document.createElement(tag) as FloatButton | FloatButtonGroup
+    element.setAttribute(attribute, "invalid")
+    expect(() => Reflect.get(element, attribute)).toThrow(RangeError)
+    expectAttributeError(() => document.body.append(element), `Invalid ${attribute}.`)
+    expect(element.getAttribute(attribute)).toBe("invalid")
+    expect(element.dataset[attribute]).toBeUndefined()
+
+    const clickHandler = vi.fn()
+    element.addEventListener("m:click", clickHandler)
+    element.setAttribute(attribute, valid)
+    expect(Reflect.get(element, attribute)).toBe(valid)
+    expect(element.dataset[attribute]).toBe(valid)
+    if (element instanceof FloatButton) {
+      element.click()
+      expect(clickHandler).toHaveBeenCalledTimes(1)
+    }
+
+    element.remove()
+    element.setAttribute(attribute, "invalid")
+    expectAttributeError(() => document.body.append(element), `Invalid ${attribute}.`)
+    expect(element.dataset[attribute]).toBe(valid)
+    element.setAttribute(attribute, valid)
+    expect(element.dataset[attribute]).toBe(valid)
+    if (element instanceof FloatButton) {
+      element.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }))
+      expect(clickHandler).toHaveBeenCalledTimes(2)
+    }
   })
 
   it("exposes MarkupUIFloatButton global", async () => {

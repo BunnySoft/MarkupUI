@@ -282,6 +282,10 @@ export function createCarousel(element: HTMLElement, options: CarouselOptions = 
     stopTimers()
     const wrapped = settings.loop && slides.length ? ((value % slides.length) + slides.length) % slides.length : clamp(value)
     target = wrapped; reason = why; silent = quiet
+    if (why === "autoplay" && pauseReasons().some(value => value !== "scroll")) {
+      schedule()
+      return
+    }
     const g = geometry()
     if (!g || wrapped < 0) { if (wrapped < 0) { target = null; change(-1, why, quiet) } else schedule(); return }
     const smooth = settings.smooth && !instant && !!media && !media.matches

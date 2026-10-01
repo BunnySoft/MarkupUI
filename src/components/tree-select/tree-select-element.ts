@@ -53,7 +53,7 @@ export class TreeSelect extends ViewElement {
     if (this.connected) this.#controller!.setData(next)
     this.#data = next
   }
-  /** Single key/null or independent multiple keys in native option order. */
+  /** Single key/null or independent dense multiple keys in native option order. Invalid arrays fail before writes. */
   public get value(): TreeSelectValue { return this.connected ? this.#controller!.value : this.#initial.value !== undefined ? this.#initial.value : this.#resume?.value ?? (this.multiple ? [] : null) }
   public set value(value: TreeSelectValue) {
     value = this.#value(value)

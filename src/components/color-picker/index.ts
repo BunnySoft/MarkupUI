@@ -1,6 +1,8 @@
 export { ColorPicker } from "./color-picker-element.js"
 export { createColorPicker } from "./color-picker.js"
 export type { ColorPickerController } from "./color-picker.js"
+export { colorModes } from "./model.js"
+export type { ColorMode, ColorPickerOptions } from "./model.js"
 
 import { ColorPicker } from "./color-picker-element.js"
 import { ViewElement } from "../../core/index.js"

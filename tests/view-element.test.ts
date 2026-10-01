@@ -47,17 +47,50 @@ describe("ViewElement layout styles", () => {
     expect(element.style.cssText).toBe(before)
   })
 
-  it("returns a detached complete attribute snapshot with the typed borderRadius spelling", () => {
+  it("returns a detached complete inline-style snapshot with the typed borderRadius spelling", () => {
     const element = new LayoutProbe()
     element.viewStyle = { gap: 8, borderRadius: 4, wrap: true }
     const snapshot = element.viewStyle
     expect(Object.keys(snapshot)).toHaveLength(ViewElement.layoutAttributes.length)
-    expect(snapshot).toMatchObject({ gap: "8", borderRadius: "4", wrap: "", display: null })
+    expect(snapshot).toMatchObject({ gap: "8px", borderRadius: "4px", wrap: "wrap", display: null })
     snapshot.gap = 99
-    expect(element.viewStyle.gap).toBe("8")
+    expect(element.viewStyle.gap).toBe("8px")
     element.viewStyle = { gap: null, wrap: false }
-    expect(element.viewStyle).toMatchObject({ gap: null, wrap: null, borderRadius: "4" })
+    expect(element.viewStyle).toMatchObject({ gap: null, wrap: "nowrap", borderRadius: "4px" })
     expect(element.style.gap).toBe("")
-    expect(element.style.flexWrap).toBe("")
+    expect(element.style.flexWrap).toBe("nowrap")
+  })
+
+  it("never interprets or rewrites same-named component behavior attributes", () => {
+    const element = new LayoutProbe()
+    element.setAttribute("direction", "vertical")
+    element.setAttribute("gap", "20")
+    expect(element.viewStyle.direction).toBeNull()
+    expect(element.viewStyle.gap).toBeNull()
+    element.viewStyle = { direction: "row", gap: 6 }
+    expect(element.getAttribute("direction")).toBe("vertical")
+    expect(element.getAttribute("gap")).toBe("20")
+    expect(element.viewStyle).toMatchObject({ direction: "row", gap: "6px" })
+  })
+
+  it("applies only supplied styles and reads current inline values without affecting unrelated CSS", () => {
+    const element = new LayoutProbe()
+    element.style.color = "blue"
+    element.style.margin = "4px"
+    element.viewStyle = { display: "flex", gap: 1.5, borderRadius: 2.5 }
+    expect(element.getAttributeNames()).toEqual(["style"])
+    expect(element.viewStyle).toMatchObject({ display: "flex", gap: "1.5px", borderRadius: "2.5px", margin: "4px" })
+    element.viewStyle = { gap: null }
+    expect(element.style.color).toBe("blue")
+    expect(element.style.display).toBe("flex")
+    element.style.width = "50%"
+    expect(element.viewStyle.width).toBe("50%")
+  })
+
+  it.each([null, [], "flex", { gap: Infinity }, { display: true }, { width: {} }, { color: "red" }, { "border-radius": "8px" }, { display: "grid", width: NaN }])("rejects invalid descriptors before modifying any style: %j", value => {
+    const element = new LayoutProbe()
+    element.style.width = "20px"
+    expect(() => Reflect.set(element, "viewStyle", value)).toThrow(TypeError)
+    expect(element.style.cssText).toBe("width: 20px;")
   })
 })

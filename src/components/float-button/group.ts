@@ -45,10 +45,6 @@ export class FloatButtonGroup extends ViewElement {
   }
 
   private updatePresentation(): void {
-    try {
-      this.dataset.shape = this.shape
-    } catch {
-      // Preserve dataset if attribute is invalid
-    }
+    this.dataset.shape = this.shape
   }
 }

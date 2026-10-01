@@ -132,6 +132,128 @@ describe("direct Collapse family", () => {
     root.expand("two")
     expect(root.expandedKeys).toEqual(["two"])
   })
+  it.each(["disconnected", "pending", "ready", "reconnected"])("rejects sparse key collections before writes while %s", phase => {
+    const { root, item } = canonical({ defaultExpandedKeys: ["one"], expandedKeys: ["two"] }, false)
+    if (phase === "pending") item("one").querySelector("m-collapse-header")!.remove()
+    if (phase !== "disconnected") document.body.append(root)
+    if (phase === "reconnected") { root.remove(); document.body.append(root) }
+    expect(root.state).toBe(phase === "reconnected" ? "ready" : phase)
+    const leading = new Array<string>(2)
+    leading[1] = "one"
+    const trailing = ["one"]
+    trailing.length = 2
+    for (const value of [new Array<string>(1), leading, trailing]) {
+      expect(() => { root.expandedKeys = value }).toThrow(TypeError)
+      expect(root.expandedKeys).toEqual(["two"])
+      expect(() => { root.defaultExpandedKeys = value }).toThrow(TypeError)
+      expect(root.defaultExpandedKeys).toEqual(["one"])
+    }
+  })
+  it("adopts cloned rendered native owners without replacing authored regions or open state", async () => {
+    const source = canonical({ expandedKeys: ["one"], accordion: true })
+    const root = source.root.cloneNode(true) as Collapse
+    const item = root.querySelector<CollapseItem>('m-collapse-item[key="one"]')!
+    const details = item.querySelector("details")!, summary = details.querySelector("summary")!
+    const arrow = summary.querySelector("svg")!, header = item.querySelector("m-collapse-header")!
+    const content = item.querySelector("m-collapse-content")!, input = content.querySelector("input")!
+    const extra = item.querySelector("m-collapse-header-extra")!, clicked = vi.fn()
+    extra.querySelector("button")!.addEventListener("click", clicked)
+    input.value = "Cloned draft"
+    summary.setAttribute("aria-label", "Authored cloned label")
+    const errors = vi.fn()
+    root.addEventListener("m:error", errors)
+    document.body.append(root)
+    expect(root.state).toBe("ready")
+    expect(errors).not.toHaveBeenCalled()
+    expect(root.expandedKeys).toEqual(["one"])
+    expect(item.expanded).toBe(true)
+    expect(item.querySelector("details")).toBe(details)
+    expect(header.parentElement).toBe(summary)
+    expect(content.parentElement).toBe(details)
+    expect(extra.parentElement).toBe(item)
+    extra.querySelector("button")!.click()
+    expect(clicked).toHaveBeenCalledOnce()
+    const cancel = (event: Event) => event.preventDefault()
+    summary.addEventListener("click", cancel)
+    summary.click()
+    await flush()
+    expect(item.expanded).toBe(true)
+    summary.removeEventListener("click", cancel)
+    summary.click()
+    await flush()
+    expect(item.expanded).toBe(false)
+    root.expand("two")
+    expect(root.expandedKeys).toEqual(["two"])
+    root.remove()
+    expect(root.querySelector('m-collapse-item[disabled] summary')!.hasAttribute("aria-disabled")).toBe(false)
+    expect(details.hasAttribute("name")).toBe(false)
+    document.body.append(root)
+    root.refresh()
+    expect(root.state).toBe("ready")
+    expect(item.querySelectorAll("details")).toHaveLength(1)
+    expect(item.querySelectorAll("summary")).toHaveLength(1)
+    expect(summary.querySelectorAll('svg[data-part="arrow"]')).toHaveLength(1)
+    expect(summary.querySelector("svg")).toBe(arrow)
+    expect(summary.getAttribute("aria-label")).toBe("Authored cloned label")
+    expect(input.value).toBe("Cloned draft")
+    source.root.expand("one")
+    expect(root.expandedKeys).toEqual(["two"])
+  })
+  it.each([
+    { expandedKeys: [] }, { defaultExpandedKeys: [] },
+    { expandedKeys: ["two"], defaultExpandedKeys: ["one"] }, { defaultExpandedKeys: ["two"] },
+  ])("applies explicit collections over captured native expansion: %j", options => {
+    const source = canonical({ expandedKeys: ["one"] })
+    const root = source.root.cloneNode(true) as Collapse
+    Object.assign(root, options)
+    document.body.append(root)
+    expect(root.state).toBe("ready")
+    expect(root.expandedKeys).toEqual(options.expandedKeys ?? options.defaultExpandedKeys)
+    root.reset()
+    expect(root.expandedKeys).toEqual(options.defaultExpandedKeys ?? [])
+  })
+  it("restores captured expansion after native exclusive names close a clone on insertion", () => {
+    const source = canonical({ expandedKeys: ["one"], accordion: true })
+    const root = source.root.cloneNode(true) as Collapse
+    const details = root.items[0]!.querySelector("details")!
+    details.setAttribute("name", "m-collapse-999-captured")
+    details.open = false
+    expect(root.items[0]!.dataset.state).toBe("expanded")
+    document.body.append(root)
+    expect(root.state).toBe("ready")
+    expect(root.expandedKeys).toEqual(["one"])
+    expect(source.root.expandedKeys).toEqual(["one"])
+    expect(details.getAttribute("name")).not.toBe("m-collapse-999-captured")
+  })
+  it("defers dense unknown-key requests until native anatomy is ready", () => {
+    const { root } = canonical({}, false)
+    root.expandedKeys = ["missing"]
+    expect(root.expandedKeys).toEqual(["missing"])
+    const errors = vi.fn()
+    root.addEventListener("m:error", errors)
+    document.body.append(root)
+    expect(root.state).toBe("invalid")
+    expect(errors.mock.calls[0]![0].detail.error).toBeInstanceOf(RangeError)
+    expect(() => root.refresh()).toThrow("Unknown Collapse item: missing.")
+    root.expandedKeys = ["one"]
+    root.refresh()
+    expect(root.state).toBe("ready")
+    expect(root.expandedKeys).toEqual(["one"])
+  })
+  it("does not adopt unmarked private anatomy or accept duplicate captured owners", () => {
+    const source = canonical()
+    const unmarked = source.root.cloneNode(true) as Collapse
+    unmarked.items[0]!.querySelector("details")!.removeAttribute("data-part")
+    document.body.append(unmarked)
+    expect(unmarked.state).toBe("pending")
+    expect(() => unmarked.refresh()).toThrow("key, header and content")
+    const duplicate = source.root.cloneNode(true) as Collapse
+    const item = duplicate.items[0]!
+    item.append(item.querySelector("details")!.cloneNode(true))
+    document.body.append(duplicate)
+    expect(duplicate.state).toBe("invalid")
+    expect(() => duplicate.refresh()).toThrow("one native disclosure")
+  })
   it("preserves public region and input identity and places extras outside the single native owner", async () => {
     const { root, item, summary } = canonical({}, false)
     const header = item("one").querySelector("m-collapse-header")!

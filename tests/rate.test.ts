@@ -55,19 +55,47 @@ describe("native bounded rating choices", () => {
     fixture()
     expect(customElements.get("m-rating")).toBe(before)
   })
-  it.each([0, 11, -1, 2.5, Infinity, NaN])("rejects unbounded/invalid count %j without rendering choices", count => {
+  it.each([0, -1, 2.5, Infinity, NaN])("rejects invalid count %j without rendering choices", count => {
     const { root, helper } = fixture()
     helper.disconnect()
     const before = root.innerHTML
     expect(() => createRate(root, { count })).toThrow()
     expect(root.innerHTML).toBe(before)
   })
-  it("rejects readonly and unknown option APIs rather than faking radio readonly", () => {
+  it("supports an authored count above ten only when all actual native choices exist", () => {
     const { root, helper, input } = fixture()
     helper.disconnect()
-    expect(() => createRate(root, { readonly: true } as RateOptions)).toThrow("readonly")
+    expect(() => createRate(root, { count: 11 })).toThrow("ascending")
+    const three = input("3"), choices = root.querySelector(".m-rate__choices")!
+    for (let score = 6; score <= 11; score++) {
+      const label = document.createElement("label"), radio = document.createElement("input")
+      radio.type = "radio"; radio.name = "quality"; radio.value = String(score); radio.setAttribute("data-radio", "")
+      label.append(radio, `${score} of 11`); choices.append(label)
+    }
+    const enhanced = createRate(root, { count: 11 }); helpers.push(enhanced)
+    expect(enhanced.count).toBe(11); expect(input("3")).toBe(three)
+    enhanced.setValue(11); expect(enhanced.value).toBe(11)
+    expect(enhanced.defaultValue).toBe(3)
+  })
+  it("shares reversible readonly policy but rejects a fictitious native readonly attribute", () => {
+    const { root, helper, input } = fixture()
+    helper.disconnect()
+    input("1").disabled = true
+    const enhanced = createRate(root, { readonly: true }); helpers.push(enhanced)
+    expect(input("3").disabled).toBe(true)
+    expect(root.getAttribute("aria-readonly")).toBe("true")
+    expect(enhanced.clear()).toBe(false)
+    enhanced.configure({ readonly: false })
+    expect(input("3").disabled).toBe(false)
+    expect(input("1").disabled).toBe(true)
+    enhanced.disconnect()
+    root.setAttribute("readonly", "")
+    expect(() => createRate(root)).toThrow("readonly")
+    root.removeAttribute("readonly")
     input("3").setAttribute("readonly", "")
     expect(() => createRate(root)).toThrow("readonly")
+    input("3").removeAttribute("readonly")
+    expect(() => createRate(root, { unknown: true } as RateOptions)).toThrow("Unsupported")
   })
   it("requires complete ascending canonical choices and meaningful native labels", () => {
     const { root, helper, input } = fixture()
@@ -281,12 +309,16 @@ describe("canonical Rate ViewElement", () => {
     expect(customElements.get("m-rate")).toBe(Rate)
     expect(Rate.observedAttributes).toEqual([
       "value",
+      "default-value",
       "count",
       "allow-half",
       "disabled",
       "readonly",
       "clearable",
       "size",
+      "name",
+      "form",
+      "label",
     ])
     const define = vi.fn()
     expect(() => registerRate({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
@@ -357,33 +389,37 @@ describe("canonical Rate ViewElement", () => {
     element.size = "large"
     expect(element.size).toBe("large")
     expect(element.getAttribute("size")).toBe("large")
-    expect(() => { (element as any).size = "huge" }).toThrow(RangeError)
+    expect(() => { Reflect.set(element, "size", "huge") }).toThrow(RangeError)
   })
 
-  it("renders choices, reflects selection, and emits change events on interaction", () => {
+  it("renders choices with one native semantic owner and commits native interaction once", async () => {
     const element = document.createElement("m-rate") as Rate
     element.value = 3
     document.body.append(element)
-    expect(element.classList.contains("m-rate")).toBe(true)
-    expect(element.getAttribute("data-rate-cumulative")).toBe("")
-    expect(element.getAttribute("data-size")).toBe("medium")
+    expect(element.native.classList.contains("m-rate")).toBe(true)
+    expect(element.native.getAttribute("data-rate-cumulative")).toBe("")
+    expect(element.native.getAttribute("data-size")).toBe("medium")
+    expect(element.hasAttribute("role")).toBe(false)
+    expect(element.native.hasAttribute("role")).toBe(false)
+    expect(element.native.querySelector("legend")!.textContent).toBe("Rating")
 
     const inputs = element.querySelectorAll<HTMLInputElement>("input[type='radio']")
-    expect(inputs).toHaveLength(5)
-    expect(inputs[2]!.checked).toBe(true)
-    expect(inputs[2]!.value).toBe("3")
+    expect(inputs).toHaveLength(6)
+    expect(inputs[3]!.checked).toBe(true)
+    expect(inputs[3]!.value).toBe("3")
 
     const changeSpy = vi.fn()
     element.addEventListener("m:change", changeSpy)
 
-    inputs[4]!.click()
+    inputs[5]!.click()
+    await flush()
     expect(changeSpy).toHaveBeenCalledOnce()
     expect(changeSpy.mock.calls[0]![0].detail).toEqual({ value: 5 })
     expect(element.value).toBe(5)
-    expect(inputs[4]!.checked).toBe(true)
+    expect(inputs[5]!.checked).toBe(true)
   })
 
-  it("supports clearable action via clear() and clicking active choice", () => {
+  it("supports clearable action via clear() and clicking active choice without conflating zero and null", async () => {
     const element = document.createElement("m-rate") as Rate
     element.clearable = true
     element.value = 3
@@ -397,23 +433,25 @@ describe("canonical Rate ViewElement", () => {
     element.addEventListener("m:change", changeSpy)
 
     element.clear()
-    expect(element.value).toBe(0)
+    expect(element.value).toBeNull()
     expect(changeSpy).toHaveBeenCalledOnce()
-    expect(changeSpy.mock.calls[0]![0].detail).toEqual({ value: 0 })
+    expect(changeSpy.mock.calls[0]![0].detail).toEqual({ value: null })
     expect(clearBtn!.hidden).toBe(true)
 
     const inputs = element.querySelectorAll<HTMLInputElement>("input[type='radio']")
     expect([...inputs].every(input => !input.checked)).toBe(true)
 
-    inputs[1]!.click()
+    inputs[2]!.click()
+    await flush()
     expect(element.value).toBe(2)
     expect(changeSpy).toHaveBeenCalledTimes(2)
 
-    const choice2 = inputs[1]!.closest(".m-rate__choice") as HTMLElement
+    const choice2 = inputs[2]!.closest(".m-rate__choice") as HTMLElement
     choice2.click()
-    expect(element.value).toBe(0)
+    await flush()
+    expect(element.value).toBeNull()
     expect(changeSpy).toHaveBeenCalledTimes(3)
-    expect(changeSpy.mock.calls[2]![0].detail).toEqual({ value: 0 })
+    expect(changeSpy.mock.calls[2]![0].detail).toEqual({ value: null })
   })
 
   it("supports half-step rating choices with allowHalf", () => {
@@ -424,7 +462,7 @@ describe("canonical Rate ViewElement", () => {
     document.body.append(element)
 
     const inputs = element.querySelectorAll<HTMLInputElement>("input[type='radio']")
-    expect(inputs).toHaveLength(6)
+    expect(inputs).toHaveLength(7)
 
     const checked = element.querySelector<HTMLInputElement>("input:checked")
     expect(checked?.value).toBe("1.5")
@@ -439,9 +477,10 @@ describe("canonical Rate ViewElement", () => {
     element.disabled = true
     document.body.append(element)
 
-    expect(element.getAttribute("aria-disabled")).toBe("true")
+    expect(element.native.disabled).toBe(true)
     const inputs = element.querySelectorAll<HTMLInputElement>("input[type='radio']")
-    expect(inputs[0]!.disabled).toBe(true)
+    expect(inputs[0]!.matches(":disabled")).toBe(true)
+    expect(inputs[0]!.disabled).toBe(false)
 
     const changeSpy = vi.fn()
     element.addEventListener("m:change", changeSpy)
@@ -455,11 +494,261 @@ describe("canonical Rate ViewElement", () => {
 
     element.disabled = false
     element.readonly = true
-    expect(element.getAttribute("aria-readonly")).toBe("true")
+    expect(element.native.getAttribute("aria-readonly")).toBe("true")
     expect(inputs[0]!.disabled).toBe(true)
 
     element.clear()
     expect(changeSpy).not.toHaveBeenCalled()
   })
-})
 
+  describe("Rate single-owner defaults, schema and lifetime", () => {
+    function generated(value?: number | null) {
+      const form = document.createElement("form"), rate = new Rate()
+      rate.name = "score"
+      if (value !== undefined) rate.value = value
+      form.append(rate); document.body.append(form)
+      const input = (score: number) => rate.native.querySelector<HTMLInputElement>(`input[value="${score}"]`)!
+      return { rate, form, input }
+    }
+
+    it("retains the generated initial zero as a real native default rather than an empty score", async () => {
+      const { rate, form, input } = generated()
+      expect(rate.value).toBe(0); expect(rate.defaultValue).toBe(0)
+      expect(input(0).checked).toBe(true); expect(input(0).defaultChecked).toBe(true)
+      expect(new FormData(form).get("score")).toBe("0")
+      rate.value = null
+      expect(new FormData(form).has("score")).toBe(false)
+      expect(rate.defaultValue).toBe(0)
+      form.reset(); await flush()
+      expect(rate.value).toBe(0)
+    })
+
+    it("separates initialization, silent live writes, changed native defaults and reset cancellation", async () => {
+      const { rate, form, input } = generated(3)
+      const changes = vi.fn(); rate.addEventListener("m:change", changes)
+      expect(rate.defaultValue).toBe(3)
+      rate.value = 4
+      expect(input(3).defaultChecked).toBe(true)
+      rate.defaultValue = 2
+      expect(rate.value).toBe(4); expect(rate.defaultValue).toBe(2)
+      form.addEventListener("reset", event => event.preventDefault(), { once: true })
+      form.reset(); await flush(); expect(rate.value).toBe(4)
+      form.reset(); await flush(); expect(rate.value).toBe(2)
+      input(2).defaultChecked = false; input(1).defaultChecked = true
+      rate.refresh()
+      expect(rate.defaultValue).toBe(1)
+      rate.setValue(5); form.reset(); await flush()
+      expect(rate.value).toBe(1); expect(changes).not.toHaveBeenCalled()
+    })
+
+    it("supports an explicit null default independently of its initial live value", async () => {
+      const rate = new Rate(), form = document.createElement("form")
+      rate.value = 3; rate.defaultValue = null
+      form.append(rate); document.body.append(form)
+      expect(rate.value).toBe(3); expect(rate.defaultValue).toBeNull()
+      form.reset(); await flush(); expect(rate.value).toBeNull()
+      const parent = rate.parentElement!
+      rate.remove(); parent.append(rate); await flush()
+      expect(rate.value).toBeNull(); expect(rate.defaultValue).toBeNull()
+    })
+
+    it("retains surviving native choices, decorations, listeners and focus across valid live schema changes", async () => {
+      const { rate, input } = generated(3), three = input(3), label = three.labels![0]!
+      const glyph = label.querySelector(".m-rate__glyph"), listener = vi.fn()
+      three.addEventListener("change", listener)
+      const decoration = document.createElement("span"); decoration.textContent = "Author decoration"; label.append(decoration)
+      three.focus()
+      rate.count = 6
+      rate.allowHalf = true
+      expect(input(3)).toBe(three); expect(three.labels![0]).toBe(label)
+      expect(label.querySelector(".m-rate__glyph")).toBe(glyph); expect(decoration.parentElement).toBe(label)
+      expect(document.activeElement).toBe(three)
+      expect(three.defaultChecked).toBe(true)
+      rate.value = 2.5
+      expect(() => { rate.allowHalf = false }).toThrow()
+      expect(rate.allowHalf).toBe(true); expect(rate.value).toBe(2.5)
+      expect(() => { rate.count = 2 }).toThrow()
+      expect(rate.count).toBe(6); expect(rate.defaultValue).toBe(3)
+      rate.value = 3; rate.allowHalf = false; rate.count = 4
+      expect(input(3)).toBe(three); expect(rate.native.querySelectorAll("input")).toHaveLength(5)
+      expect(document.activeElement).toBe(three)
+      input(2).click(); three.click(); await flush()
+      expect(listener).toHaveBeenCalledOnce()
+    })
+
+    it("preserves the public count range above ten, including half choices and detached schema validation", () => {
+      const { rate, input } = generated(3), three = input(3)
+      rate.count = 11; rate.allowHalf = true; rate.value = 10.5
+      expect(rate.native.querySelectorAll("input")).toHaveLength(23)
+      expect(rate.value).toBe(10.5); expect(input(3)).toBe(three); expect(rate.defaultValue).toBe(3)
+      rate.remove()
+      expect(() => { rate.count = 10 }).toThrow()
+      expect(rate.count).toBe(11)
+      expect(() => { rate.allowHalf = false }).toThrow()
+      expect(rate.allowHalf).toBe(true)
+    })
+
+    it("adopts authored controls and defaults without imposing generated zero or host semantics", async () => {
+      const { root, helper, input } = fixture()
+      helper.disconnect()
+      const host = new Rate(), form = root.parentElement!
+      const three = input("3"), label = three.labels![0]!, glyph = label.querySelector(".m-rate__glyph")
+      root.setAttribute("aria-label", "Author rating")
+      host.append(root); form.append(host)
+      expect(host.native).toBe(root); expect(host.value).toBe(3); expect(host.defaultValue).toBe(3)
+      expect(input("3")).toBe(three); expect(three.labels![0]).toBe(label)
+      expect(label.querySelector(".m-rate__glyph")).toBe(glyph)
+      expect(root.getAttribute("aria-label")).toBe("Author rating")
+      expect(root.querySelectorAll("input")).toHaveLength(6)
+      expect(() => createRate(root)).toThrow("owner")
+      expect(() => createRadioGroup(root)).toThrow("owner")
+      host.value = null; host.remove(); form.append(host); await flush()
+      expect(host.value).toBeNull(); expect(host.defaultValue).toBe(3)
+    })
+
+    it("preserves checkedness, defaults and nodes through reconnect while canceling pending actions and notifications", async () => {
+      const { rate, form, input } = generated(3), native = rate.native, three = input(3)
+      rate.clearable = true
+      const changes = vi.fn(); rate.addEventListener("m:change", changes)
+      input(4).click()
+      rate.remove(); form.append(rate); await flush()
+      expect(changes).not.toHaveBeenCalled(); expect(rate.value).toBe(4)
+      expect(rate.native).toBe(native); expect(input(3)).toBe(three); expect(rate.defaultValue).toBe(3)
+      rate.native.querySelector<HTMLButtonElement>("[data-rate-clear]")!.click()
+      rate.remove(); form.append(rate); await flush()
+      expect(rate.value).toBe(4); expect(changes).not.toHaveBeenCalled()
+      input(5).click(); await flush()
+      expect(changes).toHaveBeenCalledOnce()
+      rate.remove(); rate.value = null; rate.defaultValue = 2; form.append(rate); await flush()
+      expect(rate.value).toBeNull(); expect(rate.defaultValue).toBe(2)
+    })
+
+    it("shares selected-choice clear with the native entry, honors late cancellation and never clears a first activation", async () => {
+      const { root, helper, input } = fixture()
+      helper.configure({ clearable: true })
+      const changed = vi.fn(), cleared = vi.fn(), native = vi.fn()
+      root.addEventListener("m:change", changed); root.addEventListener("m:rate-clear", cleared)
+      root.addEventListener("change", native)
+      input("4").labels![0]!.click(); await flush()
+      expect(helper.value).toBe(4); expect(cleared).not.toHaveBeenCalled()
+      root.addEventListener("click", event => event.preventDefault(), { once: true })
+      input("4").labels![0]!.click(); await flush(); expect(helper.value).toBe(4)
+      input("4").labels![0]!.click(); await flush()
+      expect(helper.value).toBeNull(); expect(cleared).toHaveBeenCalledOnce()
+      expect(changed).toHaveBeenCalledTimes(2); expect(native).toHaveBeenCalledOnce()
+    })
+
+    it("retains clear controls and author listeners while changing clearable presentation", async () => {
+      const { rate } = generated(3)
+      rate.clearable = true
+      const button = rate.native.querySelector<HTMLButtonElement>("[data-rate-clear]")!, click = vi.fn()
+      button.addEventListener("click", click)
+      rate.clearable = false
+      expect(button.isConnected).toBe(true); expect(button.hidden).toBe(true)
+      rate.clearable = true; expect(button.hidden).toBe(false)
+      button.click(); await flush()
+      expect(click).toHaveBeenCalledOnce(); expect(rate.value).toBeNull()
+    })
+
+    it("keeps native fieldset disables and reversible readonly distinct from per-input author disables", async () => {
+      const { rate, form, input } = generated(3)
+      input(1).disabled = true; await flush()
+      rate.disabled = true
+      expect(input(3).disabled).toBe(false); expect(input(3).matches(":disabled")).toBe(true)
+      expect(new FormData(form).has("score")).toBe(false)
+      rate.disabled = false; rate.readonly = true
+      expect(input(3).disabled).toBe(true)
+      expect(new FormData(form).has("score")).toBe(false); expect(rate.clear()).toBe(false)
+      rate.value = 4; rate.readonly = false
+      expect(input(1).disabled).toBe(true); expect(input(4).disabled).toBe(false)
+      expect(new FormData(form).get("score")).toBe("4")
+    })
+
+    it("honors disabled ancestor fieldsets and author ARIA without making a focusable proxy", async () => {
+      const outer = document.createElement("fieldset"), legend = document.createElement("legend"), rate = new Rate()
+      legend.textContent = "Outer"; outer.append(legend, rate); document.body.append(outer)
+      rate.value = 3; rate.clearable = true
+      outer.disabled = true; await flush()
+      expect(rate.clear()).toBe(false)
+      expect(rate.native.querySelector<HTMLButtonElement>("[data-rate-clear]")!.disabled).toBe(true)
+      outer.disabled = false; await flush()
+      rate.native.setAttribute("aria-disabled", "true"); await flush()
+      expect(rate.clear()).toBe(false)
+      rate.remove(); outer.append(rate); await flush()
+      expect(rate.native.getAttribute("aria-disabled")).toBe("true")
+      expect(rate.querySelectorAll("[tabindex],[aria-checked],[role=radio],[role=radiogroup]")).toHaveLength(0)
+    })
+
+    it("maps explicit names/external form association and preserves external labels and native focus", async () => {
+      const { rate, form, input } = generated(3), other = document.createElement("form")
+      other.id = "external-rate-form"; document.body.append(other)
+      rate.setAttribute("form", other.id)
+      rate.name = "external-score"
+      expect(rate.form).toBe(other)
+      expect(new FormData(form).has("score")).toBe(false)
+      expect(new FormData(other).get("external-score")).toBe("3")
+      const three = input(3), label = document.createElement("label"), click = vi.fn()
+      three.id = "externally-labelled-score"; label.htmlFor = three.id; label.textContent = "External score label"
+      label.addEventListener("click", click); document.body.append(label)
+      rate.focus(); expect(document.activeElement).toBe(three)
+      rate.blur(); expect(document.activeElement).not.toBe(three)
+      label.click(); await flush()
+      expect(click).toHaveBeenCalledOnce(); expect(three.labels).toContain(label)
+      rate.label = "Updated rating"; expect(rate.native.querySelector("legend")!.textContent).toBe("Updated rating")
+      rate.remove(); form.append(rate); await flush()
+      expect(rate.form).toBe(other); expect(three.labels).toContain(label)
+    })
+
+    it("retains later application association/default/ARIA edits through lifecycle cleanup", async () => {
+      const { rate, form, input } = generated(3), other = document.createElement("form")
+      other.id = "late-rate-form"; document.body.append(other)
+      for (const control of rate.native.querySelectorAll("input")) {
+        control.name = "late-score"; control.setAttribute("form", other.id)
+      }
+      rate.native.setAttribute("aria-label", "Application name"); input(3).defaultChecked = false; input(2).defaultChecked = true
+      await flush(); rate.refresh()
+      expect(rate.form).toBe(other); expect(rate.name).toBe("late-score")
+      rate.remove(); form.append(rate); await flush()
+      expect(rate.form).toBe(other); expect(input(3).name).toBe("late-score")
+      expect(rate.name).toBe("late-score")
+      expect(rate.defaultValue).toBe(2); expect(rate.native.getAttribute("aria-label")).toBe("Application name")
+    })
+
+    it("enhances late authored clear/readout nodes without replacing them or their listeners", async () => {
+      const { rate } = generated(3), button = document.createElement("button"), output = document.createElement("span")
+      button.type = "button"; button.setAttribute("data-rate-clear", ""); button.textContent = "Author clear"
+      output.setAttribute("data-rate-output", ""); output.textContent = "Author readout"
+      const clicks = vi.fn(); button.addEventListener("click", clicks)
+      rate.native.append(output, button); await flush()
+      expect(output.textContent).toBe("3 / 5")
+      button.click(); await flush()
+      expect(rate.value).toBeNull(); expect(clicks).toHaveBeenCalledOnce()
+      rate.remove()
+      expect(output.textContent).toBe("Author readout")
+    })
+
+    it("replays pre-upgrade own properties into the same owner and supports early native access", () => {
+      const rate = new Rate()
+      const native = rate.native
+      expect(rate.value).toBe(0); expect(rate.defaultValue).toBe(0)
+      Object.defineProperty(rate, "value", { configurable: true, value: 2.5 })
+      Object.defineProperty(rate, "allowHalf", { configurable: true, value: true })
+      Object.defineProperty(rate, "defaultValue", { configurable: true, value: 1.5 })
+      document.body.append(rate)
+      expect(Object.hasOwn(rate, "value")).toBe(false)
+      expect(rate.native).toBe(native); expect(rate.value).toBe(2.5); expect(rate.defaultValue).toBe(1.5)
+    })
+
+    it("reports formatting errors and releases the native owner after initialization fails", () => {
+      const { root, helper } = fixture()
+      helper.disconnect()
+      expect(() => createRate(root, { formatValue: () => { throw new Error("format failed") } })).toThrow("format failed")
+      const restored = createRate(root); helpers.push(restored)
+      const errors = vi.fn(); root.addEventListener("m:rate-error", errors)
+      expect(() => restored.configure({ formatValue: () => { throw new Error("live format failed") } })).toThrow("live format failed")
+      expect(restored.error).toBe("live format failed")
+      restored.configure({ formatValue: value => String(value) })
+      expect(restored.error).toBeNull()
+    })
+  })
+})

@@ -23,16 +23,27 @@ function initialize() {
     })
   }
 
-  const root = document.querySelector("#accent-picker")
-  if (root && globalThis.MarkupUIColorPicker?.createColorPicker) {
-    try {
-      MarkupUIColorPicker.createColorPicker(root)
-    } catch {
-      // Ignore if already owned or in headless test environment
-    }
+  const alphaPicker = document.getElementById("alpha-picker")
+  const alphaValue = document.getElementById("alpha-value")
+  if (alphaPicker && alphaValue) {
+    alphaPicker.addEventListener("m:change", event => {
+      alphaValue.textContent = `Committed: ${event.detail.value}`
+    })
+  }
+  const form = document.getElementById("color-form")
+  const formValue = document.getElementById("form-value")
+  if (form && formValue) {
+    form.addEventListener("submit", event => {
+      event.preventDefault()
+      formValue.textContent = `FormData accent: ${new FormData(form).get("accent")}`
+    })
+    form.addEventListener("reset", event => {
+      queueMicrotask(() => {
+        if (!event.defaultPrevented) formValue.textContent = `Reset: ${document.getElementById("form-picker").defaultValue}`
+      })
+    })
   }
 }
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true })
 else initialize()
-

@@ -1,422 +1,296 @@
 import { ViewElement } from "../../core/index.js"
+import { ownedWrites } from "../popover/position.js"
+import { createTransfer, transferOptions } from "./transfer.js"
+import type { TransferController, TransferOption, TransferSide, TransferState } from "./transfer.js"
 
 export interface TransferChangeDetail {
   readonly value: readonly string[]
 }
+export interface TransferStageDetail {
+  readonly side: TransferSide
+  readonly selected: readonly string[]
+}
 
 /**
- * Double-column transfer component for moving items between source and target lists.
- * @region {"name":"source","accepts":["select","options","content"],"min":0,"max":1}
- * @region {"name":"target","accepts":["select","options","content"],"min":0,"max":1}
- * @region {"name":"content","accepts":["flow content"],"min":0,"max":null}
- * @event {"name":"Change","web":"m:change","bubbles":true,"cancelable":false,"composed":false,"detail":{"value":"Array"}}
+ * Target membership and native highlights are distinct; both use the existing Transfer owner.
+ * @region {"name":"content","accepts":["content","native options","native Transfer fieldset"],"min":0,"max":null}
+ * @event {"name":"Change","web":"m:change","bubbles":true,"cancelable":false,"composed":false,"detail":{"value":"readonly string[]"}}
+ * @event {"name":"Stage","web":"m:stage","bubbles":true,"cancelable":false,"composed":false,"detail":{"side":"TransferSide","selected":"readonly string[]"}}
+ * @event {"name":"Error","web":"m:error","bubbles":true,"cancelable":false,"composed":false,"detail":{"error":"unknown"}}
  */
 export class Transfer extends ViewElement {
   public static readonly tag = "m-transfer"
-  public static readonly observedAttributes = ["source-title", "target-title", "disabled"]
-
+  public static readonly observedAttributes = ["source-title", "target-title", "disabled", "name", "required"]
+  private controller: TransferController | undefined
+  private root: HTMLFieldSetElement | undefined
   private initialized = false
+  private data: readonly TransferOption[] = Object.freeze([])
+  private suppliedData = false
+  private projectedData: readonly TransferOption[] | undefined
+  private pendingValue: readonly string[] | undefined
+  private pendingDefaults: readonly string[] | undefined
+  private retainedDefaults: readonly string[] = Object.freeze([])
+  private readonly disabledWrites = ownedWrites()
+  private readonly requiredWrites = ownedWrites()
+  private readonly nameWrites = ownedWrites()
 
   public connectedCallback(): void {
     if (!this.initialized) {
-      this.initialized = true
       this.upgradeProperties()
+      this.initialized = true
     }
-    this.classList.add("m-transfer")
-    this.dataset.mTransfer = ""
-    this.render()
-    this.setupListeners()
-    this.syncTitles()
-    this.syncDisabled()
-    this.updateCounts()
+    this.dataset.part = "transfer"
+    this.prepare()
+    this.syncSettings()
+    this.projectOptions()
+    this.root!.addEventListener("m:transfer-change", this.onChange)
+    this.root!.addEventListener("m:transfer-stage", this.onStage)
+    this.root!.addEventListener("m:transfer-error", this.onError)
+    if (this.controller) this.controller.connect()
+    else this.controller = createTransfer(this.root!, {
+      ...(this.pendingValue === undefined ? {} : { value: this.pendingValue }),
+      ...(this.pendingDefaults === undefined ? {} : { defaultValue: this.pendingDefaults }),
+    })
+    if (this.pendingDefaults !== undefined) this.controller.setDefaultValue(this.pendingDefaults)
+    if (this.pendingValue !== undefined) this.controller.setValue(this.pendingValue)
+    this.pendingValue = this.pendingDefaults = undefined
   }
 
   public disconnectedCallback(): void {
-    this.cleanupListeners()
+    if (this.controller?.connected) this.retainedDefaults = this.controller.state.defaultValue
+    this.controller?.disconnect()
+    this.root?.removeEventListener("m:transfer-change", this.onChange)
+    this.root?.removeEventListener("m:transfer-stage", this.onStage)
+    this.root?.removeEventListener("m:transfer-error", this.onError)
+    this.disabledWrites.restore()
+    this.requiredWrites.restore()
+    this.nameWrites.restore()
   }
 
-  public attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
-    if (oldValue === newValue || !this.isConnected) return
-    if (name === "source-title" || name === "target-title") {
-      this.syncTitles()
-    } else if (name === "disabled") {
-      this.syncDisabled()
+  public attributeChangedCallback(name: string, before: string | null, after: string | null): void {
+    if (before === after || !this.initialized || !this.isConnected) return
+    if (name === "name" && this.controller?.connected) {
+      throw new Error("Disconnect Transfer before changing its membership field name.")
+    }
+    this.syncSettings()
+    this.controller?.refresh()
+  }
+
+  public get sourceTitle(): string { return this.getAttribute("source-title") ?? "" }
+  public set sourceTitle(value: string | null) { this.setStringAttribute("source-title", value) }
+  public get targetTitle(): string { return this.getAttribute("target-title") ?? "" }
+  public set targetTitle(value: string | null) { this.setStringAttribute("target-title", value) }
+  public get disabled(): boolean { return this.hasAttribute("disabled") }
+  public set disabled(value: boolean) { this.setBooleanAttribute("disabled", value) }
+  public get required(): boolean { return this.hasAttribute("required") }
+  public set required(value: boolean) { this.setBooleanAttribute("required", value) }
+  /** Optional membership submission name, not a name for native staged selection. Change while disconnected. */
+  public get name(): string | null { return this.getAttribute("name") }
+  public set name(value: string | null) {
+    if (value !== null && (typeof value !== "string" || !value || value.length > 128)) throw new TypeError("Invalid Transfer membership field name.")
+    if (this.controller?.connected && value !== this.name) throw new Error("Disconnect Transfer before changing its membership field name.")
+    this.setStringAttribute("name", value)
+  }
+
+  /** Property-only data; updates retain surviving native option identities and membership.
+   * @default []
+   */
+  public get options(): readonly TransferOption[] { return this.data }
+  public set options(value: readonly TransferOption[]) {
+    const next = transferOptions(value)
+    this.data = next
+    this.suppliedData = true
+    if (this.initialized && this.isConnected) {
+      this.projectOptions()
+      this.active.refresh()
     }
   }
 
-  public get sourceTitle(): string {
-    return this.getAttribute("source-title") ?? ""
-  }
-  public set sourceTitle(value: string | null) {
-    this.setStringAttribute("source-title", value)
-  }
-
-  public get targetTitle(): string {
-    return this.getAttribute("target-title") ?? ""
-  }
-  public set targetTitle(value: string | null) {
-    this.setStringAttribute("target-title", value)
-  }
-
-  public get disabled(): boolean {
-    return this.hasAttribute("disabled")
-  }
-  public set disabled(value: boolean) {
-    this.setBooleanAttribute("disabled", value)
-  }
-
-  private optionsData: readonly { label: string; value: string }[] = []
-  private selectedValues: string[] = []
-  private pendingSource = ""
-  private pendingTarget = ""
-
-  public get options(): readonly { label: string; value: string }[] {
-    return this.optionsData
-  }
-  public set options(value: readonly { label: string; value: string }[]) {
-    this.optionsData = Array.isArray(value) ? value : []
-    this.renderOptionsMode()
-  }
-
-  public get value(): string[] {
-    const targetSelect = this.querySelector<HTMLSelectElement>("select[data-transfer-target]")
-    if (targetSelect) {
-      return [...targetSelect.options].map(opt => opt.value)
-    }
-    return [...this.selectedValues]
+  /** Ordered target membership, never the highlighted options. Programmatic writes are silent. */
+  public get value(): readonly string[] {
+    if (this.pendingValue !== undefined) return this.pendingValue
+    if (this.controller?.connected) return this.controller.value
+    return Object.freeze([...this.root?.querySelector<HTMLSelectElement>("select[data-transfer-target]")?.options ?? []].map(option => option.value))
   }
   public set value(value: readonly string[]) {
-    this.selectedValues = Array.isArray(value) ? [...value] : []
-    if (this.optionsData.length > 0) {
-      this.renderOptionsMode()
-    }
+    const keys = this.keys(value)
+    if (this.controller?.connected) this.controller.setValue(keys)
+    else this.pendingValue = keys
   }
 
-  private renderOptionsMode(): void {
-    if (!this.isConnected || this.optionsData.length === 0) return
-    const selected = new Set(this.selectedValues)
-    const source = this.optionsData.filter((opt) => !selected.has(opt.value))
-    const target = this.optionsData.filter((opt) => selected.has(opt.value))
+  /** Reset target, independent of native defaultSelected highlight flags.
+   * @default []
+   */
+  public get defaultValue(): readonly string[] {
+    return this.pendingDefaults ?? (this.controller?.connected ? this.controller.state.defaultValue : this.retainedDefaults)
+  }
+  public set defaultValue(value: readonly string[]) {
+    const keys = this.keys(value)
+    if (this.controller?.connected) this.controller.setDefaultValue(keys)
+    else this.pendingDefaults = keys
+  }
+  /** Web interoperability: stable semantic owner; available after initial rendering. */
+  public get native(): HTMLFieldSetElement | null { return this.root ?? null }
+  /** Immutable live membership/staging/validation snapshot; requires connection. */
+  public get state(): TransferState { return this.active.state }
 
-    const renderList = (opts: readonly { label: string; value: string }[], isTarget: boolean) => {
-      const list = this.ownerDocument.createElement("div")
-      list.dataset.mTransferList = ""
-      opts.forEach((opt) => {
-        const button = this.ownerDocument.createElement("button")
-        button.type = "button"
-        button.textContent = opt.label
-        const isSelected = (isTarget ? this.pendingTarget : this.pendingSource) === opt.value
-        button.toggleAttribute("selected", isSelected)
-        button.addEventListener("click", () => {
-          if (isTarget) this.pendingTarget = opt.value
-          else this.pendingSource = opt.value
-          this.renderOptionsMode()
-        })
-        list.append(button)
-      })
-      return list
+  public moveToTarget(keys?: readonly string[]): number { return this.move("target", keys) }
+  public moveToSource(keys?: readonly string[]): number { return this.move("source", keys) }
+  public moveAllToTarget(): number { return this.move("target", undefined, true) }
+  public moveAllToSource(): number { return this.move("source", undefined, true) }
+  public selectAll(side: TransferSide): void { this.active.selectAll(side) }
+  public clearSelection(side: TransferSide): void { this.active.clearSelection(side) }
+  public setFilter(side: TransferSide, value: string): void { this.active.setFilter(side, value) }
+  public appendTo(data: FormData, name?: string): number { return this.active.appendTo(data, name) }
+  public reset(): void { this.active.reset() }
+  public refresh(): void {
+    if (!this.isConnected) throw new Error("Connect Transfer before refreshing.")
+    this.prepare()
+    this.syncSettings()
+    this.projectOptions()
+    this.active.refresh()
+  }
+
+  private get active(): TransferController {
+    if (!this.controller?.connected) throw new Error("Transfer is not connected.")
+    return this.controller
+  }
+  private keys(value: readonly string[]): readonly string[] {
+    if (!Array.isArray(value) || value.length > 2000
+      || [...value].some(key => typeof key !== "string" || !key || key.length > 256)
+      || new Set(value).size !== value.length) throw new TypeError("Use unique nonempty Transfer keys.")
+    return Object.freeze([...value])
+  }
+  private move(to: TransferSide, keys?: readonly string[], all = false): number {
+    const controller = this.active
+    if (controller.state.disabled) return 0
+    const count = all ? controller.moveAll(to) : keys === undefined ? controller.moveSelected(to) : controller.move(keys, to)
+    if (count) this.emit<TransferChangeDetail>("m:change", { value: controller.value })
+    return count
+  }
+  private readonly onChange = (event: Event): void => {
+    if (event.target !== this.root) return
+    this.emit<TransferChangeDetail>("m:change", { value: this.active.value })
+  }
+  private readonly onStage = (event: Event): void => {
+    if (event.target !== this.root) return
+    const detail = (event as CustomEvent<TransferStageDetail>).detail
+    this.emit<TransferStageDetail>("m:stage", { side: detail.side, selected: detail.selected })
+  }
+  private readonly onError = (event: Event): void => {
+    if (event.target === this.root) this.emit("m:error", (event as CustomEvent<{ error: unknown }>).detail)
+  }
+
+  private prepare(): void {
+    if (this.querySelectorAll(":scope > fieldset[data-transfer]").length > 1) throw new TypeError("Transfer accepts one native fieldset.")
+    if (this.root?.parentElement === this) return
+    if (this.controller) throw new Error("Transfer native owner was replaced; reconnect the original owner.")
+    const roots = [...this.querySelectorAll<HTMLFieldSetElement>(":scope > fieldset[data-transfer]")]
+    if (roots.length > 1) throw new TypeError("Transfer accepts one native fieldset.")
+    if (roots[0]) {
+      this.root = roots[0]
+      return
     }
-
+    const root = this.ownerDocument.createElement("fieldset")
+    root.className = "m-transfer"
+    root.dataset.transfer = ""
+    root.dataset.part = "transfer"
+    root.dataset.state = "generated"
+    const legend = this.ownerDocument.createElement("legend")
+    legend.textContent = "Transfer"
+    const columns = this.ownerDocument.createElement("div")
+    columns.dataset.transferColumns = ""
+    const pane = (side: TransferSide, title: string) => {
+      const container = this.ownerDocument.createElement("div")
+      container.dataset.transferPane = ""
+      const heading = this.ownerDocument.createElement("h3")
+      heading.dataset.transferTitle = side
+      heading.textContent = title
+      const filterLabel = this.ownerDocument.createElement("label")
+      filterLabel.append(`Filter ${side}`)
+      const filter = this.ownerDocument.createElement("input")
+      filter.type = "search"
+      filter.dataset.transferFilter = side
+      filterLabel.append(filter)
+      const label = this.ownerDocument.createElement("label")
+      const labelText = this.ownerDocument.createElement("span")
+      labelText.dataset.transferTitle = side
+      labelText.textContent = title
+      label.append(labelText)
+      const select = this.ownerDocument.createElement("select")
+      select.multiple = true
+      select.size = 6
+      select.setAttribute(`data-transfer-${side}`, "")
+      label.append(select)
+      const count = this.ownerDocument.createElement("p")
+      count.dataset.transferCount = side
+      container.append(heading, filterLabel, label, count)
+      return { container, select }
+    }
+    const source = pane("source", this.sourceTitle || "Source")
+    const target = pane("target", this.targetTitle || "Target")
     const actions = this.ownerDocument.createElement("div")
-    actions.dataset.mTransferActions = ""
-    const add = this.ownerDocument.createElement("button")
-    add.type = "button"
-    add.textContent = "›"
-    add.setAttribute("aria-label", "Move to selected")
-    add.addEventListener("click", () => {
-      if (this.pendingSource) {
-        this.selectedValues = [...new Set([...this.selectedValues, this.pendingSource])]
-        this.pendingSource = ""
-        this.renderOptionsMode()
-        this.emit<TransferChangeDetail>("m:change", { value: this.value }, { bubbles: true, cancelable: false, composed: false })
+    actions.dataset.transferActions = ""
+    for (const [name, label] of [["add", "Move selected to target"], ["remove", "Move selected to source"],
+      ["add-all", "Move all to target"], ["remove-all", "Move all to source"]]) {
+      const button = this.ownerDocument.createElement("button")
+      button.type = "button"
+      button.dataset.transferAction = name
+      button.textContent = label!
+      button.hidden = true
+      actions.append(button)
+    }
+    const options = [...this.children].filter((node): node is HTMLOptionElement => node instanceof HTMLOptionElement)
+    source.select.append(...options)
+    const status = this.ownerDocument.createElement("p")
+    status.dataset.transferStatus = ""
+    columns.append(source.container, actions, target.container)
+    root.append(legend, columns, status)
+    this.root = root
+    this.append(root)
+  }
+
+  private projectOptions(): void {
+    if (!this.suppliedData || this.projectedData === this.data) return
+    const list = (side: TransferSide) => {
+      const controls = [...this.root!.querySelectorAll<HTMLSelectElement>(`select[data-transfer-${side}]`)]
+        .filter(control => control.closest("[data-transfer]") === this.root)
+      if (controls.length !== 1) throw new TypeError("Transfer needs two owned native lists.")
+      return controls[0]!
+    }
+    const source = list("source"), target = list("target")
+    const existing = new Map([...source.options, ...target.options].map(option => [option.value, option]))
+    const members = new Set(this.controller ? [...target.options].map(option => option.value) : this.pendingValue ?? this.pendingDefaults ?? [])
+    const surviving = new Set(this.data.map(option => option.value))
+    for (const option of existing.values()) if (!surviving.has(option.value)) option.remove()
+    for (const item of this.data) {
+      let option = existing.get(item.value)
+      if (!option) {
+        option = this.ownerDocument.createElement("option")
+        option.value = item.value
+        ;(members.has(item.value) ? target : source).append(option)
       }
-    })
-    const remove = this.ownerDocument.createElement("button")
-    remove.type = "button"
-    remove.textContent = "‹"
-    remove.setAttribute("aria-label", "Remove from selected")
-    remove.addEventListener("click", () => {
-      if (this.pendingTarget) {
-        this.selectedValues = this.selectedValues.filter(v => v !== this.pendingTarget)
-        this.pendingTarget = ""
-        this.renderOptionsMode()
-        this.emit<TransferChangeDetail>("m:change", { value: this.value }, { bubbles: true, cancelable: false, composed: false })
+      if (option.label !== item.label) {
+        option.label = item.label
+        option.textContent = item.label
       }
-    })
-    actions.append(add, remove)
-
-    this.replaceChildren(renderList(source, false), actions, renderList(target, true))
-  }
-
-  public moveToTarget(keys?: readonly string[]): void {
-    if (this.disabled) return
-    const sourceSelect = this.querySelector<HTMLSelectElement>("select[data-transfer-source]")
-    const targetSelect = this.querySelector<HTMLSelectElement>("select[data-transfer-target]")
-    if (!sourceSelect || !targetSelect) return
-
-    const keySet = keys ? new Set(keys) : null
-    const optionsToMove = [...sourceSelect.options].filter(opt =>
-      !opt.disabled && (keySet ? keySet.has(opt.value) : opt.selected)
-    )
-    if (optionsToMove.length === 0) return
-
-    for (const opt of optionsToMove) {
-      opt.selected = false
-      targetSelect.append(opt)
+      option.disabled = item.disabled ?? false
     }
-
-    this.updateCounts()
-    const targetKeys = [...targetSelect.options].map(opt => opt.value)
-    this.emit<TransferChangeDetail>("m:change", { value: targetKeys }, { bubbles: true, cancelable: false, composed: false })
+    this.projectedData = this.data
   }
-
-  public moveToSource(keys?: readonly string[]): void {
-    if (this.disabled) return
-    const sourceSelect = this.querySelector<HTMLSelectElement>("select[data-transfer-source]")
-    const targetSelect = this.querySelector<HTMLSelectElement>("select[data-transfer-target]")
-    if (!sourceSelect || !targetSelect) return
-
-    const keySet = keys ? new Set(keys) : null
-    const optionsToMove = [...targetSelect.options].filter(opt =>
-      !opt.disabled && (keySet ? keySet.has(opt.value) : opt.selected)
-    )
-    if (optionsToMove.length === 0) return
-
-    for (const opt of optionsToMove) {
-      opt.selected = false
-      sourceSelect.append(opt)
-    }
-
-    this.updateCounts()
-    const targetKeys = [...targetSelect.options].map(opt => opt.value)
-    this.emit<TransferChangeDetail>("m:change", { value: targetKeys }, { bubbles: true, cancelable: false, composed: false })
-  }
-
-  public moveAllToTarget(): void {
-    if (this.disabled) return
-    const sourceSelect = this.querySelector<HTMLSelectElement>("select[data-transfer-source]")
-    const targetSelect = this.querySelector<HTMLSelectElement>("select[data-transfer-target]")
-    if (!sourceSelect || !targetSelect) return
-
-    const optionsToMove = [...sourceSelect.options].filter(opt => !opt.disabled && !opt.hidden)
-    if (optionsToMove.length === 0) return
-
-    for (const opt of optionsToMove) {
-      opt.selected = false
-      targetSelect.append(opt)
-    }
-
-    this.updateCounts()
-    const targetKeys = [...targetSelect.options].map(opt => opt.value)
-    this.emit<TransferChangeDetail>("m:change", { value: targetKeys }, { bubbles: true, cancelable: false, composed: false })
-  }
-
-  public moveAllToSource(): void {
-    if (this.disabled) return
-    const sourceSelect = this.querySelector<HTMLSelectElement>("select[data-transfer-source]")
-    const targetSelect = this.querySelector<HTMLSelectElement>("select[data-transfer-target]")
-    if (!sourceSelect || !targetSelect) return
-
-    const optionsToMove = [...targetSelect.options].filter(opt => !opt.disabled && !opt.hidden)
-    if (optionsToMove.length === 0) return
-
-    for (const opt of optionsToMove) {
-      opt.selected = false
-      sourceSelect.append(opt)
-    }
-
-    this.updateCounts()
-    const targetKeys = [...targetSelect.options].map(opt => opt.value)
-    this.emit<TransferChangeDetail>("m:change", { value: targetKeys }, { bubbles: true, cancelable: false, composed: false })
-  }
-
-  private render(): void {
-    let columns = this.querySelector<HTMLElement>("[data-transfer-columns]")
-    if (!columns) {
-      columns = this.ownerDocument.createElement("div")
-      columns.setAttribute("data-transfer-columns", "")
-
-      // Source pane
-      const sourcePane = this.ownerDocument.createElement("div")
-      sourcePane.setAttribute("data-transfer-pane", "")
-      sourcePane.setAttribute("data-pane", "source")
-
-      const sourceHeading = this.ownerDocument.createElement("h3")
-      sourceHeading.setAttribute("data-transfer-title", "source")
-      sourceHeading.textContent = this.sourceTitle || "Source"
-
-      const sourceFilterLabel = this.ownerDocument.createElement("label")
-      const sourceFilter = this.ownerDocument.createElement("input")
-      sourceFilter.type = "search"
-      sourceFilter.setAttribute("data-transfer-filter", "source")
-      sourceFilter.placeholder = "Filter"
-      sourceFilter.setAttribute("aria-label", "Filter source")
-      sourceFilterLabel.append(sourceFilter)
-
-      const sourceSelectLabel = this.ownerDocument.createElement("label")
-      const sourceSelect = this.ownerDocument.createElement("select")
-      sourceSelect.setAttribute("data-transfer-source", "")
-      sourceSelect.multiple = true
-      sourceSelect.size = 6
-      sourceSelectLabel.append(sourceSelect)
-
-      const sourceCount = this.ownerDocument.createElement("p")
-      sourceCount.setAttribute("data-transfer-count", "source")
-
-      sourcePane.append(sourceHeading, sourceFilterLabel, sourceSelectLabel, sourceCount)
-
-      // Actions
-      const actions = this.ownerDocument.createElement("div")
-      actions.setAttribute("data-transfer-actions", "")
-
-      const addBtn = this.ownerDocument.createElement("button")
-      addBtn.type = "button"
-      addBtn.setAttribute("data-transfer-action", "add")
-      addBtn.setAttribute("aria-label", "Move selected to target")
-      addBtn.textContent = ">"
-
-      const removeBtn = this.ownerDocument.createElement("button")
-      removeBtn.type = "button"
-      removeBtn.setAttribute("data-transfer-action", "remove")
-      removeBtn.setAttribute("aria-label", "Move selected to source")
-      removeBtn.textContent = "<"
-
-      const addAllBtn = this.ownerDocument.createElement("button")
-      addAllBtn.type = "button"
-      addAllBtn.setAttribute("data-transfer-action", "add-all")
-      addAllBtn.setAttribute("aria-label", "Move all to target")
-      addAllBtn.textContent = ">>"
-
-      const removeAllBtn = this.ownerDocument.createElement("button")
-      removeAllBtn.type = "button"
-      removeAllBtn.setAttribute("data-transfer-action", "remove-all")
-      removeAllBtn.setAttribute("aria-label", "Move all to source")
-      removeAllBtn.textContent = "<<"
-
-      actions.append(addBtn, removeBtn, addAllBtn, removeAllBtn)
-
-      // Target pane
-      const targetPane = this.ownerDocument.createElement("div")
-      targetPane.setAttribute("data-transfer-pane", "")
-      targetPane.setAttribute("data-pane", "target")
-
-      const targetHeading = this.ownerDocument.createElement("h3")
-      targetHeading.setAttribute("data-transfer-title", "target")
-      targetHeading.textContent = this.targetTitle || "Target"
-
-      const targetFilterLabel = this.ownerDocument.createElement("label")
-      const targetFilter = this.ownerDocument.createElement("input")
-      targetFilter.type = "search"
-      targetFilter.setAttribute("data-transfer-filter", "target")
-      targetFilter.placeholder = "Filter"
-      targetFilter.setAttribute("aria-label", "Filter target")
-      targetFilterLabel.append(targetFilter)
-
-      const targetSelectLabel = this.ownerDocument.createElement("label")
-      const targetSelect = this.ownerDocument.createElement("select")
-      targetSelect.setAttribute("data-transfer-target", "")
-      targetSelect.multiple = true
-      targetSelect.size = 6
-      targetSelectLabel.append(targetSelect)
-
-      const targetCount = this.ownerDocument.createElement("p")
-      targetCount.setAttribute("data-transfer-count", "target")
-
-      targetPane.append(targetHeading, targetFilterLabel, targetSelectLabel, targetCount)
-
-      // Move any direct <option> children into sourceSelect
-      const directOptions = [...this.children].filter(
-        (child): child is HTMLOptionElement => child instanceof HTMLOptionElement
-      )
-      for (const opt of directOptions) {
-        sourceSelect.append(opt)
+  private syncSettings(): void {
+    if (!this.root) return
+    if (this.disabled) this.disabledWrites.attr(this.root, "disabled", "")
+    else this.disabledWrites.restore()
+    if (this.hasAttribute("required")) this.requiredWrites.attr(this.root, "data-transfer-required", "")
+    else this.requiredWrites.restore()
+    if (this.name !== null) this.nameWrites.attr(this.root, "data-transfer-name", this.name)
+    else this.nameWrites.restore()
+    for (const [side, title] of [["source", this.sourceTitle], ["target", this.targetTitle]]) {
+      const text = title || (side === "source" ? "Source" : "Target")
+      for (const heading of this.root.querySelectorAll<HTMLElement>(`[data-transfer-title="${side}"]`)) {
+        if (heading.closest("[data-transfer]") === this.root && heading.textContent !== text) heading.textContent = text
       }
-
-      columns.append(sourcePane, actions, targetPane)
-      this.append(columns)
     }
-  }
-
-  private syncTitles(): void {
-    const sourceTitleEl = this.querySelector<HTMLElement>(
-      "[data-transfer-title='source'], [data-pane='source'] > :is(h1,h2,h3,h4,h5,h6)"
-    )
-    if (sourceTitleEl && this.hasAttribute("source-title")) {
-      sourceTitleEl.textContent = this.sourceTitle
-    }
-    const targetTitleEl = this.querySelector<HTMLElement>(
-      "[data-transfer-title='target'], [data-pane='target'] > :is(h1,h2,h3,h4,h5,h6)"
-    )
-    if (targetTitleEl && this.hasAttribute("target-title")) {
-      targetTitleEl.textContent = this.targetTitle
-    }
-  }
-
-  private syncDisabled(): void {
-    const disabled = this.disabled
-    const controls = this.querySelectorAll<HTMLSelectElement | HTMLInputElement | HTMLButtonElement>(
-      "select[data-transfer-source], select[data-transfer-target], input[data-transfer-filter], button[data-transfer-action]"
-    )
-    for (const ctrl of controls) {
-      ctrl.disabled = disabled
-    }
-  }
-
-  private updateCounts(): void {
-    const sourceSelect = this.querySelector<HTMLSelectElement>("select[data-transfer-source]")
-    const targetSelect = this.querySelector<HTMLSelectElement>("select[data-transfer-target]")
-    const sourceCount = this.querySelector<HTMLElement>("[data-transfer-count='source']")
-    const targetCount = this.querySelector<HTMLElement>("[data-transfer-count='target']")
-    if (sourceSelect && sourceCount) {
-      sourceCount.textContent = `${sourceSelect.options.length} items`
-    }
-    if (targetSelect && targetCount) {
-      targetCount.textContent = `${targetSelect.options.length} items`
-    }
-  }
-
-  private onActionClick = (event: MouseEvent): void => {
-    if (this.disabled) return
-    const target = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>("button[data-transfer-action]")
-    if (!target || !this.contains(target)) return
-
-    const action = target.getAttribute("data-transfer-action")
-    if (action === "add") {
-      this.moveToTarget()
-    } else if (action === "remove") {
-      this.moveToSource()
-    } else if (action === "add-all") {
-      this.moveAllToTarget()
-    } else if (action === "remove-all") {
-      this.moveAllToSource()
-    }
-  }
-
-  private onFilterInput = (event: Event): void => {
-    const target = event.target as HTMLElement | null
-    if (!(target instanceof HTMLInputElement)) return
-    const filterType = target.getAttribute("data-transfer-filter")
-    if (!filterType) return
-
-    const query = target.value.trim().toLowerCase()
-    const select = this.querySelector<HTMLSelectElement>(
-      filterType === "source" ? "select[data-transfer-source]" : "select[data-transfer-target]"
-    )
-    if (!select) return
-
-    for (const opt of select.options) {
-      const match = !query || opt.text.toLowerCase().includes(query) || opt.value.toLowerCase().includes(query)
-      opt.hidden = !match
-    }
-  }
-
-  private setupListeners(): void {
-    this.addEventListener("click", this.onActionClick)
-    this.addEventListener("input", this.onFilterInput)
-  }
-
-  private cleanupListeners(): void {
-    this.removeEventListener("click", this.onActionClick)
-    this.removeEventListener("input", this.onFilterInput)
   }
 }

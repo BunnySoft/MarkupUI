@@ -169,7 +169,7 @@ export class Chart extends ViewElement {
   }
   private validateDirect(option: ChartOption): void {
     const series = Array.isArray(option.series) ? option.series : option.series ? [option.series] : []
-    if (!series.length || series.some(item => !item || !["bar", "line", "pie", "scatter"].includes(item.type))) throw new TypeError("Direct options require supported first-batch series.")
+    if (!series.length || Array.from(series).some(item => !item || !["bar", "line", "pie", "scatter"].includes(item.type))) throw new TypeError("Direct options require supported first-batch series.")
   }
   private setState(state: typeof this.phase): void {
     const changed = this.phase !== state

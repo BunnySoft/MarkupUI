@@ -24,6 +24,13 @@ Keep TypeScript source in `src` and generated JavaScript/declarations/assets in 
 Relative TypeScript imports use `.js` specifiers, following the existing NodeNext setup.
 Follow surrounding formatting and reuse existing owners/helpers before adding another layer.
 
+The Web base's `viewStyle` maps a typed partial presentation update directly to inline
+CSS. It never routes style through same-named component behavior attributes; its getter
+returns inline CSS strings/null, not an attribute or computed-style snapshot. Box/Div
+retain their own layout-attribute mapping, one changed declaration at a time. Both reuse
+the small existing mapping, without a generic property engine or another runtime entry.
+Pre-upgrade replay includes shared source-declared accessors but stops before HTMLElement.
+
 `ViewElement` is the sole Web base, including the optional root facade and its retained
 foundation/dynamic elements. `src/core/element.ts` and the unreferenced aggregate
 `content.ts`, `forms.ts`, `navigation.ts` and `overlays.ts` implementations are removed.
@@ -284,11 +291,46 @@ filtering, paging, summary, selection and reset owner. It receives explicit rend
 references and immutable records; callbacks never need native rows. Preparation completes
 before row/state mutation, without a second staged-DOM rollback engine or public factory.
 
+Transfer's `transfer-element.ts` is a typed property/data and native-fieldset mapping
+boundary. The existing `transfer.ts` controller alone owns membership, staging,
+filtering, locks, defaults/reset, validity, FormData and lifecycle. The element and
+the explicit `createTransfer` native-Web interoperability entry share that owner;
+there is no separate button-list implementation. Reconnect retains the same native
+nodes and defaults. No generic controller base or additional runtime entry is added.
+
 Dropdown's `regions.ts` maps portable labels and destinations onto stable native actions,
 retaining explicit native adoption. `dropdown.ts` owns the canonical tree's sole mutation
 observer. `controller.ts` retains keyboard/submenu/selection lifecycle and a native-only
 internal observer for independent Web-controller fixtures. Shared passive-content and
 timing validation stays local to Dropdown; there is no additional production entry.
+
+The subsequent bounded API-owner samples reuse their existing concrete implementations:
+
+| Family | Element mapping | Sole behavior owner / retained Web entry |
+| --- | --- | --- |
+| TimePicker | Native time field, direct live/default properties and format hint. | `time-picker.ts` owns grammar/precision, drafts, clear/reset, events and reconnect. |
+| InputOTP | Native field group, schema/value/default mapping and metadata-only complete notification. | `input-otp.ts` owns native editing, composition, paste, focus, completion and lifecycle. |
+| Mention | Native editor and typed static/async configuration. | `mention.ts` owns query/caret/choice, stale work, forms and cleanup. |
+| AutoComplete | Native input/datalist and immutable option data; retained inert configuration. | `auto-complete.ts` owns editing, suggestion matching, loading, reset and lifecycle. |
+| Rate | Native radio scale and its typed configuration, preserving generated and authored defaults. | `rate.ts` owns live/default rating, half-step, clear, events and lifecycle. |
+| Slider | Native single or paired ranges and explicit value/default projection. | `slider.ts` owns clamp/ordering, transaction, accepted events, reset and lifecycle. |
+| DatePicker | Typed mode/live/default/range mapping, including approved year and quarter fields. | `date-picker.ts` owns native and bounded year/quarter profiles, drafts, validation, forms, clear/reset, events and lifecycle. |
+| ColorPicker | Typed mode/alpha configuration and labelled native RGB, alpha and representation controls. | `color-picker.ts` owns bounded parsing/serialization, committed/draft color, forms, reset and lifecycle; local model/native utilities are passive. |
+
+These do not introduce a controller base or a second component tree. Factory names
+remain only for justified native-Web interoperability and use the same owner.
+Programmatic values do not counterfeit native editing events; defaults and markup
+configuration are distinct from live native state. Source-scope changes retain native
+nodes rather than recreating editors. Any intentional event/default/schema change is
+documented in its current demo and generated source API.
+
+DatePicker and ColorPicker initially blocked on feature scope rather than silently
+dropping advertised behavior. The user explicitly retained both full contracts.
+Year is an integer from 1 to 9999 and quarter uses YYYY-Q1 through YYYY-Q4; their
+labelled native number/text mappings use the same owner as date/month/week/datetime
+profiles. ColorPicker implements HEX/RGB/HSL plus alpha with bounded local parsing and
+native fallback controls, not a dataset marker or one browser's alpha-picker support.
+Their current demos/source APIs define draft, invalid-value, precision and schema rules.
 
 ## Entry and packaging rules
 

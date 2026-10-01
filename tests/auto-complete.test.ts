@@ -166,6 +166,23 @@ describe("composition, debouncing and honest native events", () => {
     for (const type of ["input", "change", "m:auto-complete-results", "m:select"]) input.addEventListener(type, listener)
     helper.setSuggestions(["New"]); expect(listener).not.toHaveBeenCalled(); expect(input.value).toBe("Paris")
   })
+  it("shares existing match notifications with the element, including transient suggestions, but not IME/disabled/empty matches", () => {
+    const { helper, input, list } = fixture(), matches = vi.fn()
+    input.addEventListener("m:select", matches)
+    helper.setSuggestions(["Transient"])
+    input.value = "Transient"; input.dispatchEvent(new InputEvent("input", { bubbles: true }))
+    expect(matches).toHaveBeenCalledOnce()
+    expect((matches.mock.calls[0]![0] as CustomEvent).detail.value).toBe("Transient")
+    expect(list.options[0]!.value).toBe("Paris")
+    input.value = "Paris"; input.dispatchEvent(new InputEvent("input", { bubbles: true }))
+    expect(matches).toHaveBeenCalledTimes(2)
+    list.options[0]!.disabled = true
+    input.dispatchEvent(new InputEvent("input", { bubbles: true }))
+    input.value = ""; input.dispatchEvent(new InputEvent("input", { bubbles: true }))
+    input.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }))
+    input.value = "Tokyo"; input.dispatchEvent(new InputEvent("input", { bubbles: true, isComposing: true }))
+    expect(matches).toHaveBeenCalledTimes(2)
+  })
 })
 
 describe("async freshness, explicit failure and availability", () => {
@@ -192,7 +209,7 @@ describe("async freshness, explicit failure and availability", () => {
     second.resolve(["Newest"]); expect((await two).status).toBe("updated")
     first.resolve(["Old"]); await flush(); expect(list.options[0]!.value).toBe("Newest")
   })
-  it.each(["setter", "query", "dispose"])("cannot write after synchronous abort transfers ownership (%s)", async mode => {
+  it.each(["setter", "query", "dispose", "value", "defaults", "data", "settings"])("cannot write after synchronous abort transfers ownership (%s)", async mode => {
     const { helper, input, list } = fixture({ load: (_, { signal }) => new Promise(() => {
       signal.addEventListener("abort", () => {
         helper.disconnect()
@@ -204,6 +221,10 @@ describe("async freshness, explicit failure and availability", () => {
     if (mode === "setter") expect(() => helper.setSuggestions(["Old owner"])).toThrow("superseded")
     if (mode === "query") expect((await helper.query()).status).toBe("aborted")
     if (mode === "dispose") helper.disconnect()
+    if (mode === "value") expect(() => { helper.value = "Old value" }).toThrow("superseded")
+    if (mode === "defaults") expect(() => { helper.defaultValue = "Old default" }).toThrow("superseded")
+    if (mode === "data") expect(() => helper.setOptions(["Old data"])).toThrow("superseded")
+    if (mode === "settings") expect(() => helper.configure({ load: () => ["Old settings"] })).toThrow("superseded")
     expect((await pending).status).toBe("aborted"); await flush()
     expect(list.options[0]!.value).toBe("New owner")
   })
@@ -351,18 +372,21 @@ describe("canonical AutoComplete ViewElement", () => {
     expect(field?.contains(input)).toBe(true)
   })
 
-  it("synchronizes value property, attribute, and internal input", () => {
+  it("reads actual native value and keeps silent live writes independent from defaults", () => {
     const element = document.createElement("m-auto-complete") as AutoComplete
     document.body.append(element)
     const input = element.querySelector("input")!
     element.value = "Berlin"
     expect(element.value).toBe("Berlin")
-    expect(element.getAttribute("value")).toBe("Berlin")
+    expect(element.getAttribute("value")).toBeNull()
     expect(input.value).toBe("Berlin")
 
     element.setAttribute("value", "Madrid")
-    expect(element.value).toBe("Madrid")
-    expect(input.value).toBe("Madrid")
+    expect(element.defaultValue).toBe("Madrid")
+    expect(element.value).toBe("Berlin")
+    input.value = "Native silent edit"
+    expect(element.value).toBe("Native silent edit")
+    expect(element.getAttribute("value")).toBe("Madrid")
   })
 
   it("synchronizes placeholder property and attribute", () => {
@@ -499,7 +523,7 @@ describe("canonical AutoComplete ViewElement", () => {
     expect(input.value).toBe("")
   })
 
-  it("emits m:select event when input matches a datalist option", () => {
+  it("retains m:select as a value-match notification without claiming native selection source", () => {
     document.body.innerHTML = `
       <m-auto-complete id="select-test">
         <option value="London">London</option>
@@ -516,9 +540,11 @@ describe("canonical AutoComplete ViewElement", () => {
     expect(selectListener).toHaveBeenCalledOnce()
     const event = selectListener.mock.calls[0]![0] as CustomEvent
     expect(event.detail.value).toBe("Paris")
-    expect(event.bubbles).toBe(true)
-    expect(event.cancelable).toBe(false)
-    expect(event.composed).toBe(false)
+    expect(event.bubbles).toBe(true); expect(event.cancelable).toBe(false); expect(event.composed).toBe(false)
+    expect(element.value).toBe("Paris")
+    expect(element.native!.list).toBe(element.datalist)
+    expect(element.native!.hasAttribute("role")).toBe(false)
+    expect(element.native!.hasAttribute("aria-expanded")).toBe(false)
   })
 
   it("clicking clear button clears value and emits m:change", () => {
@@ -572,5 +598,250 @@ describe("canonical AutoComplete ViewElement", () => {
     expect(element.clearable).toBe(true)
     expect(element.size).toBe("large")
     expect(element.querySelector("input")?.value).toBe("Pre-connect")
+  })
+
+  it("replays own typed properties without a second value/default or loader owner", async () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    const load = vi.fn(() => ["Loaded"])
+    for (const [name, value] of Object.entries({ value: "Draft", defaultValue: "Reset", options: ["Fallback"], load, debounce: 0 })) {
+      Object.defineProperty(element, name, { configurable: true, writable: true, value })
+    }
+    document.body.append(element)
+    expect(Object.hasOwn(element, "options")).toBe(false)
+    expect(element.value).toBe("Draft")
+    expect(element.defaultValue).toBe("Reset")
+    expect(element.options).toEqual([{ value: "Fallback" }])
+    expect((await element.query()).status).toBe("updated")
+    expect(load).toHaveBeenCalledOnce()
+    expect(() => createAutoComplete(element.native!)).toThrow("owner")
+  })
+
+  it("reads/silently writes an authored native control even before connection, including native sanitization", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    element.innerHTML = '<input type="email" value="author@example.test" disabled readonly required placeholder="Original">'
+    const input = element.querySelector("input")!
+    expect(element.native).toBe(input); expect(element.value).toBe("author@example.test")
+    element.disabled = false; element.readOnly = false; element.required = false
+    element.placeholder = "Typed"; element.name = "email"
+    element.value = " next@example.test\n"
+    expect(element.value).toBe(input.value); expect(input.value).toBe("next@example.test")
+    expect(input.disabled || input.readOnly || input.required).toBe(false)
+    expect(input.placeholder).toBe("Typed"); expect(input.name).toBe("email")
+    document.body.append(element)
+    expect(element.native).toBe(input); expect(element.value).toBe("next@example.test")
+    expect(element.defaultValue).toBe("author@example.test")
+  })
+
+  it("uses an immutable options schema for stable native projection without truncating static data", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    const source = [{ value: "One", label: "First", disabled: true }, { value: "Two" }]
+    element.options = source
+    element.maxResults = 1
+    document.body.append(element)
+    const first = element.datalist!.options[0]!, listener = vi.fn()
+    first.addEventListener("authored", listener)
+    source[0]!.label = "Mutated application array"
+    expect(element.options[0]!.label).toBe("First")
+    expect(Object.isFrozen(element.options)).toBe(true)
+    expect(Object.isFrozen(element.options[0])).toBe(true)
+    expect(first.label).toBe("First"); expect(first.disabled).toBe(true)
+    const events = vi.fn()
+    for (const type of ["input", "change", "m:change", "m:select"]) element.addEventListener(type, events)
+    element.value = "Unlisted"
+    element.options = [{ value: "Two" }, { value: "One", label: "Updated" }]
+    expect(element.datalist!.options[1]).toBe(first)
+    first.dispatchEvent(new Event("authored")); expect(listener).toHaveBeenCalledOnce()
+    expect(first.label).toBe("Updated"); expect(first.disabled).toBe(false)
+    expect(element.value).toBe("Unlisted"); expect(events).not.toHaveBeenCalled()
+    expect(() => { element.options = ["Duplicate", "Duplicate"] }).toThrow()
+    expect([...element.datalist!.options].map(option => option.value)).toEqual(["Two", "One"])
+    expect(() => element.setSuggestions(["One", "Two"])).toThrow("at most 1")
+  })
+
+  it("preserves permissive native fallback options separately from strict portable configuration", async () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    element.innerHTML = `<datalist><option value=""></option><option value="Same" label="First"></option>
+      <option value="Same" label="Second"></option></datalist><m-option value="Portable">Label</m-option>`
+    const authored = [...element.querySelectorAll("option")]
+    document.body.append(element)
+    expect([...element.datalist!.options].slice(0, 3)).toEqual(authored)
+    expect(element.datalist!.options[3]!.value).toBe("Portable")
+    element.querySelector("m-option")!.remove(); await flush()
+    expect([...element.datalist!.options]).toEqual(authored)
+  })
+
+  it("preserves explicit empty labels and atomically rejects invalid numeric schema settings", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    element.innerHTML = '<m-option value="Value" label="">Text is not the explicit empty label</m-option>'
+    document.body.append(element)
+    expect(element.datalist!.options[0]!.hasAttribute("label")).toBe(true)
+    expect(element.datalist!.options[0]!.label).toBe("")
+    for (const name of ["minLength", "maxResults", "debounce"] as const) {
+      const before = element[name]
+      expect(() => Reflect.set(element, name, null)).toThrow()
+      expect(element[name]).toBe(before)
+    }
+    element.defaultValue = "Reset"
+    element.native!.defaultValue = "Native default update"
+    element.defaultValue = "Reset"
+    expect(element.defaultValue).toBe("Reset")
+  })
+
+  it("retains inert m-option data, native authored nodes/labels/listeners, late data and reconnect projection", async () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    element.innerHTML = `<label for="author-input">City</label><input id="author-input" aria-describedby="hint">
+      <option value="Native">Native label</option><m-option value="Portable" disabled>Portable label</m-option>
+      <span id="hint">Help</span>`
+    const configuration = element.querySelector("m-option")!, nativeOption = element.querySelector("option")!
+    const hint = element.querySelector("#hint")!, listener = vi.fn()
+    configuration.addEventListener("configuration", listener); nativeOption.addEventListener("option", listener)
+    document.body.append(element)
+    const input = element.native!, list = element.datalist!, button = element.querySelector("[data-auto-complete-clear]"), status = element.status
+    expect(element.querySelector("m-option")).toBe(configuration); expect(configuration.hasAttribute("hidden")).toBe(true)
+    expect(list.options[0]).toBe(nativeOption)
+    expect(list.options[1]!.label).toBe("Portable label"); expect(list.options[1]!.disabled).toBe(true)
+    expect(input.labels![0]!.textContent).toBe("City"); expect(input.getAttribute("aria-describedby")).toBe("hint")
+    configuration.setAttribute("label", "Changed label")
+    const late = document.createElement("m-option"); late.setAttribute("value", "Late"); late.textContent = "Late label"; element.append(late)
+    await flush()
+    expect([...list.options].map(option => option.value)).toEqual(["Native", "Portable", "Late"])
+    expect(list.options[1]!.label).toBe("Changed label")
+    element.setSuggestions(["Transient"])
+    element.remove()
+    expect(configuration.hasAttribute("hidden")).toBe(false)
+    expect([...list.options].map(option => option.value)).toEqual(["Native", "Portable", "Late"])
+    document.body.append(element)
+    expect(element.native).toBe(input); expect(element.datalist).toBe(list); expect(element.status).toBe(status)
+    expect(element.querySelector("[data-auto-complete-clear]")).toBe(button); expect(element.querySelector("#hint")).toBe(hint)
+    configuration.dispatchEvent(new Event("configuration")); nativeOption.dispatchEvent(new Event("option"))
+    expect(listener).toHaveBeenCalledTimes(2)
+    const changes = vi.fn(); element.addEventListener("m:change", changes)
+    input.dispatchEvent(new Event("change", { bubbles: true }))
+    expect(changes).toHaveBeenCalledOnce()
+    configuration.remove(); await flush()
+    expect([...list.options].map(option => option.value)).toEqual(["Native", "Late"])
+  })
+
+  it("retains native forms, defaults/dirty state, required validity and nonintrusive reset", async () => {
+    document.body.innerHTML = `<form id="external"><button name="intent" value="save">Save</button></form>`
+    const form = document.querySelector("form")!, element = document.createElement("m-auto-complete") as AutoComplete
+    element.formId = form.id; element.name = "city"; element.required = true; element.defaultValue = "Paris"
+    element.options = ["Paris", "Tokyo"]; document.body.append(element)
+    const input = element.native!, events = vi.fn()
+    for (const type of ["input", "change", "m:change", "m:select"]) element.addEventListener(type, events)
+    expect(element.form).toBe(form); expect(element.willValidate).toBe(true); expect(element.checkValidity()).toBe(true)
+    element.value = "Unlisted"; element.defaultValue = "Tokyo"; element.setSuggestions(["Loaded"])
+    expect(element.value).toBe("Unlisted"); expect(input.defaultValue).toBe("Tokyo")
+    expect(new FormData(form, form.querySelector("button")!).get("intent")).toBe("save")
+    expect(new FormData(form).get("city")).toBe("Unlisted")
+    form.addEventListener("reset", event => event.preventDefault(), { once: true }); form.reset(); await flush()
+    expect(element.value).toBe("Unlisted"); expect(element.datalist!.options[0]!.value).toBe("Loaded")
+    form.reset(); await flush()
+    expect(element.value).toBe("Tokyo"); expect([...element.datalist!.options].map(option => option.value)).toEqual(["Paris", "Tokyo"])
+    expect(events).not.toHaveBeenCalled()
+    element.value = ""; expect(element.validity!.valueMissing).toBe(true)
+    element.setCustomValidity("Application validation"); expect(element.validationMessage).toBe("Application validation")
+    element.setCustomValidity(""); expect(element.checkValidity()).toBe(false)
+    element.readOnly = true; expect(element.willValidate).toBe(false)
+    element.clear(); expect(element.value).toBe(""); expect(events).not.toHaveBeenCalled()
+  })
+
+  it("shares IME, availability and clear intent without synthetic field/selection events", async () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    const load = vi.fn(() => ["東京"]); element.load = load; element.debounce = 0; element.clearable = true
+    element.value = "東"; document.body.append(element)
+    const input = element.native!, changes = vi.fn(), synthetic = vi.fn()
+    element.addEventListener("m:change", changes)
+    element.addEventListener("m:select", synthetic); element.addEventListener("change", synthetic)
+    input.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }))
+    input.dispatchEvent(new InputEvent("input", { bubbles: true, isComposing: true }))
+    element.clear(); await flush()
+    expect(element.value).toBe("東"); expect(load).not.toHaveBeenCalled(); expect(changes).not.toHaveBeenCalled()
+    input.value = "東京"; input.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true }))
+    input.dispatchEvent(new InputEvent("input", { bubbles: true, isComposing: false })); await flush()
+    expect(load).toHaveBeenCalledOnce()
+    element.readOnly = true; element.clear(); expect(element.value).toBe("東京")
+    element.readOnly = false; element.disabled = true; element.clear(); expect(element.value).toBe("東京")
+    element.disabled = false
+    const inputEvents = vi.fn(); element.addEventListener("input", inputEvents)
+    element.querySelector<HTMLButtonElement>("[data-auto-complete-clear]")!.click()
+    expect(element.value).toBe(""); expect(changes).toHaveBeenCalledOnce(); expect(synthetic).not.toHaveBeenCalled()
+    expect(inputEvents).not.toHaveBeenCalled(); expect(document.activeElement).toBe(input)
+  })
+
+  it("uses one async owner for data/settings/value changes, errors, AbortSignal and reconnect", async () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    const pending = deferred(), signals: AbortSignal[] = []
+    element.defaultValue = "Query"; element.options = ["Fallback"]; element.debounce = 0
+    element.load = (_, { signal }) => { signals.push(signal); return pending.promise }
+    document.body.append(element)
+    const errors = vi.fn(), results = vi.fn()
+    element.addEventListener("m:auto-complete-error", errors); element.addEventListener("m:auto-complete-results", results)
+    const old = element.query(); await Promise.resolve()
+    element.options = [{ value: "New fallback", label: "Local" }]
+    expect(signals[0]!.aborted).toBe(true); expect((await old).status).toBe("aborted")
+    pending.resolve(["Stale"]); await flush()
+    expect(element.datalist!.options[0]!.value).toBe("New fallback"); expect(results).not.toHaveBeenCalled()
+    element.load = () => Promise.reject(new Error("Visible failure"))
+    await expect(element.query()).rejects.toThrow("Visible failure")
+    expect(element.error).toBeInstanceOf(Error); expect(element.state).toBe("error")
+    expect(errors).toHaveBeenCalledOnce(); expect(errors.mock.calls[0]![0].bubbles).toBe(true)
+    const next = deferred(); element.load = (_, { signal }) => { signals.push(signal); return next.promise }
+    const superseded = element.query(); await Promise.resolve(); element.value = "Different"
+    expect(signals[1]!.aborted).toBe(true); expect((await superseded).status).toBe("aborted")
+    const disposed = element.query(); await Promise.resolve(); element.remove()
+    expect(signals[2]!.aborted).toBe(true); expect((await disposed).status).toBe("aborted")
+    document.body.append(element)
+    element.load = () => ["Fresh"]
+    expect((await element.query()).status).toBe("updated")
+    expect(results).toHaveBeenCalledOnce(); expect(element.value).toBe("Different")
+    const detail = (results.mock.calls[0]![0] as CustomEvent).detail
+    expect(detail.result.current).toBe(true); expect(Object.isFrozen(detail.suggestions[0])).toBe(true)
+    element.native!.value = "Silent"; expect(detail.result.current).toBe(false)
+  })
+
+  it("does not overwrite defaults after an abort callback reconnects and transfers the native owner", async () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    element.defaultValue = "Original default"; element.options = ["Fallback"]
+    element.load = (_, { signal }) => new Promise(() => {
+      signal.addEventListener("abort", () => {
+        element.remove(); document.body.append(element); element.setSuggestions(["New owner"])
+      }, { once: true })
+    })
+    document.body.append(element)
+    const input = element.native!, pending = element.query(); await Promise.resolve()
+    expect(() => { element.defaultValue = "Obsolete default" }).toThrow("superseded")
+    expect((await pending).status).toBe("aborted"); await flush()
+    expect(element.native).toBe(input); expect(element.defaultValue).toBe("Original default")
+    expect(element.getAttribute("value")).toBe("Original default")
+    expect(element.datalist!.options[0]!.value).toBe("New owner")
+  })
+
+  it("projects host naming/constraints reversibly without erasing newer author ARIA and native state", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    element.innerHTML = `<input aria-label="Author" placeholder="Original" disabled readonly required value="Default">`
+    element.setAttribute("aria-label", "Mapped"); element.placeholder = "Mapped placeholder"; document.body.append(element)
+    const input = element.native!
+    expect(element.disabled).toBe(true); expect(element.readOnly).toBe(true); expect(element.required).toBe(true)
+    element.disabled = false; element.readOnly = false; element.required = false
+    expect(input.disabled || input.readOnly || input.required).toBe(false)
+    expect(input.getAttribute("aria-label")).toBe("Mapped")
+    input.setAttribute("aria-label", "New author name")
+    element.value = "Edited"; element.remove()
+    expect(input.getAttribute("aria-label")).toBe("New author name"); expect(input.placeholder).toBe("Original")
+    expect(element.value).toBe("Edited"); expect(element.defaultValue).toBe("Default")
+    element.placeholder = "Detached"; element.disabled = true
+    expect(input.placeholder).toBe("Detached"); expect(input.disabled).toBe(true)
+    document.body.append(element); expect(element.value).toBe("Edited"); expect(element.defaultValue).toBe("Default")
+  })
+
+  it("keeps direct viewStyle presentation separate from behavior and native anatomy", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    element.value = "Draft"; document.body.append(element)
+    const input = element.native!, list = element.datalist!
+    element.viewStyle = { width: 240, gap: 1.5, direction: "row" }
+    expect(element.viewStyle).toMatchObject({ width: "240px", gap: "1.5px", direction: "row" })
+    expect(element.hasAttribute("width")).toBe(false); expect(element.hasAttribute("direction")).toBe(false)
+    expect(element.value).toBe("Draft"); expect(element.native).toBe(input); expect(element.datalist).toBe(list)
   })
 })

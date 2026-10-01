@@ -1,342 +1,227 @@
 import { ViewElement } from "../../core/index.js"
+import { createRate, readRateDefaultValue, readRateForm, readRateName, readRateValue, validateRateScore, validateRateOptions, validateRateSchema } from "./rate.js"
+import type { RateController, RateOptions } from "./rate.js"
 
 export type RateSize = "small" | "medium" | "large"
 export const rateSizes: readonly RateSize[] = ["small", "medium", "large"] as const
 
 /**
- * A rate component for rating with stars or custom icons.
+ * Native rating choices, with one fieldset/radio owner shared with createRate.
  * @region {"name":"content","accepts":["phrasing","text"],"min":0,"max":null}
- * @event {"name":"Change","web":"m:change","bubbles":true,"cancelable":false,"composed":false,"detail":{"value":"number"}}
+ * @event {"name":"Change","web":"m:change","bubbles":true,"cancelable":false,"composed":false,"detail":{"value":"number | null"}}
+ * @event {"name":"Clear","web":"m:rate-clear","bubbles":false,"cancelable":false,"composed":false,"detail":{"previous":"number","value":"null"}}
+ * @event {"name":"Error","web":"m:rate-error","bubbles":false,"cancelable":false,"composed":false,"detail":{"message":"string"}}
  */
 export class Rate extends ViewElement {
   public static readonly tag = "m-rate"
   public static readonly observedAttributes = [
-    "value",
-    "count",
-    "allow-half",
-    "disabled",
-    "readonly",
-    "clearable",
-    "size",
+    "value", "default-value", "count", "allow-half", "disabled", "readonly",
+    "clearable", "size", "name", "form", "label",
   ]
 
-  private fallbackName = "m-rate-" + Math.random().toString(36).slice(2, 9)
-  private generated = false
+  private fieldset: HTMLFieldSetElement | null = null
+  private controller: RateController | null = null
   private initialized = false
-
-  private get groupName(): string {
-    return this.getAttribute("name") || (this.id ? `${this.id}-choice` : this.fallbackName)
-  }
+  private connectedOnce = false
+  private pending = new Set<string>()
+  private fallbackName = "m-rate-" + Math.random().toString(36).slice(2, 9)
 
   public connectedCallback(): void {
     if (!this.initialized) {
-      this.initialized = true
       this.upgradeProperties()
+      this.initialized = true
     }
-    this.classList.add("m-rate")
-    this.setAttribute("data-rate-cumulative", "")
-    this.setAttribute("data-size", this.size)
-    if (!this.hasAttribute("role")) {
-      this.setAttribute("role", "radiogroup")
-    }
-    this.render()
-    this.syncDisabled()
-    this.syncReadonly()
-    this.setupListeners()
+    const first = !this.connectedOnce
+    const root = this.native
+    this.syncSize()
+    const options = this.options(first)
+    this.controller = createRate(root, options)
+    this.connectedOnce = true
+    this.pending.clear()
   }
 
   public disconnectedCallback(): void {
-    this.cleanupListeners()
+    this.controller?.disconnect()
+    this.controller = null
   }
 
   public attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
     if (oldValue === newValue) return
-    if (!this.initialized || !this.isConnected) return
-    if (name === "size") {
-      this.setAttribute("data-size", this.size)
-    } else if (name === "disabled") {
-      this.syncDisabled()
-    } else if (name === "readonly") {
-      this.syncReadonly()
-    } else if (name === "value") {
-      this.syncValue()
-    } else if (name === "count" || name === "allow-half") {
-      this.render()
-    } else if (name === "clearable") {
-      this.syncClearable()
+    if (!this.controller?.connected) {
+      this.pending.add(name)
+      return
+    }
+    try {
+      if (name === "size") this.syncSize()
+      else if (name === "value") this.controller.setValue(this.scoreAttribute("value", this.generated ? 0 : null))
+      else if (name === "default-value") this.controller.setDefaultValue(this.scoreAttribute("default-value", null))
+      else if (name === "label") this.syncLabel()
+      else if (name === "disabled") this.controller.configure({ disabled: this.hasAttribute("disabled") })
+      else if (name === "name") this.controller.configure({ name: this.getAttribute("name") ?? this.name })
+      else if (name === "form") this.controller.configure({ form: this.getAttribute("form") })
+      else this.controller.configure(this.options(false))
+    } catch (reason) {
+      this.native.dispatchEvent(new this.ownerDocument.defaultView!.CustomEvent("m:rate-error", {
+        detail: { message: reason instanceof Error ? reason.message : String(reason) },
+      }))
+      throw reason
     }
   }
 
-  public get value(): number {
-    return this.numberAttribute("value", 0)
+  private get generated(): boolean {
+    return this.fieldset?.getAttribute("data-state") === "generated"
   }
-  public set value(value: number) {
-    if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
-      throw new RangeError("Invalid rate value.")
+
+  /** The sole native semantic owner. Authored fieldsets, controls and labels are adopted intact. */
+  public get native(): HTMLFieldSetElement {
+    const authored = [...this.children].filter((node): node is HTMLFieldSetElement =>
+      node instanceof this.ownerDocument.defaultView!.HTMLFieldSetElement)
+    if (authored.length > 1) throw new TypeError("Rate needs one native fieldset.")
+    if (this.fieldset) {
+      if (this.fieldset.parentElement !== this) throw new TypeError("Rate native fieldset was removed; retain its owner.")
+      return this.fieldset
     }
+    const root = authored[0] ?? this.ownerDocument.createElement("fieldset")
+    if (!authored.length) {
+      root.className = "m-rate m-radio-group"
+      root.setAttribute("data-rate", "")
+      root.setAttribute("data-radio-group", "")
+      root.setAttribute("data-rate-cumulative", "")
+      root.setAttribute("data-part", "rate")
+      root.setAttribute("data-state", "generated")
+      const legend = this.ownerDocument.createElement("legend")
+      legend.setAttribute("data-part", "label")
+      legend.textContent = this.label
+      root.append(legend)
+      root.append(...this.childNodes)
+      this.append(root)
+    }
+    this.fieldset = root
+    return root
+  }
+
+  /**
+   * Live native selection; null is unselected, zero is an actual score.
+   * Generated choices initially select 0; authored checkedness is never inferred from an absent attribute.
+   */
+  public get value(): number | null {
+    if (this.pending.has("value") || !this.fieldset || !this.connectedOnce && this.generated) return this.scoreAttribute("value", 0)
+    return this.controller?.connected ? this.controller.value : readRateValue(this.fieldset)
+  }
+  public set value(value: number | null) {
+    validateRateScore(value, this.count, this.allowHalf)
+    if (this.controller?.connected) this.controller.setValue(value)
     this.setAttribute("value", String(value))
   }
 
+  /** Native checked defaults, independent of live selection after initialization and programmatic writes. */
+  public get defaultValue(): number | null {
+    if (this.pending.has("default-value") || !this.fieldset || !this.connectedOnce && this.generated) {
+      return this.scoreAttribute("default-value", this.scoreAttribute("value", 0))
+    }
+    return readRateDefaultValue(this.fieldset)
+  }
+  public set defaultValue(value: number | null) {
+    validateRateScore(value, this.count, this.allowHalf)
+    if (this.controller?.connected) this.controller.setDefaultValue(value)
+    this.setAttribute("default-value", String(value))
+  }
+
+  /** @min 1 @integer */
   public get count(): number {
+    const raw = this.getAttribute("count")
+    const count = raw === null ? 5 : Number(raw)
+    validateRateOptions({ count })
     return this.numberAttribute("count", 5)
   }
   public set count(value: number) {
-    if (typeof value !== "number" || !Number.isFinite(value) || value < 1) {
-      throw new RangeError("Invalid rate count.")
-    }
+    validateRateOptions({ count: value })
+    if (this.controller?.connected) this.controller.configure({ count: value })
+    else if (this.fieldset) validateRateSchema(this.fieldset, { count: value, allowHalf: this.allowHalf })
     this.setAttribute("count", String(value))
   }
 
-  public get allowHalf(): boolean {
-    return this.hasAttribute("allow-half")
-  }
+  public get allowHalf(): boolean { return this.hasAttribute("allow-half") }
   public set allowHalf(value: boolean) {
+    validateRateOptions({ allowHalf: value })
+    if (this.controller?.connected) this.controller.configure({ allowHalf: value })
+    else if (this.fieldset) validateRateSchema(this.fieldset, { count: this.count, allowHalf: value })
     this.setBooleanAttribute("allow-half", value)
   }
 
-  public get disabled(): boolean {
-    return this.hasAttribute("disabled")
+  public get disabled(): boolean { return this.hasAttribute("disabled") || this.fieldset?.disabled === true }
+  public set disabled(value: boolean) { this.setBooleanAttribute("disabled", value) }
+  public get readonly(): boolean { return this.hasAttribute("readonly") }
+  public set readonly(value: boolean) { this.setBooleanAttribute("readonly", value) }
+  public get clearable(): boolean { return this.hasAttribute("clearable") }
+  public set clearable(value: boolean) { this.setBooleanAttribute("clearable", value) }
+  public get size(): RateSize { return this.choiceAttribute("size", rateSizes, "medium") }
+  public set size(value: RateSize) { this.setChoiceAttribute("size", value, rateSizes) }
+
+  /** An explicit name maps to all native members. Otherwise authored names survive; generated names are instance-specific. */
+  public get name(): string {
+    const configured = this.attributes.getNamedItem("name")?.value
+    const native = this.controller?.connected ? this.controller.name : this.fieldset ? readRateName(this.fieldset) : null
+    return native ?? configured ?? this.fallbackName
   }
-  public set disabled(value: boolean) {
-    this.setBooleanAttribute("disabled", value)
+  public set name(value: string) {
+    validateRateOptions({ name: value })
+    this.setAttribute("name", value)
   }
 
-  public get readonly(): boolean {
-    return this.hasAttribute("readonly")
+  /** Actual common native form association, including external input form attributes. */
+  public get form(): HTMLFormElement | null {
+    return this.controller?.connected ? this.controller.form : this.fieldset ? readRateForm(this.fieldset) : null
   }
-  public set readonly(value: boolean) {
-    this.setBooleanAttribute("readonly", value)
+  /** Generated legend text. Authored legends and external labels remain application-owned. */
+  public get label(): string { return this.getAttribute("label") ?? "Rating" }
+  public set label(value: string) {
+    if (typeof value !== "string" || !value.trim()) throw new TypeError("Rate label must be nonempty text.")
+    this.setAttribute("label", value)
+  }
+  public get error(): string | null { return this.controller?.error ?? null }
+
+  public override focus(options?: FocusOptions): void { this.controller?.focus(options) }
+  public override blur(): void { this.controller?.blur() }
+  public clear(): boolean {
+    if (!this.controller?.connected) throw new Error("Rate is disconnected.")
+    return this.controller.clear()
+  }
+  public setValue(value: number | null): void { this.value = value }
+  public refresh(): void {
+    if (!this.controller?.connected) throw new Error("Rate is disconnected.")
+    void this.native
+    this.controller.refresh()
   }
 
-  public get clearable(): boolean {
-    return this.hasAttribute("clearable")
-  }
-  public set clearable(value: boolean) {
-    this.setBooleanAttribute("clearable", value)
-  }
-
-  public get size(): RateSize {
-    return this.choiceAttribute("size", rateSizes, "medium")
-  }
-  public set size(value: RateSize) {
-    this.setChoiceAttribute("size", value, rateSizes)
+  private scoreAttribute(name: string, fallback: number | null): number | null {
+    const raw = this.getAttribute(name)
+    if (raw === null) return fallback
+    const value = raw === "null" ? null : raw.trim() ? Number(raw) : NaN
+    validateRateScore(value, this.count, this.allowHalf)
+    return value
   }
 
-  public override focus(options?: FocusOptions): void {
-    const inputs = [...this.querySelectorAll<HTMLInputElement>("input[type='radio']")]
-    const checked = inputs.find(i => i.checked)
-    const target = checked ?? inputs[0]
-    target?.focus(options)
-  }
-
-  public override blur(): void {
-    const inputs = [...this.querySelectorAll<HTMLInputElement>("input[type='radio']")]
-    const active = inputs.find(i => i === this.ownerDocument.activeElement)
-    active?.blur()
-  }
-
-  public clear(): void {
-    if (this.disabled || this.readonly) return
-    const prev = this.value
-    this.value = 0
-    if (prev !== 0) {
-      this.emit<{ value: number }>("m:change", { value: 0 }, { bubbles: true, cancelable: false, composed: false })
+  private options(first: boolean): RateOptions {
+    const options: RateOptions = {
+      count: this.count, allowHalf: this.allowHalf, readonly: this.readonly, clearable: this.clearable,
     }
+    if (first && (this.generated || this.hasAttribute("disabled")) || this.pending.has("disabled")) options.disabled = this.hasAttribute("disabled")
+    if (first && (this.generated || this.hasAttribute("name")) || this.pending.has("name")) options.name = this.getAttribute("name") ?? this.name
+    if (first && (this.generated || this.hasAttribute("form")) || this.pending.has("form")) options.form = this.getAttribute("form")
+    if (first && (this.generated || this.hasAttribute("value")) || this.pending.has("value")) {
+      options.value = this.scoreAttribute("value", this.generated ? 0 : null)
+    }
+    if (first && this.hasAttribute("default-value") || this.pending.has("default-value")) {
+      options.defaultValue = this.scoreAttribute("default-value", null)
+    }
+    return options
   }
 
-  public setValue(value: number): void {
-    this.value = value
+  private syncSize(): void {
+    if (this.generated || this.hasAttribute("size")) this.native.setAttribute("data-size", this.size)
   }
-
-  private setupListeners(): void {
-    this.addEventListener("change", this.onInputChange)
-    this.addEventListener("click", this.onClick)
-  }
-
-  private cleanupListeners(): void {
-    this.removeEventListener("change", this.onInputChange)
-    this.removeEventListener("click", this.onClick)
-  }
-
-  private onInputChange = (event: Event): void => {
-    const target = event.target as HTMLElement | null
-    if (target instanceof HTMLInputElement && target.type === "radio" && target.closest("m-rate") === this) {
-      const newVal = Number(target.value)
-      if (newVal !== this.value) {
-        this.value = newVal
-        this.emit<{ value: number }>("m:change", { value: newVal }, { bubbles: true, cancelable: false, composed: false })
-      }
-    }
-  }
-
-  private onClick = (event: MouseEvent): void => {
-    if (this.disabled || this.readonly) return
-    const target = event.target as HTMLElement | null
-    if (!target) return
-
-    const clearBtn = target.closest("[data-rate-clear]")
-    if (clearBtn && this.contains(clearBtn)) {
-      event.preventDefault()
-      this.clear()
-      return
-    }
-
-    if (this.clearable) {
-      const choice = target.closest(".m-rate__choice")
-      if (choice && this.contains(choice)) {
-        const input = choice.querySelector<HTMLInputElement>("input[type='radio']")
-        if (input && Number(input.value) === this.value && this.value !== 0) {
-          event.preventDefault()
-          this.clear()
-        }
-      }
-    }
-  }
-
-  private render(): void {
-    let choicesContainer = this.querySelector<HTMLElement>(".m-rate__choices")
-    if (!choicesContainer) {
-      choicesContainer = this.ownerDocument.createElement("div")
-      choicesContainer.className = "m-rate__choices"
-      this.append(choicesContainer)
-      this.generated = true
-    }
-
-    if (this.generated) {
-      const count = this.count
-      const allowHalf = this.allowHalf
-      const factor = allowHalf ? 2 : 1
-      const totalSteps = count * factor
-      const val = this.value
-      const groupName = this.groupName
-
-      const fragment = this.ownerDocument.createDocumentFragment()
-      for (let i = 1; i <= totalSteps; i++) {
-        const stepVal = i / factor
-        const isHalf = allowHalf && i % 2 !== 0
-
-        const label = this.ownerDocument.createElement("label")
-        label.className = "m-rate__choice"
-
-        const input = this.ownerDocument.createElement("input")
-        input.type = "radio"
-        input.setAttribute("data-radio", "")
-        input.name = groupName
-        input.value = String(stepVal)
-        if (val === stepVal) {
-          input.checked = true
-        }
-        if (this.disabled || this.readonly) {
-          input.disabled = true
-        }
-
-        const glyph = this.ownerDocument.createElement("span")
-        glyph.className = "m-rate__glyph"
-        glyph.setAttribute("aria-hidden", "true")
-        if (isHalf) {
-          glyph.setAttribute("data-half", "")
-          glyph.textContent = "★"
-          const halfFill = this.ownerDocument.createElement("span")
-          halfFill.className = "m-rate__half-fill"
-          halfFill.textContent = "★"
-          glyph.append(halfFill)
-        } else {
-          glyph.textContent = "★"
-        }
-
-        const score = this.ownerDocument.createElement("span")
-        score.className = "m-rate__score"
-        score.textContent = `${stepVal} of ${count}`
-
-        label.append(input, glyph, score)
-        fragment.append(label)
-      }
-      choicesContainer.replaceChildren(fragment)
-
-      let clearBtn = this.querySelector<HTMLButtonElement>("[data-rate-clear]")
-      if (this.clearable) {
-        if (!clearBtn) {
-          clearBtn = this.ownerDocument.createElement("button")
-          clearBtn.setAttribute("data-rate-clear", "")
-          clearBtn.type = "button"
-          clearBtn.textContent = "Clear"
-          clearBtn.setAttribute("aria-label", "Clear rating")
-          this.append(clearBtn)
-        }
-        clearBtn.hidden = val === 0
-        clearBtn.disabled = this.disabled || this.readonly
-      } else if (clearBtn && this.generated) {
-        clearBtn.remove()
-      }
-    } else {
-      this.syncValue()
-      this.syncDisabled()
-    }
-  }
-
-  private syncValue(): void {
-    const val = this.value
-    const inputs = this.querySelectorAll<HTMLInputElement>("input[type='radio']")
-    for (const input of inputs) {
-      input.checked = Number(input.value) === val
-    }
-    const clearBtn = this.querySelector<HTMLButtonElement>("[data-rate-clear]")
-    if (clearBtn && this.clearable) {
-      clearBtn.hidden = val === 0
-    }
-  }
-
-  private syncDisabled(): void {
-    const isDisabled = this.disabled
-    if (isDisabled) {
-      this.setAttribute("aria-disabled", "true")
-    } else {
-      this.removeAttribute("aria-disabled")
-    }
-    const inputs = this.querySelectorAll<HTMLInputElement>("input[type='radio']")
-    for (const input of inputs) {
-      input.disabled = isDisabled || this.readonly
-    }
-    const clearBtn = this.querySelector<HTMLButtonElement>("[data-rate-clear]")
-    if (clearBtn) {
-      clearBtn.disabled = isDisabled || this.readonly
-    }
-  }
-
-  private syncReadonly(): void {
-    const isReadonly = this.readonly
-    if (isReadonly) {
-      this.setAttribute("aria-readonly", "true")
-    } else {
-      this.removeAttribute("aria-readonly")
-    }
-    const inputs = this.querySelectorAll<HTMLInputElement>("input[type='radio']")
-    for (const input of inputs) {
-      input.disabled = this.disabled || isReadonly
-    }
-    const clearBtn = this.querySelector<HTMLButtonElement>("[data-rate-clear]")
-    if (clearBtn) {
-      clearBtn.disabled = this.disabled || isReadonly
-    }
-  }
-
-  private syncClearable(): void {
-    let clearBtn = this.querySelector<HTMLButtonElement>("[data-rate-clear]")
-    if (this.clearable) {
-      if (!clearBtn && this.generated) {
-        clearBtn = this.ownerDocument.createElement("button")
-        clearBtn.setAttribute("data-rate-clear", "")
-        clearBtn.type = "button"
-        clearBtn.textContent = "Clear"
-        clearBtn.setAttribute("aria-label", "Clear rating")
-        this.append(clearBtn)
-      }
-      if (clearBtn) {
-        clearBtn.hidden = this.value === 0
-        clearBtn.disabled = this.disabled || this.readonly
-      }
-    } else if (clearBtn && this.generated) {
-      clearBtn.remove()
-    }
+  private syncLabel(): void {
+    if (this.generated) this.native.querySelector('[data-part="label"]')!.textContent = this.label
   }
 }

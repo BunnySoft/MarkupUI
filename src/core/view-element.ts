@@ -31,7 +31,7 @@ export abstract class ViewElement extends HTMLElement {
   protected upgradeProperties(): void {
     const seen = new Set<string>()
     let prototype: object | null = Object.getPrototypeOf(this)
-    while (prototype && prototype !== ViewElement.prototype) {
+    while (prototype && prototype !== HTMLElement.prototype) {
       for (const [name, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(prototype))) {
         if (seen.has(name)) continue
         seen.add(name)
@@ -47,6 +47,7 @@ export abstract class ViewElement extends HTMLElement {
           throw error
         }
       }
+      if (prototype === ViewElement.prototype) break
       prototype = Object.getPrototypeOf(prototype)
     }
   }
@@ -125,27 +126,33 @@ export abstract class ViewElement extends HTMLElement {
   }
 
   /**
-   * Returns a typed snapshot of the active layout style properties.
+   * Returns a detached snapshot of inline presentation, never component behavior attributes.
    */
   public get viewStyle(): ViewStyle {
     return Object.fromEntries(ViewElement.layoutAttributes.map(a => [
-      a === "border-radius" ? "borderRadius" : a, this.getAttribute(a),
+      a === "border-radius" ? "borderRadius" : a, this.style.getPropertyValue(layoutMap[a] ?? a) || null,
     ])) as ViewStyle
   }
 
   /**
-   * Apply a typed ViewStyle object to this element, updating both attributes and styles.
+   * Apply only supplied presentation styles without writing component behavior attributes.
    */
   public set viewStyle(style: ViewStyle) {
-    if (!style || typeof style !== "object") return
+    if (!style || typeof style !== "object" || Array.isArray(style)) throw new TypeError("ViewStyle requires a style object.")
+    const updates: [string, string][] = []
     for (const [k, v] of Object.entries(style)) {
       const a = k === "borderRadius" ? "border-radius" : k
-      if (ViewElement.layoutAttributes.includes(a)) {
-        if (typeof v === "boolean") this.setBooleanAttribute(a, v)
-        else this.setStringAttribute(a, v == null ? null : String(v))
-      }
+      if (k === "border-radius" || !ViewElement.layoutAttributes.includes(a)) throw new TypeError(`Unknown ViewStyle property: ${k}.`)
+      const length = /^(gap|padding|margin|width|height|border-radius)$/.test(a)
+      let value: string
+      if (v == null) value = ""
+      else if (typeof v === "boolean" && a === "wrap") value = v ? "wrap" : "nowrap"
+      else if (typeof v === "number" && length && Number.isFinite(v)) value = `${v}px`
+      else if (typeof v === "string") value = length && /^\d+$/.test(v) ? `${v}px` : v
+      else throw new TypeError(`Invalid ViewStyle value for ${k}.`)
+      updates.push([layoutMap[a] ?? a, value])
     }
-    this.syncAllLayoutStyles()
+    for (const [property, value] of updates) this.style.setProperty(property, value)
   }
 
   /**

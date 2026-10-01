@@ -340,6 +340,18 @@ describe("Number Animation failures, reentrancy and lifetime", () => {
 })
 
 describe("canonical NumberAnimation ViewElement", () => {
+  function animation() {
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    element.from = 0
+    element.to = 100
+    element.duration = 1000
+    element.precision = 3
+    const finish = vi.fn()
+    element.addEventListener("m:finish", finish)
+    document.body.append(element)
+    return { element, finish }
+  }
+
   it("exports canonical ViewElement classes and registration", () => {
     expect(numberAnimationApi.NumberAnimation).toBe(NumberAnimation)
     expect(numberAnimationApi).not.toHaveProperty("MNumberAnimation")
@@ -359,6 +371,19 @@ describe("canonical NumberAnimation ViewElement", () => {
     expect(element.to).toBe(0)
     expect(element.duration).toBe(1000)
     expect(element.precision).toBe(0)
+  })
+
+  it("replays pre-upgrade properties before starting exactly one immediate run", () => {
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    for (const [name, value] of Object.entries({ from: 10, to: 50.5, duration: 0, precision: 2 })) {
+      Object.defineProperty(element, name, { value, writable: true, configurable: true })
+    }
+    const finish = vi.fn()
+    element.addEventListener("m:finish", finish)
+    document.body.append(element)
+    expect(element.textContent).toBe("50.50")
+    expect(finish).toHaveBeenCalledOnce()
+    expect(frames.size).toBe(0)
   })
 
   it("reflects property updates to attributes", () => {
@@ -457,7 +482,7 @@ describe("canonical NumberAnimation ViewElement", () => {
     expect(element.querySelector("[data-number-text]")?.textContent).toBe("100")
   })
 
-  it("supports play, pause and reset controls", () => {
+  it("supports replay, pause, resume and reset controls", () => {
     const element = document.createElement("m-number-animation") as NumberAnimation
     element.from = 10
     element.to = 50
@@ -466,8 +491,322 @@ describe("canonical NumberAnimation ViewElement", () => {
 
     frame(500)
     element.pause()
+    now = 5000
+    element.resume()
+    expect(element.textContent).toBe("49")
     element.reset()
     expect(element.textContent).toBe("10")
+    expect(frames.size).toBe(0)
+    element.resume()
+    expect(frames.size).toBe(0)
+  })
+
+  it("replays from from after pause with a fresh full duration", () => {
+    const { element, finish } = animation()
+    frame(250)
+    expect(element.textContent).toBe("76.270")
+    element.pause()
+    now = 5000
+    element.play()
+    expect(element.textContent).toBe("0.000")
+    expect(frames.size).toBe(1)
+    frame(5250)
+    expect(element.textContent).toBe("76.270")
+    expect(finish).not.toHaveBeenCalled()
+    frame(6000)
+    expect(element.textContent).toBe("100.000")
+    expect(finish).toHaveBeenCalledOnce()
+  })
+
+  it("also replays from from while already playing", () => {
+    const { element, finish } = animation()
+    frame(250)
+    now = 300
+    element.play()
+    expect(element.textContent).toBe("0.000")
+    expect(frames.size).toBe(1)
+    frame(550)
+    expect(element.textContent).toBe("76.270")
+    frame(1299)
+    expect(finish).not.toHaveBeenCalled()
+    frame(1300)
+    expect(finish).toHaveBeenCalledOnce()
+  })
+
+  it("resumes from the paused value without counting the pause gap", () => {
+    const { element, finish } = animation()
+    frame(400)
+    expect(element.textContent).toBe("92.224")
+    element.pause()
+    expect(frames.size).toBe(0)
+    now = 5000
+    element.resume()
+    expect(element.textContent).toBe("92.224")
+    expect(frames.size).toBe(1)
+    element.resume()
+    expect(frames.size).toBe(1)
+    frame(5100)
+    expect(element.textContent).toBe("96.875")
+    expect(finish).not.toHaveBeenCalled()
+    frame(5600)
+    expect(element.textContent).toBe("100.000")
+    expect(finish).toHaveBeenCalledOnce()
+  })
+
+  it("accounts for multiple pauses, including time between frames, only once", () => {
+    const { element, finish } = animation()
+    frame(200)
+    expect(element.textContent).toBe("67.232")
+    element.pause()
+    now = 1000
+    element.resume()
+    frame(1200)
+    expect(element.textContent).toBe("92.224")
+    element.pause()
+    now = 5000
+    element.pause()
+    element.resume()
+    frame(5100)
+    expect(element.textContent).toBe("96.875")
+    now = 5150
+    element.pause()
+    now = 8000
+    element.resume()
+    expect(element.textContent).toBe("96.875")
+    frame(8100)
+    expect(element.textContent).toBe("99.475")
+    frame(8449)
+    expect(finish).not.toHaveBeenCalled()
+    frame(8450)
+    expect(finish).toHaveBeenCalledOnce()
+  })
+
+  it.each(["reset", "finished", "reduced-motion"] as const)("ignores idle pause/resume after %s before a fresh play", state => {
+    const { element, finish } = animation()
+    if (state === "reset") {
+      frame(250)
+      element.reset()
+    } else if (state === "finished") {
+      frame(1000)
+    } else {
+      media.matches = true
+      element.play()
+      media.matches = false
+    }
+    const completed = finish.mock.calls.length
+    now = 5000
+    const shown = element.textContent
+    element.pause()
+    element.resume()
+    expect(element.textContent).toBe(shown)
+    expect(frames.size).toBe(0)
+    element.play()
+    expect(element.textContent).toBe("0.000")
+    frame(5250)
+    expect(element.textContent).toBe("76.270")
+    expect(finish).toHaveBeenCalledTimes(completed)
+    frame(6000)
+    expect(finish).toHaveBeenCalledTimes(completed + 1)
+  })
+
+  it("ignores pause/resume before the first connection", () => {
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    element.to = 100
+    now = 5000
+    element.pause()
+    element.resume()
+    expect(element.textContent).toBe("")
+    expect(frames.size).toBe(0)
+    document.body.append(element)
+    expect(element.textContent).toBe("0")
+    frame(5250)
+    expect(element.textContent).toBe("76")
+  })
+
+  it.each([false, true])("reconnects from the beginning, discarding paused=%s progress and stale work", paused => {
+    const { element, finish } = animation()
+    frame(250)
+    const stale = [...frames.values()][0]!
+    if (paused) element.pause()
+    element.remove()
+    expect(frames.size).toBe(0)
+    expect(element.textContent).toBe("76.270")
+    now = 5000
+    element.resume()
+    expect(frames.size).toBe(0)
+    document.body.append(element)
+    expect(element.textContent).toBe("0.000")
+    const pending = [...frames.keys()]
+    stale(10000)
+    expect(element.textContent).toBe("0.000")
+    expect([...frames.keys()]).toEqual(pending)
+    expect(finish).not.toHaveBeenCalled()
+    frame(5250)
+    expect(element.textContent).toBe("76.270")
+    frame(6000)
+    expect(finish).toHaveBeenCalledOnce()
+  })
+
+  it.each(["play", "pause", "reset", "remove", "attribute"] as const)("ignores cancelled frame/completion work after %s, including RAF id zero", action => {
+    const { element, finish } = animation()
+    const stale = frames.get(0)!
+    if (action === "attribute") element.to = 200
+    else element[action]()
+    expect(cancelAnimationFrame).toHaveBeenCalledWith(0)
+    const shown = element.textContent, pending = [...frames.keys()]
+    stale(2000)
+    expect(element.textContent).toBe(shown)
+    expect([...frames.keys()]).toEqual(pending)
+    expect(finish).not.toHaveBeenCalled()
+  })
+
+  it("ignores a pre-pause frame after resume and already-delivered frames", () => {
+    const { element, finish } = animation()
+    const delivered = frames.get(0)!
+    frame(250)
+    const stale = [...frames.values()][0]!
+    element.pause()
+    now = 5000
+    element.resume()
+    const pending = [...frames.keys()]
+    stale(10000)
+    delivered(10000)
+    expect(element.textContent).toBe("76.270")
+    expect([...frames.keys()]).toEqual(pending)
+    expect(finish).not.toHaveBeenCalled()
+    frame(5250)
+    expect(element.textContent).toBe("96.875")
+    frame(5750)
+    expect(finish).toHaveBeenCalledOnce()
+    stale(20000)
+    expect(finish).toHaveBeenCalledOnce()
+    expect(frames.size).toBe(0)
+  })
+
+  it("preserves a replay started by a completion listener", () => {
+    const { element, finish } = animation()
+    element.addEventListener("m:finish", () => element.play(), { once: true })
+    frame(1000)
+    expect(finish).toHaveBeenCalledOnce()
+    expect(element.textContent).toBe("0.000")
+    expect(frames.size).toBe(1)
+    frame(1500)
+    expect(element.textContent).toBe("96.875")
+    frame(2000)
+    expect(finish).toHaveBeenCalledTimes(2)
+    expect(frames.size).toBe(0)
+  })
+
+  it.each(["reset", "remove"] as const)("does not emit stale completion when final rendering triggers %s", action => {
+    const { element, finish } = animation()
+    const tag = `number-animation-${action}-on-remove`
+    customElements.define(tag, class extends HTMLElement {
+      disconnectedCallback() { element[action]() }
+    })
+    element.innerHTML = `<strong>Total: </strong><span data-number-text><${tag}></${tag}></span>`
+    frame(1000)
+    expect(finish).not.toHaveBeenCalled()
+    expect(frames.size).toBe(0)
+    expect(element.querySelector("[data-number-text]")?.textContent).toBe(action === "reset" ? "0.000" : "100.000")
+  })
+
+  it.each([
+    ["from", "NaN"], ["to", "Infinity"], ["duration", "-1"],
+    ["precision", "-1"], ["precision", "21"], ["precision", "1.5"]
+  ])("rejects invalid %s=%s before cancelling or replacing an accepted run", (attribute, value) => {
+    const { element, finish } = animation()
+    frame(250)
+    const read = element.getAttribute.bind(element)
+    const invalid = vi.spyOn(element, "getAttribute").mockImplementation(name => name === attribute ? value : read(name))
+    const pending = [...frames.keys()]
+    vi.mocked(cancelAnimationFrame).mockClear()
+    expect(() => element.play()).toThrow(RangeError)
+    expect(element.textContent).toBe("76.270")
+    expect([...frames.keys()]).toEqual(pending)
+    expect(cancelAnimationFrame).not.toHaveBeenCalled()
+    frame(500)
+    expect(element.textContent).toBe("96.875")
+    frame(1000)
+    expect(finish).toHaveBeenCalledOnce()
+    invalid.mockRestore()
+  })
+
+  it("validates resume and reset before mutating paused or running work", () => {
+    const { element, finish } = animation()
+    frame(250)
+    element.pause()
+    const read = element.getAttribute.bind(element)
+    const invalid = vi.spyOn(element, "getAttribute").mockImplementation(name => name === "precision" ? "21" : read(name))
+    now = 5000
+    expect(() => element.resume()).toThrow(RangeError)
+    expect(() => element.reset()).toThrow(RangeError)
+    expect(element.textContent).toBe("76.270")
+    expect(frames.size).toBe(0)
+    expect(finish).not.toHaveBeenCalled()
+    invalid.mockRestore()
+    element.resume()
+    frame(5250)
+    expect(element.textContent).toBe("96.875")
+    frame(5750)
+    expect(finish).toHaveBeenCalledOnce()
+  })
+
+  it("rejects invalid duration/precision attributes rather than emitting fallback completion", () => {
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    element.duration = 0
+    element.setAttribute("precision", "21")
+    const finish = vi.fn()
+    element.addEventListener("m:finish", finish)
+    expect(() => element.play()).toThrow(RangeError)
+    expect(element.textContent).toBe("")
+    element.removeAttribute("precision")
+    element.setAttribute("duration", "-1")
+    expect(() => element.play()).toThrow(RangeError)
+    expect(element.textContent).toBe("")
+    expect(frames.size).toBe(0)
+    expect(finish).not.toHaveBeenCalled()
+  })
+
+  it("settles a resumed paused run once under reduced motion and cancels stale work", () => {
+    const { element, finish } = animation()
+    frame(250)
+    const stale = [...frames.values()][0]!
+    element.pause()
+    now = 5000
+    media.matches = true
+    element.resume()
+    expect(element.textContent).toBe("100.000")
+    expect(finish).toHaveBeenCalledOnce()
+    expect(frames.size).toBe(0)
+    stale(10000)
+    element.pause()
+    element.resume()
+    expect(finish).toHaveBeenCalledOnce()
+    media.matches = false
+    element.play()
+    expect(element.textContent).toBe("0.000")
+    frame(5250)
+    expect(element.textContent).toBe("76.270")
+  })
+
+  it.each(["reduced-motion", "zero-duration"] as const)("cancels prior frames when replay settles immediately for %s", policy => {
+    const { element, finish } = animation()
+    frame(250)
+    const stale = [...frames.values()][0]!
+    if (policy === "reduced-motion") {
+      media.matches = true
+      element.play()
+    } else {
+      element.duration = 0
+    }
+    expect(element.textContent).toBe("100.000")
+    expect(finish).toHaveBeenCalledOnce()
+    expect(frames.size).toBe(0)
+    stale(2000)
+    element.pause()
+    element.resume()
+    expect(finish).toHaveBeenCalledOnce()
+    expect(frames.size).toBe(0)
   })
 
   it("finishes immediately when reduced motion is preferred", () => {
@@ -497,4 +836,3 @@ describe("canonical NumberAnimation ViewElement", () => {
     expect(cancelAnimationFrame).toHaveBeenCalled()
   })
 })
-

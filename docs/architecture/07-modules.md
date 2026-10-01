@@ -566,6 +566,43 @@ CSS is unchanged at 2,188 gzip bytes. Reconciliation adds 290/308 JS gzip bytes 
 removes 740/739 raw bytes. The existing 9,000 entry, 10,000 runtime and 2,500 CSS
 ceilings remain unchanged; no new mandatory dependency is emitted.
 
+## Shared presentation API correction
+
+`ViewElement.viewStyle` is an independent typed presentation channel, not another way
+to write component behavior attributes. The Web mapping writes only supplied inline
+CSS fields and returns a detached strings/null snapshot. Numeric lengths include
+fractional pixels; wrap false means nowrap, while null clears that declaration.
+Invalid descriptors fail before writes. Box's declared layout attributes still work,
+but each callback maps only its declaration and reconnect does not replay over later
+application styles. Shared source accessors participate in pre-upgrade replay.
+
+The correction changes shared core and Box, not runtime entries, dependency identities
+or the 89-family selection model. Core is 1,571 / 1,622 gzip bytes (ESM / classic).
+Its added functionality appears in every dependent composition: current Box runtime
+is 4,306 / 4,490 and Transfer runtime is 10,339 / 10,536. The earlier Transfer
+checkpoint below remains historical evidence for its previous core revision.
+Recommendations and frozen S0 remain unchanged; exceeded recommendations warn.
+See [shared presentation API](../styling/01-design.md#shared-presentation-api).
+
+## Transfer delivery
+
+Transfer selects core, its family entry and CSS. The public element and explicit
+native-Web `createTransfer` entry use the same existing membership/staging controller.
+The element maps typed properties and data to one native fieldset; it does not own a
+second button-list, movement, filtering or reset implementation.
+ESM/classic entry exports and runtime dependency files are unchanged.
+
+The shared owner retains locked members, target order, independent staged selection,
+filtering, defaults/reset, native validity, FormData ownership and reconnect cleanup.
+The element additionally exposes those capabilities through ordinary properties and
+methods. Data updates retain surviving native options rather than rebuilding on clicks.
+No generic controller base, provider or runtime metadata engine is added.
+
+After API/owner unification, Transfer measures 8,767 / 8,915 entry gzip bytes and
+10,190 / 10,387 including core (ESM / classic); CSS is 1,217. Its existing 10,000-byte
+runtime recommendation warns at +190 / +387. Recommendations and frozen S0 remain
+unchanged; required functionality is not reduced to remove the warnings.
+
 ## Reproducible size reports
 
 Dropdown's portable action reconciliation retains core plus one entry and composed CSS.

@@ -7,11 +7,22 @@ interface RenderedItem {
   details: HTMLDetailsElement
   summary: HTMLElement
   arrow: SVGSVGElement
+  captured?: boolean
 }
 const rendered = new WeakMap<CollapseItem, RenderedItem>()
 
 function renderItem(item: CollapseItem): RenderedItem | undefined {
   let record = rendered.get(item)
+  if (!record && item.dataset.part === "item") {
+    const disclosures = [...item.children].filter((node): node is HTMLDetailsElement => node instanceof HTMLDetailsElement && node.dataset.part === "disclosure")
+    if (disclosures.length) {
+      const details = disclosures[0]!, summary = details.querySelector<HTMLElement>(":scope > summary[data-part=summary]")
+      const arrows = summary?.querySelectorAll<SVGSVGElement>(":scope > svg[data-part=arrow]")
+      if (disclosures.length !== 1 || !summary || details.firstElementChild !== summary || arrows?.length !== 1
+        || arrows[0]!.namespaceURI !== "http://www.w3.org/2000/svg") throw new TypeError("Captured CollapseItem needs one native disclosure, summary and arrow.")
+      record = { details, summary, arrow: arrows[0]!, captured: true }
+    }
+  }
   const regions = (tag: string) => [...item.querySelectorAll<HTMLElement>(tag)].filter(node =>
     node.closest("m-collapse-item") === item && (node.parentElement === item
       || node.parentElement === record?.summary || node.parentElement === record?.details))
@@ -41,7 +52,6 @@ function renderItem(item: CollapseItem): RenderedItem | undefined {
     summary.append(arrow)
     details.append(summary)
     record = { details, summary, arrow }
-    rendered.set(item, record)
   }
   if (record.details.parentElement !== item || record.summary.parentElement !== record.details) {
     record.summary.replaceChildren(record.arrow, header)
@@ -52,6 +62,7 @@ function renderItem(item: CollapseItem): RenderedItem | undefined {
   if (record.arrow.parentElement !== record.summary) record.summary.prepend(record.arrow)
   if (content.parentElement !== record.details) record.details.append(content)
   if (extras[0] && extras[0].parentElement !== item) item.append(extras[0])
+  rendered.set(item, record)
   return record
 }
 
@@ -68,6 +79,7 @@ export class Collapse extends ViewElement {
   private initialized = false
   private pending: readonly string[] | undefined
   private defaults: readonly string[] = Object.freeze([])
+  private defaultRequested = false
   private retained: readonly string[] = Object.freeze([])
   private known = new Map<string, RenderedItem>()
   private phase: "disconnected" | "pending" | "ready" | "invalid" = "disconnected"
@@ -101,7 +113,7 @@ export class Collapse extends ViewElement {
 
   public get accordion(): boolean { return this.hasAttribute("accordion") }
   public set accordion(value: boolean) { this.setBooleanAttribute("accordion", value) }
-  /** Current native expansion, or the pending/retained collection before connection. */
+  /** Current native expansion, or the pending/retained collection before connection. Sparse arrays are rejected before writes. */
   public get expandedKeys(): readonly string[] {
     return this.controller?.connected ? Object.freeze([...(this.controller.expandedNames as readonly string[])])
       : this.pending ?? (this.initialized ? this.retained : this.defaults)
@@ -113,11 +125,14 @@ export class Collapse extends ViewElement {
       this.updateItems()
     } else this.pending = keys
   }
-  /** Initial expansion and explicit reset target; later writes do not expand items.
+  /** Initial expansion and explicit reset target; later writes do not expand items. Sparse arrays are rejected before writes.
    * @default []
    */
   public get defaultExpandedKeys(): readonly string[] { return this.defaults }
-  public set defaultExpandedKeys(value: readonly string[]) { this.defaults = this.checkKeys(value, this.controller?.connected ?? false) }
+  public set defaultExpandedKeys(value: readonly string[]) {
+    this.defaults = this.checkKeys(value, this.controller?.connected ?? false)
+    this.defaultRequested = true
+  }
   public get items(): readonly CollapseItem[] {
     return Object.freeze([...this.children].filter((node): node is CollapseItem => node instanceof CollapseItem))
   }
@@ -150,10 +165,12 @@ export class Collapse extends ViewElement {
     if (!this.controller?.connected) throw new Error("Connect a valid Collapse before requesting expansion.")
   }
   private checkKeys(value: readonly string[], known: boolean): readonly string[] {
-    if (!Array.isArray(value) || value.some(key => typeof key !== "string" || !key.trim()) || new Set(value).size !== value.length) throw new TypeError("Expanded keys must be a unique nonempty string array.")
-    if (this.accordion && value.length > 1) throw new RangeError("Accordion allows only one expanded key.")
-    if (known) for (const key of value) if (!this.items.some(item => item.key === key)) throw new RangeError(`Unknown Collapse item: ${key}.`)
-    return Object.freeze([...value])
+    if (!Array.isArray(value)) throw new TypeError("Expanded keys must be a unique nonempty string array.")
+    const keys = [...value]
+    if (keys.some(key => typeof key !== "string" || !key.trim()) || new Set(keys).size !== keys.length) throw new TypeError("Expanded keys must be a unique nonempty string array.")
+    if (this.accordion && keys.length > 1) throw new RangeError("Accordion allows only one expanded key.")
+    if (known) for (const key of keys) if (!this.items.some(item => item.key === key)) throw new RangeError(`Unknown Collapse item: ${key}.`)
+    return Object.freeze(keys)
   }
   private updateItems(): void {
     this.retained = this.expandedKeys
@@ -185,7 +202,8 @@ export class Collapse extends ViewElement {
         if (previous && previous !== record) record.details.open = previous.details.open
         next.set(child.key, record)
       }
-      const initial = this.pending ?? (!this.initialized ? this.defaults : undefined)
+      const captured = [...next.values()].some(record => record.captured)
+      const initial = this.pending ?? (!this.initialized && (this.defaultRequested || !captured) ? this.defaults : undefined)
       if (initial) this.checkKeys(initial, true)
       if (this.controller?.connected) this.controller.refresh()
       else this.controller = createCollapse(this, {

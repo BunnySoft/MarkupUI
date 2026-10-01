@@ -1,242 +1,189 @@
 import { ViewElement } from "../../core/index.js"
-import { createMention } from "./mention.js"
-import type { MentionController, MentionOption, MentionQueryResult } from "./mention.js"
+import { createMention, prepareMentionConfiguration, writeMentionField } from "./mention.js"
+import type { MentionConfiguration, MentionControl, MentionController, MentionOption, MentionQueryResult } from "./mention.js"
 
 /**
- * Mention component providing suggestions triggered by prefix characters in text input.
+ * Prefix suggestions sharing one native text owner with createMention.
  * @region {"name":"content","accepts":["textarea","input","phrasing"],"min":0,"max":null}
- * @event {"name":"Select","web":"m:select","bubbles":true,"cancelable":false,"composed":false,"detail":{"value":"string"}}
+ * @event {"name":"Input","web":"input","bubbles":true,"cancelable":false,"composed":true}
+ * @event {"name":"Select","web":"m:select","bubbles":true,"cancelable":false,"composed":false,"detail":{"value":"string","option":"Readonly<MentionOption>","prefix":"string"}}
+ * @event {"name":"Search","web":"m:mention-search","bubbles":true,"cancelable":false,"composed":false,"detail":{"prefix":"string","query":"string","start":"number","end":"number"}}
+ * @event {"name":"Results","web":"m:mention-results","bubbles":true,"cancelable":false,"composed":false,"detail":{"context":"MentionContext","options":"readonly Readonly<MentionOption>[]","result":"MentionQueryResult"}}
+ * @event {"name":"Error","web":"m:mention-error","bubbles":true,"cancelable":false,"composed":false,"detail":{"error":"unknown","context":"MentionContext | null"}}
+ * @event {"name":"Visibility","web":"m:mention-visibility","bubbles":true,"cancelable":false,"composed":false,"detail":{"shown":"boolean"}}
+ * @event {"name":"Reject","web":"m:mention-reject","bubbles":true,"cancelable":false,"composed":false,"detail":{"reason":"string","option":"Readonly<MentionOption>","prefix":"string"}}
  */
 export class Mention extends ViewElement {
   public static readonly tag: string = "m-mention"
-  public static readonly observedAttributes = [
-    "value",
-    "prefix",
-    "disabled",
-  ]
+  public static readonly observedAttributes = ["value", "prefix", "disabled", "readonly"]
 
   #initialized = false
-  #control: HTMLInputElement | HTMLTextAreaElement | null = null
+  #mapped = false
+  #control: MentionControl | null = null
   #panel: HTMLElement | null = null
   #controller: MentionController | undefined
-  #staticOptions: readonly MentionOption[] = []
-  #inputHandler: (() => void) | null = null
-  #selectHandler: ((event: Event) => void) | null = null
+  #configuration = prepareMentionConfiguration({})
+  #configured = false
+  #hiddenOptions = new Map<HTMLElement, string | null>()
 
   public connectedCallback(): void {
+    this.classList.add("m-mention")
+    this.#setupDOM()
     if (!this.#initialized) {
       this.#initialized = true
       this.upgradeProperties()
     }
-    this.classList.add("m-mention")
-    this.#setupDOM()
+    if (!this.#controller?.connected) this.#controller = createMention(this.native, { panel: this.#panel!, ...this.#configuration })
   }
 
   public disconnectedCallback(): void {
-    this.#teardownDOM()
-  }
-
-  public attributeChangedCallback(name: string, _oldValue: string | null, newValue: string | null): void {
-    if (!this.#initialized) return
-    if (name === "value") {
-      if (this.#control && this.#control.value !== (newValue ?? "")) {
-        this.#control.value = newValue ?? ""
-      }
-    } else if (name === "prefix") {
-      this.#recreateController()
-    } else if (name === "disabled") {
-      if (this.#control) {
-        this.#control.disabled = this.disabled
-      }
-      if (this.disabled && this.#controller) {
-        this.#controller.close()
-      }
+    if (this.#controller) this.#configuration = prepareMentionConfiguration(this.#controller.configuration)
+    this.#controller?.disconnect()
+    this.#controller = undefined
+    for (const [option, before] of this.#hiddenOptions) {
+      if (option.getAttribute("hidden") !== "") continue
+      if (before === null) option.removeAttribute("hidden")
+      else option.setAttribute("hidden", before)
     }
+    this.#hiddenOptions.clear()
   }
 
-  public get value(): string {
-    return this.getAttribute("value") ?? ""
+  public attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
+    if (!this.#mapped || oldValue === newValue) return
+    if (name === "value") this.defaultValue = newValue ?? ""
+    else if (name === "prefix") this.prefix = newValue ?? "@"
+    else if (name === "disabled") this.disabled = newValue !== null
+    else if (name === "readonly") this.readOnly = newValue !== null
   }
 
-  public set value(value: string) {
-    this.setStringAttribute("value", value)
-    if (this.#control && this.#control.value !== value) {
-      this.#control.value = value
+  /** The actual Web editor owns labels, value, caret, validity and form association. */
+  public get native(): MentionControl {
+    const controls = [...this.querySelectorAll<MentionControl>("input, textarea")].filter(control => control.closest("m-mention") === this)
+    if (controls.length > 1) throw new TypeError("Mention needs exactly one native text editor.")
+    const control = controls[0] ?? this.#control
+    if (control) {
+      if (this.#control && control !== this.#control) throw new TypeError("Do not replace the Mention editor implicitly.")
+      if (control.localName === "input" && !["text", "search"].includes((control as HTMLInputElement).type)) throw new TypeError("Mention supports text/search inputs and textareas.")
+      this.#control = control
+    } else {
+      this.#control = this.ownerDocument.createElement("textarea")
+      this.#control.className = "m-mention__editor"
+      this.prepend(this.#control)
     }
+    return this.#control
   }
 
-  public override get prefix(): string {
-    return this.getAttribute("prefix") ?? "@"
-  }
+  /** Live native text; "" is empty. Silent property writes never rewrite the value/default attribute. */
+  public get value(): string { return this.native.value }
+  public set value(value: string) { this.#write("value", value) }
 
+  /** Native reset text. The host value attribute maps here, preserving the native dirty-value rule. */
+  public get defaultValue(): string { return this.native.defaultValue }
+  public set defaultValue(value: string) { this.#write("defaultValue", value) }
+
+  /** Primary prefix. Assignment explicitly replaces the prefix set; configure() supports multiple prefixes. */
+  public override get prefix(): string { return (this.configuration.prefix as readonly string[])[0]! }
   public override set prefix(value: string) {
-    this.setStringAttribute("prefix", value)
-    this.#recreateController()
+    if (typeof value !== "string") throw new TypeError("Mention prefix needs one nonwhitespace BMP character.")
+    this.configure({ ...this.configuration, prefix: value })
   }
 
-  public get disabled(): boolean {
-    return this.hasAttribute("disabled")
-  }
+  /** Native explicit disabled state; disabled fieldsets also prevent query and selection. */
+  public get disabled(): boolean { return this.native.disabled }
+  public set disabled(value: boolean) { this.#write("disabled", value) }
 
-  public set disabled(value: boolean) {
-    this.setBooleanAttribute("disabled", value)
-    if (this.#control) {
-      this.#control.disabled = value
-    }
-    if (value && this.#controller) {
-      this.#controller.close()
-    }
-  }
+  public get readOnly(): boolean { return this.native.readOnly }
+  public set readOnly(value: boolean) { this.#write("readOnly", value) }
 
-  public select(value: string): boolean {
-    return this.#controller?.select(value) ?? false
-  }
+  public get form(): HTMLFormElement | null { return this.native.form }
+  public get connected(): boolean { return this.#controller?.connected ?? false }
+  public get context() { return this.#controller?.context ?? null }
+  public get error(): unknown { return this.#controller?.error ?? null }
 
-  public query(): Promise<MentionQueryResult> | undefined {
-    return this.#controller?.query()
+  /** Immutable effective configuration, including native-Web loader/filter callbacks. */
+  public get configuration(): Readonly<MentionConfiguration> { return this.#controller?.configuration ?? this.#configuration }
+
+  /** Explicit atomic configuration replacement; retains editor, defaults, text, caret and IME state. */
+  public configure(configuration: MentionConfiguration): void {
+    if (this.#controller) {
+      this.#controller.configure(configuration)
+      this.#configuration = prepareMentionConfiguration(this.#controller.configuration)
+    } else this.#configuration = prepareMentionConfiguration(configuration)
+    this.#configured = true
   }
 
   public setOptions(options: readonly MentionOption[]): void {
-    this.#staticOptions = [...options]
+    if (this.configuration.load) throw new TypeError("Use configure() to explicitly switch from a loader to static options.")
+    this.configure({ ...this.configuration, options })
+  }
+
+  public select(value: string): boolean {
+    if (typeof value !== "string") throw new TypeError("Mention selection needs a string value.")
+    return this.#controller?.select(value) ?? false
+  }
+
+  public query(): Promise<MentionQueryResult> {
+    if (!this.#controller) return Promise.reject(new Error("Mention is disconnected."))
+    return this.#controller.query()
+  }
+
+  public close(): void { this.#controller?.close() }
+  public refresh(): void { this.#controller?.refresh() }
+
+  #write(name: "value" | "defaultValue" | "disabled" | "readOnly", value: string | boolean): void {
     if (this.#controller) {
-      this.#controller.setOptions(this.#staticOptions)
-    } else {
-      this.#recreateController()
-    }
-  }
-
-  public close(): void {
-    this.#controller?.close()
-  }
-
-  public refresh(): void {
-    this.#controller?.refresh()
+      if (name === "value" || name === "defaultValue") this.#controller[name] = value as string
+      else this.#controller[name] = value as boolean
+    } else writeMentionField(this.native, name, value)
   }
 
   #setupDOM(): void {
-    let control = this.querySelector<HTMLInputElement | HTMLTextAreaElement>("textarea, input, [data-input-control]")
-    if (!control) {
-      control = this.ownerDocument.createElement("textarea")
-      control.className = "m-mention__editor"
-      this.prepend(control)
-    } else if (!control.classList.contains("m-mention__editor") && !control.hasAttribute("data-input-control")) {
-      control.classList.add("m-mention__editor")
-    }
-    this.#control = control
-
-    if (this.hasAttribute("value")) {
-      control.value = this.value
-    } else if (control.value) {
-      this.setAttribute("value", control.value)
-    }
-
-    if (this.hasAttribute("disabled")) {
-      control.disabled = this.disabled
-    } else if (control.disabled) {
-      this.disabled = true
-    }
-
-    const optionElements = [...this.querySelectorAll<HTMLElement>("option, m-option")]
-    if (optionElements.length > 0) {
-      this.#staticOptions = optionElements.map(opt => {
-        const option: MentionOption = {
-          value: opt.getAttribute("value") ?? opt.textContent?.trim() ?? "",
-          disabled: opt.hasAttribute("disabled"),
-        }
-        const label = opt.getAttribute("label") || opt.textContent?.trim()
-        if (label) option.label = label
-        return option
-      })
-      for (const opt of optionElements) {
-        opt.hidden = true
+    const control = this.native
+    if (!control.hasAttribute("data-input-control")) control.classList.add("m-mention__editor")
+    if (!this.#mapped) {
+      if (this.hasAttribute("value")) writeMentionField(control, "defaultValue", this.getAttribute("value")!)
+      if (this.hasAttribute("disabled")) writeMentionField(control, "disabled", true)
+      if (this.hasAttribute("readonly")) writeMentionField(control, "readOnly", true)
+      if (this.hasAttribute("prefix") && !this.#configured) this.#configuration = prepareMentionConfiguration({ ...this.#configuration, prefix: this.getAttribute("prefix")! })
+      if (!this.#configured) {
+        const options = [...this.querySelectorAll<HTMLElement>("option, m-option")].filter(option => option.closest("m-mention") === this)
+        if (options.length) this.#configuration = prepareMentionConfiguration({
+          ...this.#configuration,
+          options: options.map(option => ({
+            value: option.getAttribute("value") ?? option.textContent?.trim() ?? "",
+            label: option.getAttribute("label") ?? option.textContent?.trim() ?? "",
+            disabled: option.hasAttribute("disabled"),
+          })),
+        })
       }
+      this.#mapped = true
     }
-
-    let panel = this.querySelector<HTMLElement>("[data-mention-panel], .m-mention__panel, section[aria-label], section[aria-labelledby]")
-    if (!panel || panel === control || control.contains(panel)) {
-      panel = this.ownerDocument.createElement("section")
+    for (const option of [...this.querySelectorAll<HTMLElement>("option, m-option")].filter(option => option.closest("m-mention") === this)) {
+      this.#hiddenOptions.set(option, option.getAttribute("hidden"))
+      option.hidden = true
+    }
+    const panels = [...this.querySelectorAll<HTMLElement>("[data-mention-panel], .m-mention__panel, section[aria-label], section[aria-labelledby]")].filter(panel => panel.closest("m-mention") === this)
+    if (panels.length > 1) throw new TypeError("Mention supports one adjacent choices panel.")
+    if (panels[0]) {
+      if (this.#panel && panels[0] !== this.#panel) throw new TypeError("Do not replace the Mention panel implicitly.")
+      this.#panel = panels[0]
+    } else if (!this.#panel) {
+      const panel = this.ownerDocument.createElement("section")
       panel.className = "m-mention__panel"
       panel.setAttribute("aria-label", "Mention choices")
       panel.hidden = true
       const list = this.ownerDocument.createElement("ul")
       list.className = "m-mention__options"
       list.setAttribute("data-mention-options", "")
-      panel.append(list)
       const status = this.ownerDocument.createElement("p")
       status.setAttribute("data-mention-status", "")
       status.textContent = "No search yet."
-      panel.append(status)
+      panel.append(list, status)
       this.append(panel)
-    } else {
-      let list = panel.querySelector<HTMLElement>("[data-mention-options]")
-      if (!list) {
-        list = this.ownerDocument.createElement("ul")
-        list.className = "m-mention__options"
-        list.setAttribute("data-mention-options", "")
-        panel.append(list)
-      }
-      if (!panel.hasAttribute("aria-label") && !panel.hasAttribute("aria-labelledby")) {
-        panel.setAttribute("aria-label", "Mention choices")
-      }
-      panel.hidden = true
+      this.#panel = panel
     }
-    this.#panel = panel
-
-    this.#setupController()
-
-    this.#inputHandler = () => {
-      if (this.#control) {
-        this.setAttribute("value", this.#control.value)
-      }
-    }
-    this.#control.addEventListener("input", this.#inputHandler)
-
-    this.#selectHandler = (event: Event) => {
-      const customEvent = event as CustomEvent<{ option?: MentionOption; prefix?: string }>
-      const option = customEvent.detail?.option
-      const value = option?.value ?? ""
-      this.emit<{ value: string }>("m:select", { value }, { bubbles: true, cancelable: false, composed: false })
-    }
-    this.#control.addEventListener("m:mention-select", this.#selectHandler)
-  }
-
-  #setupController(): void {
-    if (!this.#control || !this.#panel) return
-    const prefix = this.prefix || "@"
-    try {
-      this.#controller = createMention(this.#control, {
-        panel: this.#panel,
-        prefix: [prefix],
-        options: this.#staticOptions,
-        debounce: 0,
-      })
-    } catch {
-      // Anatomy or initialization failed
-    }
-  }
-
-  #recreateController(): void {
-    if (!this.isConnected || !this.#control || !this.#panel) return
-    this.#controller?.disconnect()
-    this.#controller = undefined
-    this.#setupController()
-  }
-
-  #teardownDOM(): void {
-    if (this.#control) {
-      if (this.#inputHandler) this.#control.removeEventListener("input", this.#inputHandler)
-      if (this.#selectHandler) this.#control.removeEventListener("m:mention-select", this.#selectHandler)
-    }
-    this.#controller?.disconnect()
-    this.#controller = undefined
-    this.#control = null
-    this.#panel = null
-    this.#inputHandler = null
-    this.#selectHandler = null
   }
 }
-
-
 
 export function registerMention(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
   ViewElement.register([Mention], registry)

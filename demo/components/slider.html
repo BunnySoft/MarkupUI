@@ -28,7 +28,7 @@
 <body>
   <main data-demo-page class="component-docs">
     <h1>Slider</h1>
-    <p>Range slider component supporting horizontal, vertical, and reverse directions with native range semantics.</p>
+    <p>One native range, or two independent native tracks in range mode. The public element and optional native-Web enhancement entries share one behavior owner.</p>
     <nav class="component-docs-nav" aria-label="Slider documentation">
       <a href="#basic-heading">Examples</a>
       <a href="#required-files">Setup</a>
@@ -45,10 +45,8 @@
     <section data-demo-example="basic" aria-labelledby="basic-heading">
       <header data-demo-header><div><h2 id="basic-heading">Basic slider</h2><p>Horizontal range slider with min, max, step, and value properties.</p></div></header>
       <div data-demo-preview>
-        <label for="demo-slider-control">Volume control (0 to 100)</label>
-        <m-slider id="demo-slider" value="50" min="0" max="100" step="5">
-          <input id="demo-slider-control" data-slider-control type="range" value="50" min="0" max="100" step="5">
-          <output for="demo-slider-control" aria-live="off">50</output>
+        <m-slider id="demo-slider" value="50" min="0" max="100" step="5" aria-label="Volume control (0 to 100)">
+          <output aria-live="off">50</output>
         </m-slider>
         <m-p id="slider-status">Value: 50</m-p>
         <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
@@ -63,12 +61,21 @@
     <section data-demo-example="modes" aria-labelledby="modes-heading">
       <header data-demo-header><div><h2 id="modes-heading">Vertical, reverse and disabled</h2><p>Vertical orientation, reverse direction (RTL), and disabled state.</p></div></header>
       <div data-demo-preview>
-        <label for="vert-s-control">Vertical level</label>
-        <m-slider id="vert-s" vertical value="30" min="0" max="100"><input id="vert-s-control" data-slider-control type="range" value="30" min="0" max="100"></m-slider>
-        <label for="rev-s-control">Reversed direction</label>
-        <m-slider id="rev-s" reverse value="70" min="0" max="100"><input id="rev-s-control" data-slider-control type="range" value="70" min="0" max="100" dir="rtl"></m-slider>
-        <label for="dis-s-control">Disabled state</label>
-        <m-slider id="dis-s" disabled value="40" min="0" max="100"><input id="dis-s-control" data-slider-control type="range" value="40" min="0" max="100" disabled></m-slider>
+        <m-slider id="vert-s" vertical value="30" min="0" max="100" aria-label="Vertical level"></m-slider>
+        <m-slider id="rev-s" reverse value="70" min="0" max="100" aria-label="Reversed direction"></m-slider>
+        <m-slider id="dis-s" disabled value="40" min="0" max="100" aria-label="Disabled state"></m-slider>
+      </div>
+    </section>
+
+    <section data-demo-example="range" aria-labelledby="range-heading">
+      <header data-demo-header><div><h2 id="range-heading">Canonical range mode</h2><p>Set range before controls are materialized. The tuple maps to two labelled native inputs and a named fieldset, not a shared-track dual-thumb engine.</p></div></header>
+      <div data-demo-preview>
+        <m-slider id="demo-range" range min="0" max="100" step="any" value="[20,80]" aria-label="Window endpoints"></m-slider>
+        <m-p id="range-status">Endpoints: 20 / 80; ordered: true</m-p>
+        <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+          <m-button id="range-cross">Set crossed tuple [90,10]</m-button>
+          <m-button id="range-clamp">Clamp tuple [-50,150]</m-button>
+        </m-box>
       </div>
     </section>
 
@@ -137,6 +144,17 @@
       </div>
     </section>
 
+    <section aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Value, defaults, events and ownership</h2>
+      <p>Generated single controls retain the existing logical default 0. A generated pair starts with defaults 0 / 100; explicit initial value supplies its generated native defaults. Native clamping still applies. Adopted inputs without a value attribute retain their browser midpoint and defaultValue "", rather than receiving a fabricated 0. The native-Web enhancement example deliberately demonstrates that midpoint.</p>
+      <p>value reads current native values, including direct native writes and form resets. Assigning value is silent and never changes defaultValue. The host value attribute is a configuration/write command, not a live-state mirror: native input, reset and stepping do not rewrite it, and reconnect does not replay consumed configuration. defaultValue exposes native value-attribute strings (a two-string tuple in range mode), independently of live values. Reset is owned by each input's actual form; canceled resets, external forms, changed defaults and fieldset disabling remain native. A shared name in range mode submits two native entries, not a serialized hidden tuple.</p>
+      <p>min, max and step setters use the actual native controls; step accepts "any". Scalar bounds apply to both tracks when explicitly set; untouched per-track bounds remain authored. Crossing is permitted and ordered is computed by the owner, never sorted. Pair values, defaults, constraints and formatting are prepared together before commit; a failing formatter cannot leave a partially written pair.</p>
+      <p>Native input/change remain unmodified and bubble from the original controls. The shared owner now also supplies the canonical m:change notification for explicit Web enhancements: changed native values are reported once across input/change. stepUp/stepDown retain the existing action notification (without fabricating native events). Setters and resets do not emit value events. m:slider-pair-change is one deferred, non-bubbling notification per native committed pair change, on the canonical host or the explicit Web fieldset; detail contains value, ordered and index. Pending commits are canceled on disconnect.</p>
+      <p>readonly is not supported by native range: readonly=true and a readonly attribute are explicitly rejected, rather than simulated. Use disabled only when disabling is intended. The host has no replacement role or tabstop; native inputs keep keyboard movement, focus, labels, validation and form ownership. Generated fallback names are Slider or Start/End; supply an appropriate aria-label/aria-labelledby, or adopt real labelled inputs. In range mode host naming names the fieldset, not both endpoints.</p>
+      <p>The typed formatValue callback returns plain text for non-live outputs and optional aria-valuetext. Callback changes are accepted only after preparation succeeds; stale or reentrant work cannot commit. Invalid native anatomy, unsupported readonly, bad attributes and callback failures report m:error on the element and m:slider-error on the Web owner; error exposes the gate. Fix the source and call refresh() to retry. Scalar updates and reconnect retain native nodes, listeners, defaults and authored ARIA; direct native writes need refresh() only to update readouts. Structural control/order changes require explicit rebinding, not an automatic second control engine.</p>
+      <p>createSlider(root, options) and createSliderPair(fieldset, options) are explicit Web-only interoperability entries for the native anatomy below. They use exactly the same owner as m-slider. Do not enhance the native root a second time while the element owns it. They are not alternate portable component APIs, and do not require the aggregate bundle.</p>
+    </section>
+
     <section aria-labelledby="api-heading">
       <h2 id="api-heading">API</h2>
       <div id="slider-api">
@@ -146,4 +164,3 @@
   </main>
 </body>
 </html>
-

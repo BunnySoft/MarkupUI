@@ -396,42 +396,43 @@ describe("canonical Mention ViewElement", () => {
     expect(panel).not.toBeNull()
   })
 
-  it("synchronizes value property, attribute, and internal control", () => {
+  it("keeps silent live property writes separate from default attributes and native dirty values", () => {
     const element = document.createElement("m-mention") as Mention
     document.body.append(element)
     const textarea = element.querySelector("textarea")!
 
     element.value = "Hello @alice"
     expect(element.value).toBe("Hello @alice")
-    expect(element.getAttribute("value")).toBe("Hello @alice")
+    expect(element.getAttribute("value")).toBeNull()
     expect(textarea.value).toBe("Hello @alice")
 
     element.setAttribute("value", "Changed text")
-    expect(element.value).toBe("Changed text")
-    expect(textarea.value).toBe("Changed text")
+    expect(element.value).toBe("Hello @alice")
+    expect(textarea.value).toBe("Hello @alice")
+    expect(element.defaultValue).toBe("Changed text")
   })
 
-  it("synchronizes prefix property and attribute", () => {
+  it("maps a prefix attribute and configures the owner without reflecting property writes", () => {
     const element = document.createElement("m-mention") as Mention
     document.body.append(element)
 
     expect(element.prefix).toBe("@")
     element.prefix = "#"
     expect(element.prefix).toBe("#")
-    expect(element.getAttribute("prefix")).toBe("#")
+    expect(element.getAttribute("prefix")).toBeNull()
 
     element.setAttribute("prefix", "$")
     expect(element.prefix).toBe("$")
   })
 
-  it("synchronizes disabled property, attribute, and internal control", () => {
+  it("maps disabled attributes and reads actual native disabled property state", () => {
     const element = document.createElement("m-mention") as Mention
     document.body.append(element)
     const textarea = element.querySelector("textarea")!
 
     element.disabled = true
     expect(element.disabled).toBe(true)
-    expect(element.hasAttribute("disabled")).toBe(true)
+    expect(element.hasAttribute("disabled")).toBe(false)
     expect(textarea.disabled).toBe(true)
 
     element.disabled = false
@@ -448,7 +449,7 @@ describe("canonical Mention ViewElement", () => {
     expect(textarea.disabled).toBe(false)
   })
 
-  it("updates value attribute and property on user input", () => {
+  it("reads user input live without replacing defaults or reflecting a second host value", () => {
     const element = document.createElement("m-mention") as Mention
     document.body.append(element)
     const textarea = element.querySelector("textarea")!
@@ -457,7 +458,7 @@ describe("canonical Mention ViewElement", () => {
     textarea.dispatchEvent(new Event("input", { bubbles: true }))
 
     expect(element.value).toBe("Typed message")
-    expect(element.getAttribute("value")).toBe("Typed message")
+    expect(element.getAttribute("value")).toBeNull()
   })
 
   it("parses option children and emits m:select upon selection", async () => {
@@ -486,7 +487,8 @@ describe("canonical Mention ViewElement", () => {
     expect(selectSpy).toHaveBeenCalledOnce()
     const customEvent = selectSpy.mock.calls[0]![0] as CustomEvent<{ value: string }>
     expect(customEvent.type).toBe("m:select")
-    expect(customEvent.detail).toEqual({ value: "alice" })
+    expect(customEvent.detail).toEqual({ value: "alice", prefix: "@", option: { value: "alice", label: "alice", disabled: false } })
+    expect(customEvent.target).toBe(textarea)
     expect(customEvent.bubbles).toBe(true)
     expect(customEvent.cancelable).toBe(false)
     expect(customEvent.composed).toBe(false)
@@ -535,7 +537,7 @@ describe("canonical Mention ViewElement", () => {
     expect(input.value).toBe("Tag #tech ")
     expect(selectSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        detail: { value: "tech" },
+        detail: expect.objectContaining({ value: "tech", prefix: "#" }),
       }),
     )
   })
@@ -552,5 +554,158 @@ describe("canonical Mention ViewElement", () => {
     expect(element.isConnected).toBe(true)
     expect(element.querySelector("textarea")).not.toBeNull()
   })
-})
 
+  it.each(["input", "textarea"])("retains original %s labels, ARIA, form defaults, listeners and dirty edits across reconnect", async type => {
+    const form = document.createElement("form"), element = document.createElement("m-mention") as Mention
+    const label = document.createElement("label"), editor = document.createElement(type) as HTMLInputElement | HTMLTextAreaElement
+    editor.id = `native-${type}`; editor.name = "body"; editor.defaultValue = "Original"
+    editor.setAttribute("aria-describedby", "native-help")
+    label.htmlFor = editor.id; label.textContent = "Author label"
+    const help = document.createElement("p"); help.id = "native-help"; help.textContent = "Author help"
+    const input = vi.fn(), selected = vi.fn()
+    editor.addEventListener("input", input); element.addEventListener("m:select", selected)
+    element.append(editor); form.append(label, element, help); document.body.append(form)
+    element.setOptions([{ value: "alice" }])
+    expect(element.native).toBe(editor); expect(editor.labels![0]).toBe(label)
+    editor.value = "Native direct write"; expect(element.value).toBe("Native direct write")
+    element.setAttribute("value", "Reset text")
+    expect(element.value).toBe("Native direct write"); expect(element.defaultValue).toBe("Reset text")
+    caret(editor, "@al"); await element.query(); expect(element.select("alice")).toBe(true)
+    expect(new FormData(form).getAll("body")).toEqual(["@alice "]); expect(input).toHaveBeenCalledOnce()
+    const caretBefore = editor.selectionStart, panel = element.querySelector("section")
+    element.remove(); form.append(element)
+    expect(element.native).toBe(editor); expect(element.querySelector("section")).toBe(panel)
+    expect(element.value).toBe("@alice "); expect(editor.selectionStart).toBe(caretBefore)
+    expect(editor.getAttribute("aria-describedby")).toBe("native-help"); expect(editor.labels![0]).toBe(label)
+    form.reset(); expect(element.value).toBe("Reset text")
+    element.value = ""; expect(element.value).toBe(""); expect(element.defaultValue).toBe("Reset text")
+    expect(input).toHaveBeenCalledOnce(); expect(selected).toHaveBeenCalledOnce()
+    expect(() => { element.value = null as never }).toThrow(TypeError)
+    expect(() => { element.defaultValue = undefined as never }).toThrow(TypeError)
+    expect(() => { element.disabled = "false" as never }).toThrow(TypeError)
+    expect(() => { element.readOnly = 1 as never }).toThrow(TypeError)
+    expect(element.value).toBe("")
+  })
+
+  it("exposes one owner with the same configuration, defaults and silent native writes as createMention", async () => {
+    const { helper, control } = fixture()
+    helper.value = ""; helper.defaultValue = "reset"
+    expect(control.value).toBe(""); expect(control.defaultValue).toBe("reset")
+    helper.configure({ prefix: ["@", "#"], options: [{ value: "topic" }], filter: () => true, separator: ";", minQueryLength: 0, debounce: 0 })
+    expect(Object.isFrozen(helper.configuration)).toBe(true)
+    caret(control, "#"); await helper.query()
+    const selected = vi.fn(); control.addEventListener("m:select", selected)
+    expect(helper.select("topic")).toBe(true); expect(control.value).toBe("#topic;")
+    expect(selected).toHaveBeenCalledOnce()
+    expect(selected.mock.calls[0]![0]).toMatchObject({ bubbles: true, cancelable: false, composed: false, detail: { value: "topic", prefix: "#" } })
+    expect(() => { helper.value = null as never }).toThrow(TypeError)
+  })
+
+  it("exposes loader cancellation and reconfiguration without replacing the editor or its caret/defaults", async () => {
+    const element = document.createElement("m-mention") as Mention
+    document.body.append(element)
+    const native = element.native, panel = element.querySelector<HTMLElement>("section")!, pending = deferred()
+    let signal!: AbortSignal
+    const load = vi.fn(context => { signal = context.signal; return pending.promise })
+    element.configure({ load, prefix: ["@", "#"], debounce: 0 })
+    native.defaultValue = "Reset"; caret(native, "😀 #al tail", 6)
+    const query = element.query(); await Promise.resolve()
+    expect(element.context).toEqual({ prefix: "#", query: "al", start: 3, end: 6 })
+    expect(() => element.setOptions([{ value: "alice" }])).toThrow("configure")
+    const selected = vi.fn(); element.addEventListener("m:select", selected)
+    element.configure({ options: [{ value: "alice", label: "Alice" }], filter: () => true, prefix: ["@", "#"], separator: ";", debounce: 0 })
+    expect(signal.aborted).toBe(true); expect((await query).status).toBe("aborted")
+    expect(element.native).toBe(native); expect(element.querySelector("section")).toBe(panel)
+    expect(native.value).toBe("😀 #al tail"); expect(native.selectionStart).toBe(6); expect(native.defaultValue).toBe("Reset")
+    pending.resolve([{ value: "stale" }]); await flush()
+    expect((await element.query()).count).toBe(1); expect(element.select("alice")).toBe(true)
+    expect(native.value).toBe("😀 #alice; tail"); expect(selected).toHaveBeenCalledOnce()
+    expect(() => createMention(native, { panel })).toThrow("owner")
+  })
+
+  it("fails invalid configuration atomically and keeps a published selection usable", async () => {
+    const element = document.createElement("m-mention") as Mention
+    document.body.append(element); element.setOptions([{ value: "alice", class: "author-choice" }])
+    caret(element.native, "@al"); await element.query()
+    const configuration = element.configuration, choice = element.querySelector("button")
+    expect(() => element.configure({ options: [{ value: "two words" }] })).toThrow()
+    expect(() => { element.prefix = "" }).toThrow()
+    expect(() => { element.prefix = undefined as never }).toThrow()
+    expect(() => element.configure({ load: () => [], options: [] })).toThrow()
+    expect(element.configuration).toBe(configuration); expect(element.querySelector("button")).toBe(choice)
+    expect(element.select("alice")).toBe(true)
+  })
+
+  it("invalidates queued native choice actions when values or configuration change", async () => {
+    const element = document.createElement("m-mention") as Mention
+    document.body.append(element); element.setOptions([{ value: "alice" }])
+    const selected = vi.fn(); element.addEventListener("m:select", selected)
+    caret(element.native, "@al"); await element.query()
+    const first = element.querySelector<HTMLButtonElement>("button")!; first.focus(); first.click()
+    element.value = "application edit"; await flush()
+    expect(element.value).toBe("application edit"); expect(selected).not.toHaveBeenCalled()
+    caret(element.native, "@al"); await element.query()
+    const second = element.querySelector<HTMLButtonElement>("button")!; second.focus(); second.click()
+    element.configure({ options: [{ value: "alex" }], debounce: 0 }); await flush()
+    expect(element.value).toBe("@al"); expect(selected).not.toHaveBeenCalled()
+  })
+
+  it("keeps composition state through schema updates and reads readonly/fieldset eligibility from the native owner", async () => {
+    const fieldset = document.createElement("fieldset"), element = document.createElement("m-mention") as Mention
+    fieldset.append(element); document.body.append(fieldset)
+    const native = element.native, load = vi.fn(() => [])
+    caret(native, "@al"); native.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }))
+    element.configure({ load, debounce: 0 })
+    expect((await element.query()).status).toBe("skipped"); expect(load).not.toHaveBeenCalled()
+    native.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true })); element.close()
+    element.readOnly = true; expect((await element.query()).status).toBe("skipped")
+    element.readOnly = false; fieldset.disabled = true; expect((await element.query()).status).toBe("skipped")
+    const legend = document.createElement("legend"); fieldset.prepend(legend); legend.append(element)
+    native.focus(); expect((await element.query()).status).toBe("updated")
+    expect(element.disabled).toBe(false); expect(load).toHaveBeenCalledOnce()
+    element.setAttribute("readonly", ""); expect(native.readOnly).toBe(true)
+    element.removeAttribute("readonly"); expect(native.readOnly).toBe(false)
+  })
+
+  it("cancels element loaders on reset/disconnect and keeps authored panel names/status/listeners on reconnect", async () => {
+    const form = document.createElement("form"), element = document.createElement("m-mention") as Mention
+    element.innerHTML = `<textarea name="body">@al</textarea><section data-mention-panel aria-labelledby="choices-heading" hidden>
+      <h2 id="choices-heading">Author choices</h2><ul data-mention-options></ul><p data-mention-status>Author idle</p></section>`
+    form.append(element); document.body.append(form)
+    const panel = element.querySelector<HTMLElement>("section")!, list = panel.querySelector("ul")!, pending = deferred()
+    let signal!: AbortSignal
+    element.configure({ load: context => { signal = context.signal; return pending.promise }, debounce: 0 })
+    caret(element.native, "@al"); const query = element.query(); await Promise.resolve()
+    form.reset(); expect(signal.aborted).toBe(true); expect((await query).status).toBe("aborted")
+    const canceled = (event: Event) => event.preventDefault()
+    form.addEventListener("reset", canceled)
+    element.value = "edited"; form.reset(); expect(element.value).toBe("edited")
+    form.removeEventListener("reset", canceled)
+    caret(element.native, "@al"); const again = element.query(); await Promise.resolve()
+    element.remove(); expect(signal.aborted).toBe(true); expect((await again).status).toBe("aborted")
+    expect(panel.getAttribute("aria-labelledby")).toBe("choices-heading"); expect(panel.querySelector("[data-mention-status]")!.textContent).toBe("Author idle")
+    form.append(element); expect(element.querySelector("ul")).toBe(list); expect(element.connected).toBe(true)
+    element.configure({ options: [{ value: "alice" }], debounce: 0 })
+    const cancel = (event: Event) => event.preventDefault()
+    list.addEventListener("click", cancel)
+    caret(element.native, "@al"); await element.query()
+    const choice = element.querySelector<HTMLButtonElement>("button")!; choice.focus(); choice.click(); await flush()
+    expect(element.value).toBe("@al")
+    list.removeEventListener("click", cancel)
+    choice.click(); await flush(); expect(element.value).toBe("@alice ")
+    pending.resolve([{ value: "stale" }])
+  })
+
+  it("replays pre-upgrade properties without losing the original native editor or overwriting typed configuration", () => {
+    const element = document.createElement("m-mention") as Mention, editor = document.createElement("textarea")
+    element.setAttribute("prefix", "@"); editor.defaultValue = "Author default"; element.append(editor)
+    Object.defineProperty(element, "value", { value: "Assigned draft", configurable: true, writable: true })
+    Object.defineProperty(element, "prefix", { value: "#", configurable: true, writable: true })
+    Object.defineProperty(element, "readOnly", { value: true, configurable: true, writable: true })
+    document.body.append(element)
+    expect(element.native).toBe(editor); expect(element.value).toBe("Assigned draft")
+    expect(element.defaultValue).toBe("Author default"); expect(element.prefix).toBe("#"); expect(editor.readOnly).toBe(true)
+    element.remove(); document.body.append(element)
+    expect(element.prefix).toBe("#"); expect(element.value).toBe("Assigned draft")
+  })
+})

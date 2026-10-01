@@ -223,7 +223,10 @@ export function createCollapse(root: HTMLElement, options: CollapseOptions = {})
         || summary.hasAttribute("contenteditable") && summary.getAttribute("contenteditable")?.toLowerCase() !== "false"
         || !named(summary) || summary.querySelector(interactive)) throw new TypeError("Collapse items need unique string keys, a first native summary and one direct content region; nested items need their own group.")
       const previous = itemOwners.get(node)
+      const captured = canonical && !previous && node.dataset.part === "disclosure"
+        && node.parentElement?.getAttribute("data-part") === "item" && summary.dataset.part === "summary"
       const managedDisabled = previous?.summary === summary && previous.disabledValue === summary.getAttribute("aria-disabled")
+        || captured && node.parentElement!.getAttribute("data-state")?.split(/\s+/).includes("disabled") && summary.getAttribute("aria-disabled") === "true"
       if (![null, "button"].includes(summary.getAttribute("role")) || summary.hasAttribute("aria-expanded")
         || summary.hidden || summary.hasAttribute("inert") || summary.getAttribute("aria-hidden") === "true"
         || summary.hasAttribute("aria-disabled") && !managedDisabled) throw new TypeError("Native summary owns expanded semantics; use the disabled item marker, not authored aria-disabled.")
@@ -235,6 +238,14 @@ export function createCollapse(root: HTMLElement, options: CollapseOptions = {})
       }
       const arrow = summary.querySelector(canonical ? '[data-part="arrow"]' : "[data-collapse-arrow]")
       if (arrow && arrow.getAttribute("aria-hidden") !== "true") throw new TypeError("Authored collapse arrows must be explicitly decorative.")
+      if (captured) {
+        if (managedDisabled) summary.removeAttribute("aria-disabled")
+        if (/^m-collapse-\d+-[a-z0-9]+$/.test(node.getAttribute("name") ?? "")) {
+          node.removeAttribute("name")
+          // Native exclusivity can close a named clone before its connection callback.
+          if (node.parentElement!.getAttribute("data-state")?.split(/\s+/).includes("expanded")) node.open = true
+        }
+      }
       seen.add(key)
       return { name: key, details: node, summary, content: content[0] as HTMLElement }
     })

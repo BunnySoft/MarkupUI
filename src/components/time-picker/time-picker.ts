@@ -10,23 +10,32 @@ export interface TimePickerState {
 export interface TimePickerController {
   readonly control: HTMLInputElement
   readonly value: string
+  readonly defaultValue: string
   readonly state: TimePickerState
   readonly connected: boolean
   readonly error: unknown
   setValue(value: string): void
+  setDefaultValue(value: string): void
+  setClearable(value: boolean): void
   clear(): boolean
   refresh(): void
+  connect(): void
   disconnect(): void
+}
+export interface TimePickerOptions {
+  /** Enable the optional authored clear action. Native-only enhancement defaults to true. */
+  readonly clearable?: boolean
 }
 interface Attribute { node: HTMLElement; name: string; before: string | null; base: string | null; last: string | null }
 const owner = Symbol.for("markup-ui.time-picker.owner")
 type Owned = Element & { [owner]?: TimePickerController }
 
 /** A time-of-day input is not an anchored date/instant; all native min/max/step behavior stays native. */
-export function createTimePicker(root: HTMLElement): TimePickerController {
+export function createTimePicker(root: HTMLElement, options: TimePickerOptions = {}): TimePickerController {
   const document = root?.ownerDocument, view = document?.defaultView
   if (!view || !(root instanceof view.HTMLElement) || !root.matches("[data-time-picker]")) throw new TypeError("Time Picker needs an authored data-time-picker root.")
-  const own = (node: Element) => node.closest("[data-time-picker]") === root
+  if (options.clearable !== undefined && typeof options.clearable !== "boolean") throw new TypeError("clearable must be boolean.")
+  const own = (node: Element) => node.closest("[data-time-picker], m-time-picker") === root
   function one(selector: string, required = false) {
     const nodes = [...root.querySelectorAll<HTMLElement>(selector)].filter(own)
     if (nodes.length > 1 || required && nodes.length !== 1) throw new TypeError(`Author ${required ? "one" : "at most one"} owned ${selector}.`)
@@ -39,12 +48,13 @@ export function createTimePicker(root: HTMLElement): TimePickerController {
   const nodes = [root, control, ...[clearButton, output].filter((node): node is HTMLElement => !!node)]
   if (new Set(nodes).size !== nodes.length) throw new TypeError("Time field, readout and clear action must be distinct.")
   for (const node of nodes) if ((node as Owned)[owner]) throw new Error("Time Picker node already has an owner.")
-  function anatomy() {
-    if (!root.isConnected || root.getRootNode() !== document || root.closest("label, button, a[href], summary")
+  function anatomy(requireConnection = true) {
+    if (requireConnection && (!root.isConnected || root.getRootNode() !== document) || !root.matches("[data-time-picker]")
+      || root.closest("label, button, a[href], summary")
       || one("[data-time-control]", true) !== control || one("[data-time-clear]") !== clearButton || one("[data-time-output]") !== output
       || nodes.some(node => node !== root && (!root.contains(node) || !own(node)))
       || control.type !== "time" || control.getAttribute("type")?.toLowerCase() !== "time" || control.hasAttribute("role") || control.hidden
-      || !(control.getAttribute("aria-label")?.trim() || [...control.labels ?? []].some(label => label.textContent?.trim()))) throw new TypeError("Keep the original connected labelled native time field and mapped anatomy.")
+      || requireConnection && !(control.getAttribute("aria-label")?.trim() || [...control.labels ?? []].some(label => label.textContent?.trim()))) throw new TypeError("Keep the original connected labelled native time field and mapped anatomy.")
     nativeTimeValue(document!, control.value)
     if (control.hasAttribute("value")) nativeTimeValue(document!, control.defaultValue)
     if (clearButton && (clearButton.getAttribute("type")?.toLowerCase() !== "button"
@@ -58,7 +68,8 @@ export function createTimePicker(root: HTMLElement): TimePickerController {
   }
   anatomy()
   if (clearButton && !clearButton.hidden || output && !output.hidden) throw new TypeError("Custom clear/readout start hidden for native no-JS fallback.")
-  let connected = true, generation = 0, error: unknown = null, reset: Event | null = null
+  let connected = false, generation = 0, error: unknown = null, reset: Event | null = null
+  let clearable = options.clearable ?? true, notifiedValue = control.value
   const attributes: Attribute[] = [], removers: (() => void)[] = [], tasks = new Set<number>(), generated = new WeakSet<Event>()
   let outputBefore = output?.textContent ?? "", outputLast = outputBefore
   function lease(node: HTMLElement, name: string, enhance = false) {
@@ -98,7 +109,7 @@ export function createTimePicker(root: HTMLElement): TimePickerController {
     anatomy()
     const previous = document!.activeElement
     for (const item of attributes) {
-      if (item.node === clearButton && item.name === "hidden") write(item, hasEntry() ? item.base : item.base ?? "")
+      if (item.node === clearButton && item.name === "hidden") write(item, clearable && hasEntry() ? item.base : item.base ?? "")
       else if (item.name === "disabled") write(item, editable() && hasEntry() ? item.base : item.base ?? "")
       else write(item, item.base)
     }
@@ -118,7 +129,7 @@ export function createTimePicker(root: HTMLElement): TimePickerController {
     }
   }
   const observer = new view.MutationObserver(records => {
-    mark(records); try { refresh() } catch { /* refresh reports and withdraws unsupported enhancement. */ }
+    mark(records); automatic(refresh)
   })
   function pause() { mark(observer.takeRecords()); observer.disconnect() }
   function observe() {
@@ -130,17 +141,23 @@ export function createTimePicker(root: HTMLElement): TimePickerController {
     error = reason
     root.dispatchEvent(new view!.CustomEvent("m:time-picker-error", { detail: { error: reason } }))
   }
+  function automatic(action: () => void) {
+    try { action() }
+    catch (reason) {
+      if (error !== reason) { disconnect(); report(reason) }
+    }
+  }
   function settleReset() {
     if (!reset || reset.eventPhase !== 0) return
     const previous = reset; reset = null
-    if (!previous.defaultPrevented) generation++
+    if (!previous.defaultPrevented) { generation++; notifiedValue = control.value }
   }
   function refresh() {
     if (!connected) return
     settleReset()
     mark(observer.takeRecords())
     prepareTemporalActionFocus(clearButton, [control],
-      !hasEntry() || !editable() || !!clearButton && (!available(clearButton) || attributes.some(item => item.node === clearButton && item.base !== null)), available)
+      !clearable || !hasEntry() || !editable() || !!clearButton && (!available(clearButton) || attributes.some(item => item.node === clearButton && item.base !== null)), available)
     if (!connected) return
     pause()
     let previous: Element | null = null
@@ -155,10 +172,27 @@ export function createTimePicker(root: HTMLElement): TimePickerController {
   }
   function setValue(value: string) {
     const checked = nativeTimeValue(document!, value)
-    ensure(); generation++
+    if (connected) ensure()
+    else anatomy(false)
+    generation++
     const previous = control.value
     control.value = checked
     if (control.value !== checked) { control.value = previous; throw new Error("Native time serialization changed unexpectedly; value restored.") }
+    notifiedValue = control.value
+    refresh()
+  }
+  function setDefaultValue(value: string) {
+    const checked = nativeTimeValue(document!, value)
+    if (connected) ensure()
+    else anatomy(false)
+    generation++
+    control.defaultValue = checked
+    notifiedValue = control.value
+    refresh()
+  }
+  function setClearable(value: boolean) {
+    if (typeof value !== "boolean") throw new TypeError("clearable must be boolean.")
+    clearable = value
     refresh()
   }
   function clear() {
@@ -196,25 +230,44 @@ export function createTimePicker(root: HTMLElement): TimePickerController {
     for (const node of nodes) if ((node as Owned)[owner] === api) delete (node as Owned)[owner]
     recover(previous)
   }
-  const api: TimePickerController = { control, get value() { ensure(); return control.value }, get state() { ensure(); return state() },
-    get connected() { return connected }, get error() { return error }, setValue, clear, refresh, disconnect }
-  for (const node of nodes) Object.defineProperty(node, owner, { value: api, configurable: true })
-  for (const type of ["input", "change"]) listen(control, type, event => {
-    if (!generated.has(event)) { generation++; try { refresh() } catch { /* Explicit component error. */ } }
-  })
-  if (clearButton) listen(clearButton, "click", event => {
-    const value = control.value, version = generation
-    later(() => {
+  function connect() {
+    if (connected) { refresh(); return }
+    anatomy()
+    for (const node of nodes) if ((node as Owned)[owner]) throw new Error("Time Picker node already has an owner.")
+    if (clearButton && !clearButton.hidden || output && !output.hidden) throw new TypeError("Custom clear/readout start hidden for native no-JS fallback.")
+    for (const item of attributes) {
+      item.before = item.last = item.node.getAttribute(item.name)
+      item.base = item.name === "hidden" ? null : item.before
+    }
+    outputBefore = outputLast = output?.textContent ?? ""
+    connected = true; generation++; error = null; notifiedValue = control.value
+    for (const node of nodes) Object.defineProperty(node, owner, { value: api, configurable: true })
+    for (const type of ["input", "change"]) listen(control, type, event => automatic(() => {
       settleReset()
-      if (event.defaultPrevented || !available(clearButton) || generation !== version || control.value !== value) return
-      try { clear() } catch (reason) { if (error !== reason) report(reason) }
+      if (!generated.has(event)) { generation++; refresh() }
+      if (connected && notifiedValue !== control.value) {
+        notifiedValue = control.value
+        root.dispatchEvent(new view!.CustomEvent("m:change", { bubbles: true, detail: { value: control.value } }))
+      }
+    }))
+    if (clearButton) listen(clearButton, "click", event => {
+      const value = control.value, version = generation
+      later(() => automatic(() => {
+        settleReset()
+        if (event.defaultPrevented || !clearable || !available(clearButton) || generation !== version || control.value !== value) return
+        clear()
+      }))
     })
-  })
-  listen(document!, "reset", event => {
-    if (event.target !== control.form) return
-    settleReset(); reset = event
-    later(() => { settleReset(); if (!event.defaultPrevented) { try { refresh() } catch { /* Explicit component error. */ } } })
-  }, true)
-  try { refresh() } catch (reason) { disconnect(); throw reason }
+    listen(document!, "reset", event => {
+      if (event.target !== control.form) return
+      settleReset(); reset = event
+      later(() => automatic(() => { settleReset(); if (!event.defaultPrevented) refresh() }))
+    }, true)
+    refresh()
+  }
+  const api: TimePickerController = { control, get value() { ensure(); return control.value }, get defaultValue() { return control.defaultValue },
+    get state() { ensure(); return state() }, get connected() { return connected }, get error() { return error },
+    setValue, setDefaultValue, setClearable, clear, refresh, connect, disconnect }
+  connect()
   return api
 }

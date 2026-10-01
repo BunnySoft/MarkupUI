@@ -13,6 +13,9 @@ function initialize() {
       basic.play()
     }
   })
+  document.getElementById("pause-btn")?.addEventListener("click", () => basic?.pause())
+  document.getElementById("resume-btn")?.addEventListener("click", () => basic?.resume())
+  document.getElementById("reset-btn")?.addEventListener("click", () => basic?.reset())
 }
 
 if (document.readyState === "loading") {
@@ -20,5 +23,4 @@ if (document.readyState === "loading") {
 } else {
   initialize()
 }
-
 

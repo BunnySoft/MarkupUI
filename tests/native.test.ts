@@ -610,7 +610,7 @@ describe("unified API and plugins", () => {
     expect(document.querySelector("m-upload input")?.getAttribute("accept")).toBe(".csv")
   })
 
-  it("installs the optional widgets plugin", () => {
+  it("installs the optional widgets plugin", async () => {
     m.use(widgetsPlugin)
     expect(widgetElementNames).toEqual(["m-rating"])
     expect(widgetElementNames).not.toContain("m-input-number")
@@ -650,8 +650,11 @@ describe("unified API and plugins", () => {
       { label: "One", value: "one" },
       { label: "Two", value: "two" },
     ]
-    transfer.querySelector<HTMLElement>("[data-m-transfer-list] button")?.click()
-    transfer.querySelector<HTMLElement>('[aria-label="Move to selected"]')?.click()
+    const transferSource = transfer.querySelector<HTMLSelectElement>("[data-transfer-source]")!
+    transferSource.options[0]!.selected = true
+    transferSource.dispatchEvent(new Event("change", { bubbles: true }))
+    transfer.querySelector<HTMLButtonElement>('[data-transfer-action="add"]')!.click()
+    await new Promise(resolve => setTimeout(resolve, 0))
     expect(transfer.value).toEqual(["one"])
 
     const cascader = document.querySelector("m-cascader") as Cascader

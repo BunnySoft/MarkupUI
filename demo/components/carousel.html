@@ -301,6 +301,11 @@
         scroll/interaction, insufficient-slides, non-loop boundary, unavailable rotation-control, layout and disabled.
         Missing matchMedia is treated conservatively as reduced motion. Readout announcements are off during
         enabled, non-user-paused rotation; otherwise only the readout is polite, never slide content.</p>
+      <p>Every automatic move rechecks those safety conditions before scrolling, including when settings,
+        reduced motion or resize realign a pending target. Turning autoplay off or making rotation unsafe
+        cancels that target rather than instantly completing it. Native scrolling stops at its current
+        position and may settle to the nearest item quietly. Pending manual requests still realign normally,
+        including instant completion when reduced motion becomes active.</p>
       <h3>Spacing and layout</h3>
       <p><code>gap</code> is a finite, nonnegative spacing value with a default of zero. Logical units map
         to CSS pixels on Web. It controls the space between full-view items, not the number of visible slides.

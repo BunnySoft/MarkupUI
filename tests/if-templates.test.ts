@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { If, registerBox } from "../src/components/box/index.js"
 import { Input } from "../src/components/input/index.js"
 import { Card } from "../src/components/card/index.js"
+import { Collapse } from "../src/components/collapse/index.js"
 import "../src/components/button/index.js"
 import "../src/components/list/index.js"
 import { App } from "../src/components/foundation.js"
@@ -56,6 +57,31 @@ describe("portable conditional content", () => {
     expect(root.querySelector("m-input")).not.toBe(input)
     expect(root.querySelector<Input>("m-input")!.value).toBe("Report")
     expect(region.native.content.children).toHaveLength(1)
+  })
+
+  it("adopts already-rendered Collapse owners through conditional capture and recreation", () => {
+    const { root, store, region } = fixture('<m-collapse accordion><m-collapse-item key="one"><m-collapse-header>Section</m-collapse-header><m-collapse-content><input value="Source"></m-collapse-content></m-collapse-item><m-collapse-item key="two" disabled><m-collapse-header>Disabled</m-collapse-header><m-collapse-content>Body</m-collapse-content></m-collapse-item></m-collapse>')
+    const source = root.querySelector<Collapse>("m-collapse")!
+    source.expand("one")
+    const captured = region.native.content.querySelector("m-collapse")!
+    expect(captured.querySelector("details[open]")).not.toBeNull()
+    stop = bind(root, store)
+    for (let cycle = 0; cycle < 2; cycle++) {
+      const group = root.querySelector<Collapse>("m-collapse")!
+      expect(group.state).toBe("ready")
+      expect(group.expandedKeys).toEqual(["one"])
+      expect(group.querySelectorAll("details")).toHaveLength(2)
+      expect(group.querySelectorAll("summary")).toHaveLength(2)
+      expect(group.querySelectorAll('svg[data-part="arrow"]')).toHaveLength(2)
+      group.expand("two")
+      expect(group.expandedKeys).toEqual(["two"])
+      store.set("visible", false)
+      expect(group.state).toBe("disconnected")
+      store.set("visible", true)
+      expect(root.querySelector("m-collapse")).not.toBe(group)
+    }
+    expect(region.native.content.querySelector("m-collapse")).toBe(captured)
+    expect(captured.querySelector("details[open]")?.parentElement?.getAttribute("key")).toBe("one")
   })
 
   it.each(["generated", "authored"])("retains one Card header and close owner through captured %s regions", header => {

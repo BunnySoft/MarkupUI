@@ -196,6 +196,29 @@ describe("native current/default/form identity and clear semantics", () => {
     form.reset(); await flush(); expect(control.value).toBe("09:30")
     expect(control.min).toBe("22:00"); expect(control.max).toBe("02:00")
   })
+  it("updates defaults using native dirty-value rules and reconnects the same concrete owner", async () => {
+    const { helper, control, form, root, clear } = fixture(), changed = vi.fn()
+    root.addEventListener("m:change", changed)
+    helper.setDefaultValue("08:00")
+    expect(helper.value).toBe("08:00")
+    helper.setValue("00:00")
+    helper.setDefaultValue("07:00")
+    expect(helper.value).toBe("00:00")
+    clear.click(); helper.disconnect()
+    helper.setValue("23:00"); helper.setDefaultValue("06:00")
+    helper.connect(); helper.connect(); await flush()
+    expect(helper.control).toBe(control)
+    expect(helper.value).toBe("23:00")
+    expect(helper.defaultValue).toBe("06:00")
+    expect(changed).not.toHaveBeenCalled()
+    control.value = "22:00"
+    control.dispatchEvent(new Event("input", { bubbles: true }))
+    control.dispatchEvent(new Event("change", { bubbles: true }))
+    expect(changed).toHaveBeenCalledOnce()
+    form.reset(); await flush()
+    expect(helper.value).toBe("06:00")
+    expect(changed).toHaveBeenCalledOnce()
+  })
   it("retains external native form association and ignores unrelated form resets", async () => {
     const { helper, root, control, form } = fixture()
     control.setAttribute("form", form.id); document.body.append(root); helper.refresh(); helper.setValue("12:00")
@@ -280,9 +303,12 @@ describe("canonical TimePicker ViewElement", () => {
   })
 
   it("exposes canonical observedAttributes and default property values", () => {
-    expect(TimePicker.observedAttributes).toEqual(["value", "placeholder", "format", "clearable", "disabled", "step", "size"])
+    expect(TimePicker.observedAttributes).toEqual(["value", "placeholder", "format", "clearable", "disabled", "step", "size", "aria-label"])
     const picker = new TimePicker()
-    expect(picker.value).toBeNull()
+    expect(picker.value).toBe("")
+    expect(picker.defaultValue).toBe("")
+    expect(picker.native).toBeNull()
+    expect(() => picker.state).toThrow("not connected")
     expect(picker.placeholder).toBeNull()
     expect(picker.format).toBeNull()
     expect(picker.clearable).toBe(false)
@@ -294,9 +320,13 @@ describe("canonical TimePicker ViewElement", () => {
   it("reflects properties to attributes and validates values", () => {
     const picker = new TimePicker()
     picker.value = "09:30"
-    expect(picker.getAttribute("value")).toBe("09:30")
-    picker.value = null
+    expect(picker.value).toBe("09:30")
     expect(picker.hasAttribute("value")).toBe(false)
+    picker.value = ""
+    expect(picker.value).toBe("")
+    picker.defaultValue = "12:34"
+    expect(picker.getAttribute("value")).toBe("12:34")
+    expect(() => { picker.value = null as never }).toThrow("time-only string")
 
     picker.placeholder = "Select time"
     expect(picker.getAttribute("placeholder")).toBe("Select time")
@@ -376,7 +406,7 @@ describe("canonical TimePicker ViewElement", () => {
     expect(picker.value).toBe("15:45")
   })
 
-  it("supports clearable and clear() method", () => {
+  it("supports clearable and clear() method", async () => {
     const picker = new TimePicker()
     picker.clearable = true
     picker.value = "09:30"
@@ -393,29 +423,32 @@ describe("canonical TimePicker ViewElement", () => {
     picker.addEventListener("m:change", listener)
 
     clearBtn.click()
+    await flush()
 
-    expect(picker.value).toBeNull()
+    expect(picker.value).toBe("")
     expect(input.value).toBe("")
     expect(listener).toHaveBeenCalledOnce()
     expect(listener.mock.calls[0][0].detail).toEqual({ value: "" })
 
     picker.value = "11:00"
     expect(input.value).toBe("11:00")
-    picker.clear()
-    expect(picker.value).toBeNull()
+    expect(picker.clear()).toBe(true)
+    expect(picker.value).toBe("")
     expect(input.value).toBe("")
     expect(listener).toHaveBeenCalledTimes(2)
   })
 
   it("adopts authored native inputs", () => {
     const picker = document.createElement("m-time-picker") as TimePicker
-    picker.innerHTML = '<input data-time-control id="custom-field" type="time" value="09:30">'
+    picker.innerHTML = '<input data-time-control id="custom-field" type="time" value="09:30" aria-label="Custom time">'
     document.body.append(picker)
 
     const input = picker.querySelector<HTMLInputElement>("#custom-field")!
     expect(input).not.toBeNull()
     expect(picker.querySelectorAll("input")).toHaveLength(1)
-    expect(picker.value).toBeNull()
+    expect(picker.native).toBe(input)
+    expect(picker.value).toBe("09:30")
+    expect(picker.defaultValue).toBe("09:30")
     picker.value = "10:30"
     expect(input.value).toBe("10:30")
   })
@@ -436,12 +469,275 @@ describe("canonical TimePicker ViewElement", () => {
 
   it("upgrades properties assigned before connection", () => {
     const picker = document.createElement("m-time-picker") as TimePicker
-    picker.value = "12:00"
-    picker.size = "large"
-    picker.clearable = true
+    Object.defineProperties(picker, {
+      value: { configurable: true, writable: true, value: "12:00" },
+      defaultValue: { configurable: true, writable: true, value: "08:00" },
+      size: { configurable: true, writable: true, value: "large" },
+      clearable: { configurable: true, writable: true, value: true },
+    })
     document.body.append(picker)
 
     expect(picker.value).toBe("12:00")
+    expect(picker.native!.value).toBe("12:00")
+    expect(picker.defaultValue).toBe("08:00")
     expect(picker.size).toBe("large")
+  })
+
+  it.each(["24:00", "12:60", "1:30", "12:34Z", "12:34:56.1234", "12:34+08:00", " 12:34"])("rejects %j atomically through live and default APIs", value => {
+    const picker = new TimePicker()
+    picker.defaultValue = "09:30"
+    document.body.append(picker)
+    picker.value = "10:00"
+    expect(() => { picker.value = value }).toThrow()
+    expect(() => { picker.defaultValue = value }).toThrow()
+    expect(picker.value).toBe("10:00")
+    expect(picker.native!.value).toBe("10:00")
+    expect(picker.defaultValue).toBe("09:30")
+    expect(picker.getAttribute("value")).toBe("09:30")
+  })
+
+  it.each(["00:00", "00:00:00", "12:34:56.100", "12:34:56.010", "12:34:56.001", "23:59:59.999"])("retains %s precision and native validity independently of the format hint", value => {
+    const picker = new TimePicker()
+    picker.format = "HH:mm"
+    picker.step = "0.001"
+    document.body.append(picker)
+    picker.value = value
+    const probe = document.createElement("input"); probe.type = "time"; probe.value = value
+    expect(picker.value).toBe(probe.value)
+    expect(picker.native!.valueAsNumber).toBe(probe.valueAsNumber)
+    expect(picker.state.nativeValid).toBe(true)
+    expect(picker.state.value).toBe(picker.value)
+    expect(Object.isFrozen(picker.state)).toBe(true)
+    picker.step = "60"
+    expect(picker.value).toBe(probe.value)
+    expect(picker.state.nativeValid).toBe(picker.native!.validity.valid)
+  })
+
+  it.each([["12:34:56.1", 45_296_100], ["12:34:56.01", 45_296_010]] as const)("does not silently accept an unsupported native fraction %s", (value, coordinate) => {
+    const picker = new TimePicker()
+    document.body.append(picker)
+    const probe = document.createElement("input"); probe.type = "time"; probe.value = value
+    if (probe.valueAsNumber === coordinate) {
+      picker.value = value
+      expect(picker.native!.valueAsNumber).toBe(coordinate)
+    } else {
+      expect(() => { picker.value = value }).toThrow("unsupported-precision")
+      expect(picker.value).toBe("")
+    }
+  })
+
+  it("maps value markup to native defaults without clobbering a dirty live value", async () => {
+    const form = document.createElement("form"), picker = new TimePicker(), events = vi.fn()
+    picker.setAttribute("value", "09:30")
+    form.append(picker); document.body.append(form)
+    picker.addEventListener("input", events); picker.addEventListener("change", events); picker.addEventListener("m:change", events)
+    picker.defaultValue = "08:00"
+    expect(picker.value).toBe("08:00")
+    picker.value = "10:00"
+    picker.setAttribute("value", "07:00")
+    expect(picker.value).toBe("10:00")
+    expect(picker.defaultValue).toBe("07:00")
+    form.addEventListener("reset", event => event.preventDefault(), { once: true })
+    form.reset(); await flush(); expect(picker.value).toBe("10:00")
+    form.reset(); await flush(); expect(picker.value).toBe("07:00")
+    expect(picker.state.value).toBe("07:00")
+    picker.removeAttribute("value")
+    expect(picker.defaultValue).toBe("")
+    form.reset(); await flush(); expect(picker.value).toBe("")
+    expect(events).not.toHaveBeenCalled()
+  })
+
+  it("preserves authored nodes, labels, form association and native constraints", async () => {
+    const form = document.createElement("form"); form.id = "external"; document.body.append(form)
+    const picker = new TimePicker()
+    picker.innerHTML = `<label for="authored-clock">Clock</label><input id="authored-clock" type="time"
+      name="clock" form="external" value="23:00" min="22:00" max="02:00" step="0.001" required>
+      <span data-time-output hidden>Original</span><button data-time-clear type="button" hidden>Clear clock</button>`
+    const input = picker.querySelector("input")!, label = picker.querySelector("label")!, listener = vi.fn()
+    input.addEventListener("input", listener)
+    document.body.append(picker)
+    expect(picker.native).toBe(input)
+    expect(input.labels![0]).toBe(label)
+    expect(input.form).toBe(form)
+    expect(input.min).toBe("22:00"); expect(input.max).toBe("02:00"); expect(input.step).toBe("0.001")
+    picker.value = "00:00"
+    expect([...new FormData(form)]).toEqual([["clock", "00:00"]])
+    expect(listener).not.toHaveBeenCalled()
+    picker.disabled = true
+    expect(new FormData(form).has("clock")).toBe(false)
+    picker.disabled = false
+    picker.value = "12:00"; expect(picker.state.nativeValid).toBe(false)
+    form.reset(); await flush()
+    expect(picker.value).toBe("23:00")
+    expect(picker.defaultValue).toBe("23:00")
+    expect(input.validationMessage).toBe("")
+  })
+
+  it("keeps native events bubbling and deduplicates m:change across input/change", () => {
+    const picker = new TimePicker(); document.body.append(picker)
+    const events: string[] = []
+    for (const name of ["input", "change", "m:change"]) picker.addEventListener(name, () => events.push(name))
+    picker.native!.value = "10:00"
+    picker.native!.dispatchEvent(new Event("input", { bubbles: true, composed: true }))
+    picker.native!.dispatchEvent(new Event("change", { bubbles: true }))
+    expect(events).toEqual(["m:change", "input", "change"])
+    expect(picker.getAttribute("value")).toBeNull()
+    picker.value = "12:00"
+    expect(events).toHaveLength(3)
+    picker.clear()
+    expect(events.slice(3)).toEqual(["m:change", "input", "change"])
+    expect(picker.clear()).toBe(false)
+    expect(events).toHaveLength(6)
+  })
+
+  it("retains edited live values during scalar mapping updates without rewriting defaults", () => {
+    const picker = new TimePicker(); picker.defaultValue = "09:30"; document.body.append(picker)
+    picker.native!.value = "15:45"
+    picker.native!.dispatchEvent(new Event("input", { bubbles: true }))
+    picker.placeholder = "Later"; picker.step = "1"; picker.size = "large"; picker.format = "HH:mm"
+    picker.clearable = true
+    expect(picker.value).toBe("15:45")
+    expect(picker.native!.value).toBe("15:45")
+    expect(picker.defaultValue).toBe("09:30")
+    expect(picker.getAttribute("value")).toBe("09:30")
+  })
+
+  it("does not notify a stale clear change after a public change listener supersedes the value", () => {
+    const picker = new TimePicker(); picker.value = "09:30"; document.body.append(picker)
+    const changed = vi.fn(), cleared = vi.fn()
+    picker.addEventListener("m:change", () => { picker.value = "18:00" }, { once: true })
+    picker.addEventListener("change", changed); picker.addEventListener("m:time-picker-clear", cleared)
+    expect(picker.clear()).toBe(true)
+    expect(picker.value).toBe("18:00")
+    expect(picker.native!.value).toBe("18:00")
+    expect(changed).not.toHaveBeenCalled(); expect(cleared).not.toHaveBeenCalled()
+  })
+
+  it("toggles clearability without replacing actions and respects readonly/disabled", async () => {
+    const picker = new TimePicker(); picker.defaultValue = "09:30"; document.body.append(picker)
+    const button = picker.querySelector<HTMLButtonElement>("[data-time-clear]")!
+    expect(button.hidden).toBe(true)
+    picker.clearable = true; expect(button.hidden).toBe(false)
+    button.addEventListener("click", event => event.preventDefault(), { once: true })
+    button.click(); await flush(); expect(picker.value).toBe("09:30")
+    picker.native!.readOnly = true; picker.refresh()
+    expect(picker.clear()).toBe(false); expect(button.disabled).toBe(true)
+    picker.value = "12:00"; expect(picker.value).toBe("12:00")
+    picker.native!.readOnly = false; picker.disabled = true
+    expect(picker.clear()).toBe(false)
+    picker.disabled = false; picker.clearable = false
+    expect(button.hidden).toBe(true)
+    expect(picker.clear()).toBe(true)
+    picker.value = "13:00"; picker.clearable = true
+    expect(picker.querySelector("[data-time-clear]")).toBe(button)
+    expect(button.hidden).toBe(false)
+  })
+
+  it("reconnects the same owner and nodes, cancelling stale queued actions", async () => {
+    const form = document.createElement("form"), picker = new TimePicker()
+    picker.defaultValue = "09:30"; picker.clearable = true
+    form.append(picker); document.body.append(form)
+    const input = picker.native!, button = picker.querySelector<HTMLButtonElement>("[data-time-clear]")!, changed = vi.fn()
+    picker.addEventListener("m:change", changed)
+    button.click(); picker.remove()
+    picker.value = "00:00"
+    expect(picker.value).toBe(input.value)
+    picker.defaultValue = "07:30"
+    form.append(picker); await flush()
+    expect(picker.native).toBe(input); expect(picker.value).toBe("00:00")
+    expect(picker.defaultValue).toBe("07:30")
+    expect(picker.querySelectorAll("input")).toHaveLength(1)
+    expect(picker.querySelector("[data-time-clear]")).toBe(button)
+    expect(changed).not.toHaveBeenCalled()
+    button.click(); await flush()
+    expect(changed).toHaveBeenCalledOnce(); expect(picker.value).toBe("")
+    form.reset(); await flush(); expect(picker.value).toBe("07:30")
+    picker.remove(); picker.setAttribute("value", "06:00"); form.append(picker)
+    form.reset(); await flush(); expect(picker.value).toBe("06:00")
+  })
+
+  it("restores only its own native mappings, retaining later application edits", () => {
+    const picker = new TimePicker()
+    picker.innerHTML = '<input type="time" value="09:30" aria-label="Authored" step="900" placeholder="Authored hint">'
+    picker.step = "1"; picker.placeholder = "Mapped"; picker.setAttribute("aria-label", "Mapped clock")
+    document.body.append(picker)
+    const input = picker.native!
+    input.placeholder = "Application"
+    picker.remove()
+    expect(input.step).toBe("900")
+    expect(input.placeholder).toBe("Application")
+    expect(input.getAttribute("aria-label")).toBe("Authored")
+    document.body.append(picker)
+    expect(input.step).toBe("1")
+    picker.step = null
+    expect(input.step).toBe("900")
+  })
+
+  it("allows disconnected data writes after releasing a host-mapped native label", () => {
+    const picker = new TimePicker()
+    picker.innerHTML = '<input type="time" value="09:30">'
+    picker.setAttribute("aria-label", "Mapped clock")
+    document.body.append(picker)
+    const input = picker.native!
+    picker.remove()
+    expect(input.hasAttribute("aria-label")).toBe(false)
+    picker.value = "00:00"; picker.defaultValue = "08:00"
+    expect(input.value).toBe("00:00"); expect(input.defaultValue).toBe("08:00")
+    document.body.append(picker)
+    expect(picker.native).toBe(input)
+    expect(picker.value).toBe("00:00")
+    expect(input.getAttribute("aria-label")).toBe("Mapped clock")
+  })
+
+  it("reports automatic errors, preserving invalid markup rather than sanitizing it into success", async () => {
+    const picker = new TimePicker(), errors = vi.fn()
+    picker.addEventListener("m:error", errors)
+    picker.setAttribute("value", "24:00")
+    document.body.append(picker)
+    expect(errors).toHaveBeenCalledOnce()
+    expect(picker.getAttribute("value")).toBe("24:00")
+    expect(() => picker.state).toThrow("not connected")
+    picker.remove(); picker.setAttribute("value", "09:30"); document.body.append(picker)
+    expect(picker.value).toBe("09:30")
+    picker.native!.type = "text"
+    await flush()
+    expect(errors).toHaveBeenCalledTimes(2)
+    expect(() => picker.clear()).toThrow("not connected")
+    expect(picker.native!.type).toBe("text")
+  })
+
+  it("never exposes a pending value as the live value of a failed native enhancement", () => {
+    const picker = new TimePicker(), errors = vi.fn()
+    picker.value = "12:00"
+    picker.innerHTML = '<input type="time" value="09:30">'
+    picker.addEventListener("m:error", errors); document.body.append(picker)
+    expect(errors).toHaveBeenCalledOnce()
+    expect(picker.value).toBe(picker.native!.value)
+    expect(picker.value).toBe("09:30")
+    expect(() => { picker.value = "14:00" }).toThrow("enhancement is unavailable")
+    expect(picker.native!.value).toBe("09:30")
+    picker.remove(); picker.native!.setAttribute("aria-label", "Fixed clock"); document.body.append(picker)
+    expect(picker.value).toBe("12:00")
+    expect(picker.value).toBe(picker.native!.value)
+  })
+
+  it("rejects unlabelled, multiple and nested native owners without cloning authored content", () => {
+    for (const content of [
+      '<input type="time">',
+      '<input type="time" aria-label="One"><input type="time" aria-label="Two">',
+    ]) {
+      const picker = new TimePicker(), errors = vi.fn()
+      picker.innerHTML = content
+      const nodes = [...picker.children]
+      picker.addEventListener("m:error", errors); document.body.append(picker)
+      expect(errors).toHaveBeenCalledOnce()
+      expect(() => picker.state).toThrow("not connected")
+      expect([...picker.children].slice(0, nodes.length)).toEqual(nodes)
+      picker.remove()
+    }
+    const outer = new TimePicker(), inner = new TimePicker()
+    inner.defaultValue = "08:00"; outer.append(inner); document.body.append(outer)
+    expect(outer.native).not.toBe(inner.native)
+    outer.value = "12:00"; expect(inner.value).toBe("08:00")
   })
 })

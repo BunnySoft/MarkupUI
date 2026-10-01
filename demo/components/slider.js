@@ -6,7 +6,16 @@ function initialize() {
     void loadComponentApi(sliderApiEl, new URL("../api/slider.json", import.meta.url))
   }
 
-  // Canonical ViewElement demo interactions
+  if (!globalThis.MarkupUISlider?.createSlider || !globalThis.MarkupUISlider?.createSliderPair) {
+    throw new Error("Load the selected Slider runtime after the shared core.")
+  }
+  for (const slider of document.querySelectorAll("m-slider")) {
+    if (slider.error) throw new Error(slider.error)
+    slider.addEventListener("m:error", event => {
+      document.getElementById("slider-status").textContent = `Slider error: ${event.detail.message}`
+    })
+  }
+
   const demoSlider = document.getElementById("demo-slider")
   const sliderStatus = document.getElementById("slider-status")
   if (demoSlider && sliderStatus) {
@@ -31,10 +40,18 @@ function initialize() {
     })
   }
 
-  // Existing helper / form interactions
+  const range = document.getElementById("demo-range")
+  const rangeStatus = document.getElementById("range-status")
+  function renderRange() {
+    rangeStatus.textContent = `Endpoints: ${range.value.join(" / ")}; ordered: ${range.ordered}`
+  }
+  range.addEventListener("m:change", renderRange)
+  document.getElementById("range-cross").addEventListener("click", () => { range.value = [90, 10]; renderRange() })
+  document.getElementById("range-clamp").addEventListener("click", () => { range.value = [-50, 150]; renderRange() })
+
   const volumeEl = document.getElementById("volume-root")
   const pairEl = document.getElementById("window-pair")
-  if (volumeEl && pairEl && globalThis.MarkupUISlider?.createSlider) {
+  if (volumeEl && pairEl) {
     const volume = MarkupUISlider.createSlider(volumeEl, { formatValue: value => `${value} percent` })
     const pair = MarkupUISlider.createSliderPair(pairEl, { formatValue: value => `${value} minutes` })
     const balance = document.getElementById("balance-root") ? MarkupUISlider.createSlider(document.getElementById("balance-root")) : null
@@ -86,4 +103,3 @@ function initialize() {
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true })
 else initialize()
-

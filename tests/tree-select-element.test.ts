@@ -33,6 +33,27 @@ describe("portable Tree Select mapping", () => {
     expect(() => { element.value = "readme" }).toThrow()
     expect(() => { element.value = ["readme", "readme"] }).toThrow()
   })
+  it("rejects sparse multiple values and defaults before detached or connected writes", () => {
+    const element = new TreeSelect()
+    element.multiple = true; element.options = items()
+    element.value = ["readme"]; element.defaultValue = ["notes"]
+    const partial = new Array<string>(2); partial[1] = "readme"
+    const invalid = [new Array<string>(1), partial]
+    for (const value of invalid) {
+      expect(() => { element.value = value }).toThrow()
+      expect(() => { element.defaultValue = value }).toThrow()
+      expect(element.value).toEqual(["readme"]); expect(element.defaultValue).toEqual(["notes"])
+      expect(element.native).toBeNull()
+    }
+    document.body.append(element)
+    const options = [...element.native!.options]
+    for (const value of invalid) {
+      expect(() => { element.value = value }).toThrow()
+      expect(() => { element.defaultValue = value }).toThrow()
+      expect(element.value).toEqual(["readme"]); expect(element.defaultValue).toEqual(["notes"])
+      expect([...element.native!.options]).toEqual(options)
+    }
+  })
   it("preserves authored nodes, native identity, current/default values and unavailable defaults on reconnect", async () => {
     const { element, control, form } = fixture(true)
     const content = document.createElement("m-span"), listener = vi.fn()

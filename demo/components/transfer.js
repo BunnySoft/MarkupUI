@@ -8,6 +8,25 @@ function initialize() {
 
   const basicTransfer = document.getElementById("basic-transfer")
   const basicStatus = document.getElementById("basic-status")
+  if (basicTransfer) basicTransfer.options = Array.from({ length: 5 }, (_, index) => ({
+    value: `item-${index + 1}`, label: `Item ${index + 1}`,
+  }))
+  const custom = document.getElementById("custom-transfer")
+  if (custom) {
+    custom.options = [
+      { value: "read", label: "Read access" },
+      { value: "write", label: "Write access" },
+      { value: "delete", label: "Delete access" },
+      { value: "admin", label: "Admin access" },
+    ]
+    custom.defaultValue = ["admin"]
+    custom.value = ["admin"]
+  }
+  const disabled = document.getElementById("disabled-transfer")
+  if (disabled) disabled.options = [
+    { value: "locked-1", label: "Locked Item 1" },
+    { value: "locked-2", label: "Locked Item 2" },
+  ]
   basicTransfer?.addEventListener("m:change", event => {
     if (basicStatus) {
       const keys = event.detail.value
@@ -112,4 +131,3 @@ if (document.readyState === "loading") {
 } else {
   initialize()
 }
-

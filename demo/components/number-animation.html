@@ -42,13 +42,28 @@
     </details>
 
     <section data-demo-example="basic" aria-labelledby="basic-heading">
-      <header data-demo-header><div><h2 id="basic-heading">Basic animation</h2><p>Smooth numeric animation with configurable bounds.</p></div></header>
+      <header data-demo-header><div><h2 id="basic-heading">Basic animation</h2><p>Replay starts from the beginning; Resume continues a paused run.</p></div></header>
       <div data-demo-preview>
         <m-number-animation id="demo-basic" from="0" to="1000" duration="1500"></m-number-animation>
         <m-box class="controls" margin="8 0 0 0">
           <m-button id="play-btn">Replay</m-button>
+          <m-button id="pause-btn">Pause</m-button>
+          <m-button id="resume-btn">Resume</m-button>
+          <m-button id="reset-btn">Reset</m-button>
         </m-box>
       </div>
+    </section>
+
+    <section aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Behavior</h2>
+      <p><code>play()</code> always starts a new run from <code>from</code>, even while playing or paused.
+        <code>pause()</code> freezes a running animation and does nothing while idle or already paused.
+        <code>resume()</code> continues only a paused run, preserving its elapsed animation time and excluding the pause gap.
+        <code>reset()</code> cancels the run and displays <code>from</code> without completion.</p>
+      <p>Connecting or reconnecting starts from the beginning; disconnecting cancels pending frames and discards paused progress.
+        Changes to <code>from</code>, <code>to</code>, <code>duration</code> or <code>precision</code> replay the animation.
+        Zero duration or a reduced-motion preference displays <code>to</code> immediately.
+        Successful completion emits <code>m:finish</code> once with <code>{ value: to }</code>; pause, reset and disconnect do not.</p>
     </section>
 
     <section data-demo-example="precision" aria-labelledby="precision-heading">

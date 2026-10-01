@@ -88,15 +88,37 @@ describe("native-control demo markup", () => {
     }
   })
 
-  it("Slider authors named native ranges and associates readouts with them", () => {
+  it("Slider authors portable single and range configurations without requiring native controls", () => {
     const document = demo("slider")
     const sliders = [...document.querySelectorAll("m-slider")]
-    expect(sliders).toHaveLength(4)
+    expect(sliders.map(slider => slider.id)).toEqual(["demo-slider", "vert-s", "rev-s", "dis-s", "demo-range"])
     for (const slider of sliders) {
-      const input = slider.querySelector<HTMLInputElement>('input[type="range"]')!
-      expect(input).not.toBeNull()
+      expect(slider.querySelector("input")).toBeNull()
+      expect(slider.getAttribute("aria-label")?.trim()).toBeTruthy()
+      expect(slider.hasAttribute("role")).toBe(false)
+      expect(slider.hasAttribute("tabindex")).toBe(false)
+    }
+    const range = document.getElementById("demo-range")!
+    expect(range.hasAttribute("range")).toBe(true)
+    expect(range.getAttribute("step")).toBe("any")
+    expect(JSON.parse(range.getAttribute("value")!)).toEqual([20, 80])
+  })
+
+  it("Slider Web interoperability authors named native ranges and associated readouts", () => {
+    const native = demo("slider").querySelector('[data-demo-example="native"]')!
+    const inputs = [...native.querySelectorAll<HTMLInputElement>('input[type="range"]')]
+    expect(inputs.map(input => input.id)).toEqual(["volume", "start", "end", "balance", "vertical", "external-range", "plain-range"])
+    for (const input of inputs) {
+      expect(input.name).not.toBe("")
       expect(input.labels).toHaveLength(1)
-      for (const output of slider.querySelectorAll("output")) expect(output.htmlFor.contains(input.id)).toBe(true)
+    }
+    const outputs = [...native.querySelectorAll<HTMLOutputElement>("output[data-slider-output]")]
+    const enhanced = [...native.querySelectorAll<HTMLInputElement>('[data-slider] input[type="range"], [data-slider-pair] input[type="range"]')]
+    expect(outputs).toHaveLength(enhanced.length)
+    for (const input of enhanced) expect(outputs.filter(output => output.htmlFor.contains(input.id))).toHaveLength(1)
+    for (const output of outputs) {
+      expect(output.htmlFor).toHaveLength(1)
+      expect(inputs.some(input => output.htmlFor.contains(input.id))).toBe(true)
     }
   })
 })

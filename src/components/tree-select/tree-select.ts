@@ -61,7 +61,7 @@ export function treeSelectSettings(value: TreeSelectSettings): Readonly<Required
 }
 export function treeSelectKeys(value: TreeSelectValue, multiple: boolean): string[] {
   const keys: unknown = multiple ? value : value === null ? [] : [value]
-  if (!Array.isArray(keys) || keys.length > 2000 || keys.some(key => typeof key !== "string" || !key || key.length > 256)
+  if (!Array.isArray(keys) || keys.length > 2000 || Array.from(keys).some(key => typeof key !== "string" || !key || key.length > 256)
     || new Set(keys).size !== keys.length) throw new TypeError("Use a string/null or unique multiple string keys.")
   return [...keys] as string[]
 }

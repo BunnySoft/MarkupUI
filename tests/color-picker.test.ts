@@ -37,25 +37,28 @@ describe("classic RGB value and native control ownership", () => {
     expect(new FormData(form).getAll("theme.color")).toEqual(["#abcdef"])
     expect(listener).not.toHaveBeenCalled(); expect(form.querySelectorAll('input[name]')).toHaveLength(1)
   })
-  it.each([null, undefined, "", "#fff", "#12345678", "#12345g", "red", "rgb(1, 2, 3)", "transparent", "color(display-p3 1 0 0)", " #123456", "#123456\n", 0])("rejects unsupported value %j before native black fallback", value => {
+  it.each([null, undefined, "#fff", "#12345g", "red", "transparent", "color(display-p3 1 0 0)", " #123456", "#123456\n", 0,
+    "rgba(1,2,3,1.001)", "rgba(1,2,3,.1234)", "rgb(256,0,0)", "rgb(1.2,0,0)", "hsl(361,50%,50%)", "hsl(1,101%,0%)", "rgb(1 2 3 / .5)"])("rejects unsupported value %j before native black fallback", value => {
     const { helper, control, hex } = fixture()
-    expect(() => helper.setValue(value as string)).toThrow("#RRGGBB")
+    expect(() => helper.setValue(value as string)).toThrow()
     expect(control.value).toBe("#336699"); expect(hex.value).toBe("#336699")
   })
   it("treats black as a real color, not a null/clear value", () => {
     const { helper, form } = fixture(false)
     helper.setValue("#000000"); expect(helper.value).toBe("#000000")
     expect(new FormData(form).get("theme.color")).toBe("#000000")
-    expect("clear" in helper).toBe(false)
+    expect(helper.clear()).toBe(true); expect(helper.value).toBe("")
+    expect(new FormData(form).get("theme.color")).toBe("")
   })
   it("accepts omitted native default as black but rejects explicitly invalid defaults", () => {
     const { helper, root, control } = fixture(false); helper.disconnect()
+    root.querySelector("[data-color-value]")!.remove()
     control.removeAttribute("value"); control.value = "#000000"
     const next = createColorPicker(root); helpers.push(next); expect(next.value).toBe("#000000"); next.disconnect()
     control.setAttribute("value", "rgba(0,0,0,0)")
     expect(() => createColorPicker(root)).toThrow("RGB")
   })
-  it.each(["alpha", "colorspace", "readonly", "required"])("does not claim or flatten unsupported %s markup", async name => {
+  it.each(["alpha", "colorspace"])("does not claim or flatten unsupported native %s markup", async name => {
     const { helper, root, control } = fixture(false)
     control.setAttribute(name, name === "colorspace" ? "display-p3" : "")
     await flush(); expect(helper.connected).toBe(false); expect(control.hasAttribute(name)).toBe(true)
@@ -81,7 +84,7 @@ describe("optional native hex draft and deliberate apply", () => {
   it("keeps invalid drafts until Apply/Revert while the real color stays valid", async () => {
     const { helper, hex, control, apply } = fixture()
     edit(hex, "#12"); expect(helper.dirty).toBe(true)
-    expect(hex.validity.patternMismatch).toBe(true); expect(helper.commit()).toBe(false)
+    expect(hex.validity.customError).toBe(true); expect(helper.commit()).toBe(false)
     const report = vi.spyOn(hex, "reportValidity")
     apply.click(); await flush(); expect(report).toHaveBeenCalledOnce()
     expect(control.value).toBe("#336699"); expect(hex.value).toBe("#12")
@@ -89,6 +92,7 @@ describe("optional native hex draft and deliberate apply", () => {
   })
   it("rejects empty drafts through native required, never coercing them to black", () => {
     const { helper, hex, control } = fixture()
+    helper.configure({ required: true })
     edit(hex, ""); expect(hex.validity.valueMissing).toBe(true); expect(helper.commit()).toBe(false)
     expect(control.value).toBe("#336699"); expect(hex.value).toBe("")
   })
@@ -317,11 +321,198 @@ describe("canonical ColorPicker ViewElement", () => {
     expect(ColorPicker.tag).toBe("m-color-picker")
     expect(ViewElement.prototype.isPrototypeOf(ColorPicker.prototype)).toBe(true)
     expect(customElements.get("m-color-picker")).toBe(ColorPicker)
-    expect(ColorPicker.observedAttributes).toEqual(["value", "disabled", "show-alpha"])
+    expect(ColorPicker.observedAttributes).toEqual(["value", "disabled", "readonly", "required", "show-alpha", "modes", "mode", "name", "form"])
     expect(() => registerColorPicker()).not.toThrow()
     const define = vi.fn()
     expect(() => registerColorPicker({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
+  })
+
+  describe("full bounded ColorPicker owner", () => {
+    function picker(value = "rgba(51, 102, 153, 0.5)") {
+      const form = document.createElement("form")
+      const element = document.createElement("m-color-picker") as ColorPicker
+      element.defaultValue = value; element.value = value; element.showAlpha = true; element.name = "accent"
+      form.append(element); document.body.append(form)
+      return { element, form, control: element.native, text: element.draftControl, alpha: element.alphaControl }
+    }
+    it.each([
+      ["#ABCDEF", "#abcdef"], ["#33669980", "rgba(51, 102, 153, 0.502)"],
+      ["rgba(51,102,153,.125)", "rgba(51, 102, 153, 0.125)"], ["rgb(51,102,153)", "#336699"],
+      ["hsl(210,50%,40%)", "#336699"], ["hsla(210deg,50%,40%,.5)", "rgba(51, 102, 153, 0.5)"],
+      ["hsl(360,100%,50%)", "#ff0000"], ["rgba(0,0,0,0)", "rgba(0, 0, 0, 0)"], ["", ""],
+    ])("accepts %s and serializes %s through element and native entry", (input, canonical) => {
+      const { element, form } = picker()
+      element.value = input
+      expect(element.value).toBe(canonical); expect(new FormData(form).getAll("accent")).toEqual([canonical])
+      const { helper } = fixture(); helper.setValue(input); expect(helper.value).toBe(canonical)
+    })
+    it("edits true RGB/HSL/HEX modes without discarding logical alpha or replacing controls", () => {
+      const { element, control, text, alpha } = picker()
+      const changes = vi.fn(); element.addEventListener("m:change", changes)
+      expect(element.formattedValue).toBe("#336699"); expect(alpha.value).toBe("0.5")
+      element.mode = "rgb"; expect(element.formattedValue).toBe("rgba(51, 102, 153, 0.5)")
+      edit(text, "rgba(255,0,0,.25)"); expect(element.commit()).toBe(true)
+      expect(element.value).toBe("rgba(255, 0, 0, 0.25)")
+      element.mode = "hsl"; expect(text.value).toBe("hsla(0, 100%, 50%, 0.25)")
+      edit(text, "hsla(120,100%,50%,.75)"); expect(element.commit()).toBe(true)
+      expect(element.value).toBe("rgba(0, 255, 0, 0.75)")
+      element.mode = "hex"; edit(text, "#112233"); expect(element.commit()).toBe(true)
+      expect(element.value).toBe("rgba(17, 34, 51, 0.75)")
+      expect(element.native).toBe(control); expect(element.draftControl).toBe(text); expect(element.alphaControl).toBe(alpha)
+      expect(changes).toHaveBeenCalledTimes(3)
+    })
+    it("uses alpha range drafts and commits in every mode, without input-alpha support", async () => {
+      const { element, text, alpha, control } = picker()
+      for (const mode of ["hex", "rgb", "hsl"] as const) {
+        element.mode = mode
+        alpha.value = "0.333"; alpha.dispatchEvent(new Event("input", { bubbles: true }))
+        expect(element.dirty).toBe(true); expect(element.value).not.toBe("")
+        alpha.dispatchEvent(new Event("change", { bubbles: true })); await flush()
+        expect(element.value).toBe("rgba(51, 102, 153, 0.333)"); expect(element.dirty).toBe(false)
+        expect(text.value).toBe(element.formattedValue)
+      }
+      expect(control.hasAttribute("alpha")).toBe(false); expect(control.hasAttribute("colorspace")).toBe(false)
+    })
+    it("hides alpha without flattening it, and native RGB edits preserve transparency", () => {
+      const { element, control, alpha } = picker()
+      element.showAlpha = false; expect(alpha.hidden).toBe(true)
+      control.value = "#ff0000"; control.dispatchEvent(new Event("input", { bubbles: true }))
+      expect(element.value).toBe("rgba(255, 0, 0, 0.5)")
+      element.showAlpha = true; expect(alpha.value).toBe("0.5")
+    })
+    it("rejects an entire settings record before value, defaults, attributes, mode options or drafts change", () => {
+      const { element, control, text } = picker()
+      edit(text, "#12")
+      const snapshot = element.outerHTML, options = element.querySelector("[data-color-mode]")!.firstChild
+      expect(() => element.configure({ value: "#ffffff", defaultValue: "#000000", modes: ["rgb"], mode: "hsl" })).toThrow()
+      expect(element.outerHTML).toBe(snapshot); expect(element.value).toBe("rgba(51, 102, 153, 0.5)")
+      expect(element.querySelector("[data-color-mode]")!.firstChild).toBe(options)
+      expect(() => element.configure({ disabled: true, value: "rgba(0,0,0,2)" })).toThrow()
+      expect(control.disabled).toBe(false); expect(text.value).toBe("#12")
+      expect(() => element.modes = []).toThrow(); expect(() => element.modes = ["hex", "hex"]).toThrow()
+    })
+    it("retains invalid drafts and native selection across settings, silent value writes and deliberate restore", () => {
+      const { element, text } = picker()
+      edit(text, "#12"); text.focus(); text.setSelectionRange(1, 2)
+      element.mode = "hsl"; element.value = "rgba(0,255,0,.6)"
+      expect(text.value).toBe("#12"); expect([text.selectionStart, text.selectionEnd]).toEqual([1, 2])
+      expect(element.commit()).toBe(false); expect(element.value).toBe("rgba(0, 255, 0, 0.6)")
+      element.restoreDraft(); expect(text.value).toBe("hsla(120, 100%, 50%, 0.6)"); expect(element.dirty).toBe(false)
+    })
+    it("keeps clean mode projections lossless on commit, including non-byte alpha", () => {
+      const { element } = picker("rgba(17, 39, 211, 0.123)")
+      for (const mode of ["hex", "rgb", "hsl"] as const) {
+        element.mode = mode; expect(element.commit()).toBe(true)
+        expect(element.value).toBe("rgba(17, 39, 211, 0.123)")
+      }
+    })
+    it("distinguishes empty/black/default and resets mode and alpha silently", async () => {
+      const { element, form, text, alpha } = picker()
+      const changes = vi.fn(); element.addEventListener("m:change", changes)
+      element.mode = "hsl"; element.value = "#000000"
+      element.defaultValue = "rgba(255,0,0,.75)"
+      expect(element.value).toBe("#000000"); expect(element.valueDirty).toBe(true)
+      form.reset(); await flush()
+      expect(element.value).toBe("rgba(255, 0, 0, 0.75)"); expect(text.value).toBe("hsla(0, 100%, 50%, 0.75)")
+      expect(alpha.value).toBe("0.75"); expect(element.valueDirty).toBe(false); expect(changes).not.toHaveBeenCalled()
+      element.defaultValue = ""; expect(element.value).toBe(""); expect(text.value).toBe("")
+      element.required = true; expect(element.checkValidity()).toBe(false)
+      element.value = "#000000"; expect(element.checkValidity()).toBe(true)
+      element.clear(); expect(element.value).toBe(""); expect(element.checkValidity()).toBe(false)
+    })
+    it("preserves full-alpha current/default/draft state and original listeners on reconnect", async () => {
+      const { element, form, text, alpha, control } = picker()
+      const listener = vi.fn(); control.addEventListener("input", listener)
+      element.value = "rgba(255,0,0,.123)"; edit(text, "#12"); text.setAttribute("aria-describedby", "authored")
+      element.remove(); form.append(element); await flush()
+      expect(element.value).toBe("rgba(255, 0, 0, 0.123)"); expect(element.defaultValue).toBe("rgba(51, 102, 153, 0.5)")
+      expect(element.draftControl).toBe(text); expect(element.alphaControl).toBe(alpha)
+      expect(text.value).toBe("#12"); expect(text.getAttribute("aria-describedby")).toBe("authored")
+      element.restoreDraft(); edit(text, "#112233"); element.commit(); expect(listener).toHaveBeenCalledOnce()
+      expect(new FormData(form).getAll("accent")).toEqual(["rgba(17, 34, 51, 0.123)"])
+    })
+    it("blocks user actions for readonly/disabled/fieldset but permits silent programmatic writes", () => {
+      const { element, form, control, text, alpha } = picker()
+      element.readOnly = true
+      expect(control.disabled).toBe(true); expect(text.readOnly).toBe(true); expect(alpha.disabled).toBe(true)
+      expect(element.clear()).toBe(false); expect(element.commit()).toBe(false)
+      expect(new FormData(form).get("accent")).toBe("rgba(51, 102, 153, 0.5)")
+      element.value = "#112233"; expect(element.value).toBe("#112233")
+      element.readOnly = false; element.disabled = true; expect(new FormData(form).has("accent")).toBe(false)
+      element.disabled = false
+      const fieldset = document.createElement("fieldset"); form.append(fieldset); fieldset.append(element); fieldset.disabled = true
+      expect(element.commit()).toBe(false); expect(element.clear()).toBe(false); expect(new FormData(form).has("accent")).toBe(false)
+    })
+    it("suppresses stale alpha apply and queued clear on cancellation, newer drafts and disconnect", async () => {
+      const { element, alpha, text } = picker()
+      alpha.value = "0.7"; alpha.dispatchEvent(new Event("input", { bubbles: true })); alpha.dispatchEvent(new Event("change", { bubbles: true }))
+      element.value = "#112233"; await flush(); expect(element.value).toBe("#112233")
+      element.restoreDraft()
+      const clear = element.querySelector<HTMLButtonElement>("[data-color-clear]")!
+      clear.addEventListener("click", event => event.preventDefault(), { once: true }); clear.click(); await flush()
+      expect(element.value).toBe("#112233")
+      clear.click(); edit(text, "#123"); await flush(); expect(element.value).toBe("#112233")
+      element.restoreDraft(); clear.click(); element.remove(); await flush(); expect(element.value).toBe("#112233")
+    })
+    it("settles independently with multiple connected native owners and changing readouts", async () => {
+      const first = picker(), second = picker("#112233")
+      first.element.value = "rgba(255,0,0,.75)"; second.element.mode = "rgb"
+      await flush()
+      expect(first.element.value).toBe("rgba(255, 0, 0, 0.75)")
+      expect(second.element.value).toBe("#112233")
+      expect(first.element.querySelector("[data-color-output]")!.textContent).toBe(first.element.value)
+      expect(second.text.value).toBe("rgb(17, 34, 51)")
+    })
+    it("retains pending alpha when hidden or reconnected, and keeps the same live dirty flag", async () => {
+      const { element, form, alpha } = picker()
+      element.value = element.defaultValue; expect(element.valueDirty).toBe(true)
+      alpha.value = "0.123"; alpha.dispatchEvent(new Event("input", { bubbles: true }))
+      element.showAlpha = false
+      element.remove(); form.append(element); await flush()
+      expect(element.valueDirty).toBe(true); expect(alpha.value).toBe("0.123")
+      expect(element.commit()).toBe(true); expect(element.value).toBe("rgba(51, 102, 153, 0.123)")
+    })
+    it("keeps preconnection current/default records distinct, including updates while detached", async () => {
+      const element = document.createElement("m-color-picker") as ColorPicker
+      element.configure({ value: "rgba(255,0,0,.5)", defaultValue: "rgba(0,255,0,.75)", showAlpha: true })
+      document.body.append(element)
+      expect(element.value).toBe("rgba(255, 0, 0, 0.5)"); expect(element.defaultValue).toBe("rgba(0, 255, 0, 0.75)")
+      element.remove(); element.value = "rgba(0,0,255,.123)"; element.mode = "hsl"; document.body.append(element); await flush()
+      expect(element.value).toBe("rgba(0, 0, 255, 0.123)"); expect(element.draft).toBe("hsla(240, 100%, 50%, 0.123)")
+    })
+    it("does not erase application custom validity while readonly or disabled bars validation", () => {
+      const { element, text } = picker()
+      text.setCustomValidity("Application error")
+      element.readOnly = true; element.readOnly = false; expect(text.validationMessage).toBe("Application error")
+      element.disabled = true; element.disabled = false; expect(text.validationMessage).toBe("Application error")
+    })
+    it("requires a committed color, not merely a valid pending draft, before native form submission", () => {
+      const { element, form, text } = picker("")
+      element.required = true; edit(text, "#112233")
+      expect(element.value).toBe(""); expect(form.checkValidity()).toBe(false)
+      expect(new FormData(form).get("accent")).toBe("")
+      expect(element.commit()).toBe(true); expect(form.checkValidity()).toBe(true)
+      expect(new FormData(form).get("accent")).toBe("#112233")
+    })
+    it("does not let pending reset reconciliation overwrite a newer native RGB edit", async () => {
+      const { element, form, control } = picker()
+      element.value = "#ff0000"; form.reset()
+      control.value = "#112233"; control.dispatchEvent(new Event("input", { bubbles: true }))
+      await flush()
+      expect(element.value).toBe("rgba(17, 34, 51, 0.5)")
+      expect(new FormData(form).get("accent")).toBe("rgba(17, 34, 51, 0.5)")
+    })
+    it("retains an authored canonical submission field and its name in the native Web entry", () => {
+      const form = document.createElement("form"), root = document.createElement("fieldset")
+      root.setAttribute("data-color-picker", "")
+      root.innerHTML = '<legend>Accent</legend><label>RGB<input type="color" data-color-control value="#336699"></label><input type="hidden" data-color-value name="accent" value="rgba(51,102,153,.5)">'
+      form.append(root); document.body.append(form)
+      const field = root.querySelector<HTMLInputElement>("[data-color-value]")!, helper = createColorPicker(root)
+      helpers.push(helper); helper.setValue("hsla(120,100%,50%,.25)")
+      expect(helper.submission).toBe(field)
+      expect(new FormData(form).getAll("accent")).toEqual(["rgba(0, 255, 0, 0.25)"])
+    })
   })
 
   it("initializes with canonical default values", () => {
@@ -363,13 +554,14 @@ describe("canonical ColorPicker ViewElement", () => {
     const control = picker.querySelector("input") as HTMLInputElement
 
     picker.value = "#112233"
-    expect(picker.getAttribute("value")).toBe("#112233")
+    expect(picker.getAttribute("value")).toBeNull()
     expect(picker.value).toBe("#112233")
     expect(control.value).toBe("#112233")
 
     picker.setAttribute("value", "#445566")
-    expect(picker.value).toBe("#445566")
-    expect(control.value).toBe("#445566")
+    expect(picker.defaultValue).toBe("#445566")
+    expect(picker.value).toBe("#112233")
+    expect(control.value).toBe("#112233")
 
     picker.disabled = true
     expect(picker.hasAttribute("disabled")).toBe(true)
@@ -384,12 +576,12 @@ describe("canonical ColorPicker ViewElement", () => {
     picker.showAlpha = true
     expect(picker.hasAttribute("show-alpha")).toBe(true)
     expect(picker.showAlpha).toBe(true)
-    expect(picker.hasAttribute("data-show-alpha")).toBe(true)
+    expect(picker.alphaControl.hidden).toBe(false)
 
     picker.showAlpha = false
     expect(picker.hasAttribute("show-alpha")).toBe(false)
     expect(picker.showAlpha).toBe(false)
-    expect(picker.hasAttribute("data-show-alpha")).toBe(false)
+    expect(picker.alphaControl.hidden).toBe(true)
   })
 
   it("emits m:change event when native color control changes or inputs", () => {
@@ -452,7 +644,8 @@ describe("canonical ColorPicker ViewElement", () => {
     expect(picker.value).toBe("#aabbcc")
     expect(picker.disabled).toBe(true)
     expect(picker.showAlpha).toBe(true)
-    expect(picker.getAttribute("value")).toBe("#aabbcc")
+    expect(picker.getAttribute("value")).toBeNull()
+    expect(picker.defaultValue).toBe("#000000")
     expect(picker.hasAttribute("disabled")).toBe(true)
     expect(picker.hasAttribute("show-alpha")).toBe(true)
   })
@@ -471,4 +664,3 @@ describe("canonical ColorPicker ViewElement", () => {
     expect(picker.value).toBe("#336699")
   })
 })
-

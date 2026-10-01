@@ -50,13 +50,13 @@ in the target inventory.
 45. [Progress demo and API](../../demo/components/progress.html): Progress; line, circle and dashboard progress indicators, percentages, custom colors, and processing states.
 46. [Result demo and API](../../demo/components/result.html): Result, ResultHeader, ResultContent, ResultFooter; status pages (403, 404, 500, success, info, warning, error) with actions.
 47. [Image demo and API](../../demo/components/image.html): Image, ImageGroup; responsive image display, object-fit, preview modals, and load/error events.
-48. [Date Picker demo and API](../../demo/components/date-picker.html): DatePicker; date, datetime, daterange inputs, formatting, and clearable controls.
-49. [Time Picker demo and API](../../demo/components/time-picker.html): TimePicker; time inputs, formatting, stepping, and clearable controls.
+48. [Date Picker demo and API](../../demo/components/date-picker.html): DatePicker; all seven modes including bounded year/quarter, native week interoperability, typed ranges, live/default/draft state, explicit schema configuration and clearable controls. Format is a hint, not a conversion engine.
+49. [Time Picker demo and API](../../demo/components/time-picker.html): TimePicker; native time grammar/precision, live/default values, form/reset ownership and clearable controls. Format is a hint.
 50. [Upload demo and API](../../demo/components/upload.html): Upload, UploadDragger, UploadTrigger, UploadFileList; drag-and-drop file upload, file listings, and status management.
-51. [Auto Complete demo and API](../../demo/components/auto-complete.html): AutoComplete; input suggestions, datalist integration, and clearable controls.
-52. [Slider demo and API](../../demo/components/slider.html): Slider; continuous and stepped range sliders, vertical orientation, and change events.
-53. [Rate demo and API](../../demo/components/rate.html): Rate; star rating, half-star selection, clearable states, and custom counts.
-54. [Input OTP demo and API](../../demo/components/input-otp.html): InputOtp; segmented one-time password inputs, character masking, and completion events.
+51. [Auto Complete demo and API](../../demo/components/auto-complete.html): AutoComplete; native input/datalist owner, immutable suggestions and async cancellation, live/default values, form/reset and clearable controls.
+52. [Slider demo and API](../../demo/components/slider.html): Slider; native single/paired ranges, independent clamps and crossing, live/default values, step-any, form/reset, orientation and accepted change events.
+53. [Rate demo and API](../../demo/components/rate.html): Rate; native radio scale, half scores, distinct null/zero and defaults, clear/readonly/disabled, custom counts and form/reset.
+54. [Input OTP demo and API](../../demo/components/input-otp.html): InputOtp; one native editing owner with segmented presentation, character/mask/schema constraints, native input/change and metadata-only m:input-otp-complete notification.
 55. [Popselect demo and API](../../demo/components/popselect.html): Popselect, PopselectTrigger, PopselectPanel; popover selection, custom triggers, and value change events.
 56. [Tree demo and API](../../demo/components/tree.html): Tree, TreeNode; hierarchical trees, checkbox selection, expand/collapse, and selection events.
 57. [Tree Select demo and API](../../demo/components/tree-select.html): TreeSelect; dropdown tree selection, multi-select, and clearable controls.
@@ -80,12 +80,12 @@ in the target inventory.
 75. [Gradient Text demo and API](../../demo/components/gradient-text.html): GradientText; vibrant gradient text styling, predefined color types, custom sizes, and weights.
 76. [Watermark demo and API](../../demo/components/watermark.html): Watermark; security watermark overlay, canvas text/image patterns, and fullscreen protection.
 77. [Float Button demo and API](../../demo/components/float-button.html): FloatButton, FloatButtonGroup; floating action buttons, circle/square shapes, and positioning.
-78. [Color Picker demo and API](../../demo/components/color-picker.html): ColorPicker; color inputs, hex/rgba values, alpha channel support, and change events.
-79. [Mention demo and API](../../demo/components/mention.html): Mention; user mentions, suggestions dropdown, prefix triggers, and selection events.
-80. [Transfer demo and API](../../demo/components/transfer.html): Transfer; dual-list transfer component, item movement, and change events.
+78. [Color Picker demo and API](../../demo/components/color-picker.html): ColorPicker; bounded HEX/RGB/HSL/alpha editing, canonical string value versus formatted draft, labelled native fallback controls, defaults/form/reset and accepted change events.
+79. [Mention demo and API](../../demo/components/mention.html): Mention; native editor value/default state, configured prefixes/static/async suggestions, caret/IME, cancellation and native-owner selection events.
+80. [Transfer demo and API](../../demo/components/transfer.html): Transfer; ordered target membership separate from staged highlights, immutable options, locked/filtered moves, defaults/validity/FormData and reconnect through one owner.
 81. [Countdown demo and API](../../demo/components/countdown.html): Countdown; countdown timer, active toggling, precision controls, and finish events.
 82. [Log demo and API](../../demo/components/log.html): Log; terminal and streaming log viewer, auto-scroll, row limits, and trim controls.
-83. [Number Animation demo and API](../../demo/components/number-animation.html): NumberAnimation; animated numerical transitions, easing, precision formatting, and finish events.
+83. [Number Animation demo and API](../../demo/components/number-animation.html): NumberAnimation; animated numerical transitions, easing/precision and finish events; explicit play replay, pause, resume and reset, with restart on reconnect.
 84. [Time demo and API](../../demo/components/time.html): Time; relative and formatted time display, timezone options, and automatic updates.
 85. [Heatmap demo and API](../../demo/components/heatmap.html): Heatmap; 2D matrix data visualization, color scales, and cell tooltips.
 86. [Thing demo and API](../../demo/components/thing.html): Thing, ThingHeader, ThingAvatar, ThingContent, ThingFooter, ThingAction; compound entity cards, actions, and headers.
@@ -95,6 +95,14 @@ in the target inventory.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
+
+The owner-unified families above retain selected package entries and share their
+concrete behavior implementation with justified native-Web enhancement factories.
+Factory inputs are Web interoperability, not a competing logical API or mandatory
+author markup. Current demos define intentional value/default/empty/event/schema
+changes; no superseded event aliases or compatibility implementations are provided.
+`ViewElement.viewStyle` is an independent presentation channel, not a way to mutate
+same-named component behavior attributes.
 
 ## Select only what you use
 

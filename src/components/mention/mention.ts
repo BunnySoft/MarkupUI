@@ -3,8 +3,7 @@ export interface MentionContext { readonly prefix: string; readonly query: strin
 export interface MentionOption { value: string; label?: string; disabled?: boolean; class?: string }
 export interface MentionSearch extends MentionContext { readonly control: MentionControl; readonly signal: AbortSignal }
 export type MentionLoader = (context: MentionSearch) => readonly MentionOption[] | Promise<readonly MentionOption[]>
-export interface MentionOptions {
-  panel: HTMLElement
+export interface MentionConfiguration {
   options?: readonly MentionOption[]
   load?: MentionLoader
   filter?: (query: string, option: Readonly<MentionOption>, prefix: string) => boolean
@@ -15,6 +14,7 @@ export interface MentionOptions {
   maxQueryLength?: number
   debounce?: number
 }
+export interface MentionOptions extends MentionConfiguration { panel: HTMLElement }
 export interface MentionQueryResult {
   readonly status: "updated" | "skipped" | "aborted"
   readonly context: MentionContext | null
@@ -27,6 +27,12 @@ export interface MentionController {
   readonly connected: boolean
   readonly context: MentionContext | null
   readonly error: unknown
+  readonly configuration: Readonly<MentionConfiguration>
+  value: string
+  defaultValue: string
+  disabled: boolean
+  readOnly: boolean
+  configure(configuration: MentionConfiguration): void
   query(): Promise<MentionQueryResult>
   select(value: string): boolean
   setOptions(options: readonly MentionOption[]): void
@@ -38,18 +44,51 @@ const owner = Symbol.for("markup-ui.mention.owner")
 type Owned = Element & { [owner]?: MentionController }
 interface Snapshot { text: string; start: number | null; end: number | null; form: HTMLFormElement | null; max: number; available: boolean }
 interface Rendered { nodes: ChildNode[]; html: string }
+type PreparedMentionConfiguration = Readonly<MentionConfiguration & {
+  prefix: readonly string[]
+  separator: string
+  maxResults: number
+  minQueryLength: number
+  maxQueryLength: number
+  debounce: number
+}>
 
-/** A native editor plus adjacent action list; there is no caret mirror, popup geometry or rich-text model. */
-export function createMention(control: MentionControl, settings: MentionOptions): MentionController {
-  const document = control?.ownerDocument, view = document?.defaultView
-  if (!view || !(control instanceof view.HTMLInputElement || control instanceof view.HTMLTextAreaElement)) throw new TypeError("Mention needs a native text input or textarea.")
+function wellFormed(value: string) {
+  for (let index = 0; index < value.length; index++) {
+    const code = value.charCodeAt(index)
+    if (code >= 0xD800 && code <= 0xDBFF) {
+      const next = value.charCodeAt(++index)
+      if (!(next >= 0xDC00 && next <= 0xDFFF)) return false
+    } else if (code >= 0xDC00 && code <= 0xDFFF) return false
+  }
+  return true
+}
+
+function normalize(values: readonly MentionOption[], maxResults: number, separator: string, prefixes: readonly string[]) {
+  if (!Array.isArray(values) || values.length > maxResults) throw new TypeError(`Supply at most ${maxResults} mention options; oversized results are not truncated.`)
+  const seen = new Set<string>()
+  return Object.freeze(Array.from(values, option => {
+    if (!option || typeof option !== "object" || Array.isArray(option) || Object.keys(option).some(key => !["value", "label", "disabled", "class"].includes(key))) throw new TypeError("Mention options must be bounded plain option records.")
+    const { value, label, disabled, class: className } = option
+    if (typeof value !== "string" || !value.trim() || value.length > 256 || !wellFormed(value)
+      || /[\r\n]/.test(value) || value.includes(separator) || prefixes.some(prefix => value.includes(prefix))
+      || seen.has(value) || label !== undefined && (typeof label !== "string" || !label.trim() || label.length > 1024 || !wellFormed(label))
+      || disabled !== undefined && typeof disabled !== "boolean"
+      || className !== undefined && (typeof className !== "string" || className.length > 256)) {
+      throw new TypeError("Options need unique single-token string values (1-256 units), plain labels, boolean disabled and optional class; no render/style/object values.")
+    }
+    seen.add(value)
+    return Object.freeze({ value, ...(label !== undefined ? { label } : {}), ...(disabled !== undefined ? { disabled } : {}), ...(className !== undefined ? { class: className } : {}) })
+  }))
+}
+
+/** @internal Shared validation for the element's disconnected configuration and the native owner. */
+export function prepareMentionConfiguration(settings: MentionConfiguration): PreparedMentionConfiguration {
   if (!settings || typeof settings !== "object" || Array.isArray(settings)
-    || Object.keys(settings).some(key => !["panel", "options", "load", "filter", "prefix", "separator", "maxResults", "minQueryLength", "maxQueryLength", "debounce"].includes(key))
-    || !(settings.panel instanceof view.HTMLElement)
+    || Object.keys(settings).some(key => !["options", "load", "filter", "prefix", "separator", "maxResults", "minQueryLength", "maxQueryLength", "debounce"].includes(key))
     || settings.load !== undefined && typeof settings.load !== "function"
     || settings.filter !== undefined && typeof settings.filter !== "function"
-    || settings.load !== undefined && settings.options !== undefined) throw new TypeError("Use an authored panel and either static options or one loader, with an optional filter.")
-  const panel = settings.panel, load = settings.load, filter = settings.filter
+    || settings.load !== undefined && settings.options !== undefined) throw new TypeError("Use either static options or one loader, with an optional filter.")
   const prefixes = typeof settings.prefix === "string" ? [settings.prefix] : settings.prefix === undefined ? ["@"] : settings.prefix
   const separator = settings.separator ?? " ", maxResults = settings.maxResults ?? 20
   const minQueryLength = settings.minQueryLength ?? 1, maxQueryLength = settings.maxQueryLength ?? 64, debounce = settings.debounce ?? 120
@@ -64,41 +103,35 @@ export function createMention(control: MentionControl, settings: MentionOptions)
     || !Number.isInteger(maxResults) || maxResults < 1 || maxResults > 100
     || !Number.isInteger(minQueryLength) || minQueryLength < 0 || !Number.isInteger(maxQueryLength) || maxQueryLength < 1 || maxQueryLength > 256 || minQueryLength > maxQueryLength
     || !Number.isInteger(debounce) || debounce < 0 || debounce > 1000) throw new TypeError("Use 1-8 unique one-BMP-unit prefixes, a distinct one-unit separator, maxResults 1-100, query lengths 0-256 and debounce 0-1000ms.")
-  const prefixSet = new Set<string>(prefixes)
+  return Object.freeze({
+    prefix: Object.freeze([...prefixes]), separator, maxResults, minQueryLength, maxQueryLength, debounce,
+    ...(settings.load ? { load: settings.load } : { options: normalize(settings.options === undefined ? [] : settings.options, maxResults, separator, prefixes) }),
+    ...(settings.filter ? { filter: settings.filter } : {}),
+  })
+}
+
+/** @internal Native properties remain the only editing/default/availability state. */
+export function writeMentionField(control: MentionControl, name: "value" | "defaultValue" | "disabled" | "readOnly", value: string | boolean): void {
+  if (typeof value !== (name === "value" || name === "defaultValue" ? "string" : "boolean")) throw new TypeError(`Mention ${name} has an invalid type.`)
+  if (name === "value" || name === "defaultValue") control[name] = value as string
+  else control[name] = value as boolean
+}
+
+/** A native editor plus adjacent action list; there is no caret mirror, popup geometry or rich-text model. */
+export function createMention(control: MentionControl, settings: MentionOptions): MentionController {
+  const document = control?.ownerDocument, view = document?.defaultView
+  if (!view || !(control instanceof view.HTMLInputElement || control instanceof view.HTMLTextAreaElement)) throw new TypeError("Mention needs a native text input or textarea.")
+  if (!settings || typeof settings !== "object" || Array.isArray(settings) || !(settings.panel instanceof view.HTMLElement)) throw new TypeError("Mention needs an authored panel.")
+  const { panel, ...initial } = settings
+  let configuration = prepareMentionConfiguration(initial)
+  let { prefix: prefixes, separator, minQueryLength, maxQueryLength, debounce } = configuration
+  let prefixSet = new Set<string>(prefixes)
   const lists = panel.querySelectorAll<HTMLElement>("[data-mention-options]"), statuses = panel.querySelectorAll<HTMLElement>("[data-mention-status]")
   if (lists.length !== 1 || statuses.length > 1) throw new TypeError("Author one options list and at most one status inside the panel.")
   const list = lists[0]!, status = statuses[0] ?? null
   if (!panel.hidden || list.children.length || list.textContent?.trim()) throw new TypeError("The no-JS panel must start hidden, with an empty owned options container.")
   const original = [...list.childNodes], nodes = [control, panel, list, ...(status ? [status] : [])]
   for (const node of nodes) if ((node as Owned)[owner]) throw new Error("Mention node already has an owner.")
-  function wellFormed(value: string) {
-    for (let index = 0; index < value.length; index++) {
-      const code = value.charCodeAt(index)
-      if (code >= 0xD800 && code <= 0xDBFF) {
-        const next = value.charCodeAt(++index)
-        if (!(next >= 0xDC00 && next <= 0xDFFF)) return false
-      } else if (code >= 0xDC00 && code <= 0xDFFF) return false
-    }
-    return true
-  }
-  function normalize(values: readonly MentionOption[]) {
-    if (!Array.isArray(values) || values.length > maxResults) throw new TypeError(`Supply at most ${maxResults} mention options; oversized results are not truncated.`)
-    const seen = new Set<string>()
-    return Object.freeze(Array.from(values, option => {
-      if (!option || typeof option !== "object" || Array.isArray(option) || Object.keys(option).some(key => !["value", "label", "disabled", "class"].includes(key))) throw new TypeError("Mention options must be bounded plain option records.")
-      const { value, label, disabled, class: className } = option
-      if (typeof value !== "string" || !value.trim() || value.length > 256 || !wellFormed(value)
-        || /[\r\n]/.test(value) || value.includes(separator) || [...prefixSet].some(prefix => value.includes(prefix))
-        || seen.has(value) || label !== undefined && (typeof label !== "string" || !label.trim() || label.length > 1024 || !wellFormed(label))
-        || disabled !== undefined && typeof disabled !== "boolean"
-        || className !== undefined && (typeof className !== "string" || className.length > 256)) {
-        throw new TypeError("Options need unique single-token string values (1-256 units), plain labels, boolean disabled and optional class; no render/style/object values.")
-      }
-      seen.add(value)
-      return Object.freeze({ value, ...(label !== undefined ? { label } : {}), ...(disabled !== undefined ? { disabled } : {}), ...(className !== undefined ? { class: className } : {}) })
-    }))
-  }
-  let staticOptions = normalize(settings.options === undefined ? [] : settings.options)
   let connected = true, generation = 0, composing = false, composition = 0, inserting = false, error: unknown = null
   let pending: AbortController | null = null, timer: number | null = null, rendered: Rendered | null = null
   let published: { snapshot: Snapshot; context: MentionContext; options: readonly Readonly<MentionOption>[]; version: number } | null = null
@@ -189,7 +222,7 @@ export function createMention(control: MentionControl, settings: MentionOptions)
     if (recover && focused instanceof view!.HTMLElement && focusedPanel && available(control)
       && (document!.activeElement === focused || document!.activeElement === document!.body)) control.focus({ preventScroll: true })
     previous?.abort()
-    if (notify && connected && generation === version && wasShown && panel.hidden) control.dispatchEvent(new view!.CustomEvent("m:mention-visibility", { detail: { shown: false } }))
+    if (notify && connected && generation === version && wasShown && panel.hidden) control.dispatchEvent(new view!.CustomEvent("m:mention-visibility", { bubbles: true, detail: { shown: false } }))
     return version
   }
   function settleReset() {
@@ -203,7 +236,7 @@ export function createMention(control: MentionControl, settings: MentionOptions)
   }
   function report(reason: unknown, ctx: MentionContext | null) {
     error = reason
-    control.dispatchEvent(new view!.CustomEvent("m:mention-error", { detail: { error: reason, context: ctx } }))
+    control.dispatchEvent(new view!.CustomEvent("m:mention-error", { bubbles: true, detail: { error: reason, context: ctx } }))
   }
   function sync() {
     if (!connected) return
@@ -217,7 +250,8 @@ export function createMention(control: MentionControl, settings: MentionOptions)
     if (reset && reset.event.eventPhase !== 0) return Object.freeze({ status: "skipped", context: null, count: 0, current: false })
     const expected = generation + 1
     invalidate(true)
-    const before = snapshot(), ctx = context(before), version = generation
+    const before = snapshot(), ctx = context(before), version = generation, config = configuration
+    const { load, filter } = config
     function current() { return connected && generation === version && anatomy() && ownedList()
       && panel.getAttribute("hidden") === hiddenLast && same(before, snapshot()) && inScope() }
     function result(status: MentionQueryResult["status"], count = 0): MentionQueryResult {
@@ -229,9 +263,9 @@ export function createMention(control: MentionControl, settings: MentionOptions)
     pending = controller; activeSnapshot = before; error = null
     message("Loading mention choices…")
     const show = visibility(true)
-    if (show) control.dispatchEvent(new view!.CustomEvent("m:mention-visibility", { detail: { shown: true } }))
+    if (show) control.dispatchEvent(new view!.CustomEvent("m:mention-visibility", { bubbles: true, detail: { shown: true } }))
     if (!current()) { if (connected && generation === version) invalidate(true); return result("aborted") }
-    control.dispatchEvent(new view!.CustomEvent("m:mention-search", { detail: ctx }))
+    control.dispatchEvent(new view!.CustomEvent("m:mention-search", { bubbles: true, detail: ctx }))
     let remove = () => {}
     const cancelled = new Promise<null>(resolve => {
       const abort = () => resolve(null)
@@ -240,10 +274,10 @@ export function createMention(control: MentionControl, settings: MentionOptions)
     })
     const work = Promise.resolve().then(() => {
       if (signal.aborted || !current()) return null
-      return load ? load(Object.freeze({ ...ctx, control, signal })) : staticOptions
+      return load ? load(Object.freeze({ ...ctx, control, signal })) : config.options
     }).then(values => {
       if (values === null && (signal.aborted || !current())) return null
-      const normalized = normalize(values as readonly MentionOption[])
+      const normalized = normalize(values as readonly MentionOption[], config.maxResults, config.separator, config.prefix)
       return Object.freeze(normalized.filter(option => {
         if (signal.aborted || !current()) return false
         const matched = filter ? filter(ctx.query, option, ctx.prefix) : load ? true : (option.label ?? option.value).startsWith(ctx.query)
@@ -270,7 +304,7 @@ export function createMention(control: MentionControl, settings: MentionOptions)
       published = { snapshot: before, context: ctx, options: values, version }; pending = null
       message(values.length ? `${values.length} mention choices. Tab to a button; Enter or Space inserts. Escape closes.` : "No mention choices. Ordinary editing remains available.")
       const completed = result("updated", values.length)
-      control.dispatchEvent(new view!.CustomEvent("m:mention-results", { detail: { context: ctx, options: values, result: completed } }))
+      control.dispatchEvent(new view!.CustomEvent("m:mention-results", { bubbles: true, detail: { context: ctx, options: values, result: completed } }))
       return completed
     } catch (reason) {
       if (current()) { pending = null; message("Mention search failed. Ordinary editing remains available.") }
@@ -279,6 +313,7 @@ export function createMention(control: MentionControl, settings: MentionOptions)
     } finally { remove() }
   }
   function select(value: string) {
+    if (typeof value !== "string") throw new TypeError("Mention selection needs a string value.")
     sync()
     const session = published, candidate = session?.options.find(option => option.value === value)
     const button = [...choices].find(([, option]) => option === candidate)?.[0]
@@ -289,7 +324,7 @@ export function createMention(control: MentionControl, settings: MentionOptions)
     const insertion = candidate.value + (separated ? "" : separator)
     if (control.maxLength >= 0 && session.snapshot.text.length - (end - from) + insertion.length > control.maxLength) {
       message("That mention would exceed maxlength. Text was not changed.")
-      control.dispatchEvent(new view!.CustomEvent("m:mention-reject", { detail: { reason: "maxlength", option: candidate, prefix } }))
+      control.dispatchEvent(new view!.CustomEvent("m:mention-reject", { bubbles: true, detail: { reason: "maxlength", option: candidate, prefix } }))
       return false
     }
     const active = document!.activeElement, expected = generation + 1
@@ -305,7 +340,7 @@ export function createMention(control: MentionControl, settings: MentionOptions)
       control.setSelectionRange(caret, caret)
       control.dispatchEvent(new view!.InputEvent("input", { bubbles: true, composed: true, inputType: "insertReplacementText", data: insertion }))
     } finally { inserting = false }
-    control.dispatchEvent(new view!.CustomEvent("m:mention-select", { detail: { option: candidate, prefix } }))
+    control.dispatchEvent(new view!.CustomEvent("m:select", { bubbles: true, detail: { value: candidate.value, option: candidate, prefix } }))
     return true
   }
   function schedule() {
@@ -350,16 +385,33 @@ export function createMention(control: MentionControl, settings: MentionOptions)
     reset = null
     previous?.abort()
   }
+  function configure(settings: MentionConfiguration) {
+    const next = prepareMentionConfiguration(settings)
+    if (!connected) throw new Error("Mention is disconnected.")
+    const version = generation + 1
+    invalidate(true)
+    if (!connected || generation !== version) throw new Error("Mention configuration update was superseded or disconnected.")
+    configuration = next
+    ;({ prefix: prefixes, separator, minQueryLength, maxQueryLength, debounce } = next)
+    prefixSet = new Set(prefixes)
+    error = null
+  }
+  function write(name: "value" | "defaultValue" | "disabled" | "readOnly", value: string | boolean) {
+    if (!connected) throw new Error("Mention is disconnected.")
+    writeMentionField(control, name, value)
+    invalidate(true)
+  }
   const api: MentionController = {
     control, panel, get connected() { return connected }, get context() { return connected ? context(snapshot()) : null }, get error() { return error },
+    get configuration() { return configuration },
+    get value() { return control.value }, set value(value) { write("value", value) },
+    get defaultValue() { return control.defaultValue }, set defaultValue(value) { write("defaultValue", value) },
+    get disabled() { return control.disabled }, set disabled(value) { write("disabled", value) },
+    get readOnly() { return control.readOnly }, set readOnly(value) { write("readOnly", value) },
+    configure,
     query, select, setOptions(values) {
-      if (load) throw new TypeError("Use the declared loader or recreate for static options.")
-      const normalized = normalize(values)
-      if (!connected) throw new Error("Mention is disconnected.")
-      const version = generation + 1
-      invalidate(true)
-      if (!connected || generation !== version) throw new Error("Mention options update was superseded or disconnected.")
-      staticOptions = normalized
+      if (configuration.load) throw new TypeError("Use configure() to explicitly switch from a loader to static options.")
+      configure({ ...configuration, options: values })
     },
     refresh() { if (connected) { sync(); if (connected) invalidate(true) } },
     close() { if (connected) invalidate(true) }, disconnect,

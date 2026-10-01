@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from "vitest"
 import { bind, createStore, type Binding, type BindingOptions } from "../src/state/index.js"
 import { List } from "../src/components/list/index.js"
 import { Input } from "../src/components/input/index.js"
+import { Collapse } from "../src/components/collapse/index.js"
 
 const bindings: Binding[] = []
 afterEach(() => { bindings.splice(0).forEach(stop => stop()); document.body.replaceChildren() })
@@ -49,6 +50,33 @@ describe("explicit template sources", () => {
     expect(document.querySelector("input")).toBe(input)
     expect(input!.value).toBe("New")
     expect(source.isConnected).toBe(false)
+  })
+
+  it("adopts rendered Collapse from an explicit Source without consuming or changing its native snapshot", () => {
+    const group = document.createElement("m-collapse") as Collapse
+    group.innerHTML = '<m-collapse-item key="one"><m-collapse-header>Section</m-collapse-header><m-collapse-content><input value="Source"></m-collapse-content></m-collapse-item>'
+    document.body.append(group)
+    group.expand("one")
+    const source = template("")
+    source.content.append(group)
+    const native = group.querySelector("details")!
+    const { store } = setup(anchor.replace("#row", "row"), { templates: new Map([["row", source]]) })
+    const groups = [...document.querySelectorAll<Collapse>("m-collapse")]
+    expect(groups).toHaveLength(2)
+    for (const instance of groups) {
+      expect(instance.state).toBe("ready")
+      expect(instance.expandedKeys).toEqual(["one"])
+      expect(instance.querySelectorAll("details")).toHaveLength(1)
+      expect(instance.querySelectorAll("summary")).toHaveLength(1)
+    }
+    groups[0]!.collapse("one")
+    store.set("rows", structuredClone(rows).reverse())
+    expect([...document.querySelectorAll("m-collapse")]).toEqual([...groups].reverse())
+    expect(groups[0]!.expandedKeys).toEqual([])
+    expect(groups[1]!.expandedKeys).toEqual(["one"])
+    expect(source.content.firstElementChild).toBe(group)
+    expect(group.querySelector("details")).toBe(native)
+    expect(native.open).toBe(true)
   })
 
   it("refreshes changed definitions and disables models from replaced instances", () => {

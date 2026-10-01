@@ -12,7 +12,7 @@ vi.mock("../src/components/chart/renderer.js", () => ({
     return instance
   },
 }))
-import { Chart, ChartDataset, ChartSeries } from "../src/components/chart/index.js"
+import { Chart, ChartDataset, ChartEncode, ChartSeries } from "../src/components/chart/index.js"
 import { chartConfiguration } from "../src/components/chart/options.js"
 
 const markup = `<m-chart-title text="Sales"></m-chart-title><m-chart-tooltip trigger="axis"></m-chart-tooltip>
@@ -62,6 +62,31 @@ describe("Chart ECharts-shaped configuration", () => {
     series.removeAttribute("formatter")
     series.append(series.firstElementChild!.cloneNode(true))
     expect(() => chartConfiguration(host)).toThrow("one scalar")
+  })
+
+  it("rejects sparse encode vectors before changing any configuration attribute", () => {
+    const encode = new ChartEncode()
+    const partial = new Array<string>(2); partial[1] = "sales"
+    for (const name of ["x", "y", "value", "itemName", "tooltip"] as const) {
+      encode[name] = ["month"]
+      const before = encode.outerHTML
+      for (const value of [new Array<string>(1), partial]) {
+        expect(() => { encode[name] = value }).toThrow()
+        expect(encode.outerHTML).toBe(before)
+        expect(encode[name]).toEqual(["month"])
+      }
+    }
+  })
+
+  it("rejects sparse direct series before replacing accepted options", () => {
+    const host = new Chart()
+    const accepted = { series: [{ type: "pie", data: [1, 2] }] }
+    host.option = accepted
+    const partial = new Array<{ type: string }>(2); partial[1] = { type: "pie" }
+    for (const series of [new Array<{ type: string }>(1), partial]) {
+      expect(() => { host.option = { series } }).toThrow("first-batch")
+      expect(host.option).toBe(accepted)
+    }
   })
 
   it("isolates nested charts and rejects indirectly owned configuration", () => {

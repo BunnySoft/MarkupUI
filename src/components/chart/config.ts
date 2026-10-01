@@ -8,7 +8,7 @@ const axisTypes = ["category", "value"] as const
 function dimension(value: unknown): asserts value is Dimension | null {
   if (value === null) return
   const entries = Array.isArray(value) ? value : [value]
-  if (!entries.length || entries.some(item => !(typeof item === "string" && item.length || typeof item === "number" && Number.isInteger(item) && item >= 0))) {
+  if (!entries.length || Array.from(entries).some(item => !(typeof item === "string" && item.length || typeof item === "number" && Number.isInteger(item) && item >= 0))) {
     throw new TypeError("Encode requires dimension names or nonnegative indices.")
   }
 }

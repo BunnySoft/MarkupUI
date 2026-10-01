@@ -132,7 +132,7 @@ describe("canonical Box and Primitives ViewElements", () => {
     box.classTokens = ["surface-elevated", "tone-success"]
     expect(box.className).toBe("surface-elevated tone-success")
 
-    expect(box.viewStyle.gap).toBe("12")
+    expect(box.viewStyle.gap).toBe("12px")
     expect(box.viewStyle.direction).toBe("column")
 
     box.viewStyle = {
@@ -141,12 +141,39 @@ describe("canonical Box and Primitives ViewElements", () => {
       padding: 16,
       display: "flex",
     }
-    expect(box.getAttribute("gap")).toBe("24")
-    expect(box.getAttribute("direction")).toBe("row")
-    expect(box.getAttribute("padding")).toBe("16")
-    expect(box.getAttribute("display")).toBe("flex")
+    expect(box.getAttribute("gap")).toBe("12")
+    expect(box.getAttribute("direction")).toBe("column")
+    expect(box.hasAttribute("padding")).toBe(false)
+    expect(box.hasAttribute("display")).toBe(false)
     expect(box.style.gap).toBe("24px")
     expect(box.style.padding).toBe("16px")
     expect(box.style.flexDirection).toBe("row")
+    box.width = "50%"
+    expect(box.style.flexDirection).toBe("row")
+    expect(box.style.gap).toBe("24px")
+    box.remove()
+    document.body.append(box)
+    expect(box.style.flexDirection).toBe("row")
+    expect(box.style.gap).toBe("24px")
+    box.direction = "column-reverse"
+    expect(box.style.flexDirection).toBe("column-reverse")
+  })
+
+  it("replays inherited presentation properties without changing declared layout inputs", () => {
+    const box = document.createElement("m-box") as Box
+    box.direction = "column"
+    Object.defineProperty(box, "viewStyle", { configurable: true, value: { direction: "row", gap: 3.5 } })
+    Object.defineProperty(box, "classTokens", { configurable: true, value: ["surface-card"] })
+    document.body.append(box)
+    expect(Object.hasOwn(box, "viewStyle")).toBe(false)
+    expect(Object.hasOwn(box, "classTokens")).toBe(false)
+    expect(box.direction).toBe("column")
+    expect(box.viewStyle).toMatchObject({ direction: "row", gap: "3.5px" })
+    expect(box.classTokens).toEqual(["surface-card"])
+    box.remove()
+    box.padding = "8"
+    document.body.append(box)
+    expect(box.style.flexDirection).toBe("row")
+    expect(box.style.padding).toBe("8px")
   })
 })

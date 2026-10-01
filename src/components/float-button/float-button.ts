@@ -32,10 +32,10 @@ export class FloatButton extends ViewElement {
       this.setAttribute("tabindex", "0")
     }
     this.updatePosition()
-    this.updatePresentation()
 
     this.addEventListener("click", this.onClick)
     this.addEventListener("keydown", this.onKeyDown)
+    this.updatePresentation()
   }
 
   public disconnectedCallback(): void {
@@ -48,7 +48,7 @@ export class FloatButton extends ViewElement {
     if (name === "right" || name === "bottom") {
       this.updatePosition()
     } else if (name === "type" || name === "shape") {
-      this.updatePresentation()
+      this.updatePresentation(name)
     }
   }
 
@@ -57,7 +57,7 @@ export class FloatButton extends ViewElement {
   }
   public set type(value: FloatButtonType) {
     this.setChoiceAttribute("type", value, floatButtonTypes)
-    this.updatePresentation()
+    this.updatePresentation("type")
   }
 
   public get shape(): FloatButtonShape {
@@ -65,7 +65,7 @@ export class FloatButton extends ViewElement {
   }
   public set shape(value: FloatButtonShape) {
     this.setChoiceAttribute("shape", value, floatButtonShapes)
-    this.updatePresentation()
+    this.updatePresentation("shape")
   }
 
   public get right(): string | number | null {
@@ -127,16 +127,12 @@ export class FloatButton extends ViewElement {
     }
   }
 
-  private updatePresentation(): void {
-    try {
+  private updatePresentation(name?: "type" | "shape"): void {
+    if (name === undefined || name === "type") {
       this.dataset.type = this.type
-    } catch {
-      // Preserve dataset if attribute is invalid
     }
-    try {
+    if (name === undefined || name === "shape") {
       this.dataset.shape = this.shape
-    } catch {
-      // Preserve dataset if attribute is invalid
     }
   }
 

@@ -1,5 +1,7 @@
 /**
- * Typed layout and appearance descriptor for ViewElement cross-platform rendering.
+ * Layout and appearance descriptor, separate from component behavior properties.
+ * Web writes inline CSS only; numeric lengths map to pixels and null clears that style.
+ * Web snapshots contain inline CSS strings/null, not computed/theme values or HTML attributes.
  */
 export interface ViewStyle {
   display?: "block" | "inline" | "flex" | "grid" | "none" | string | null

@@ -170,7 +170,8 @@
       <h3>Keys and state ownership</h3>
       <ul>
         <li><code>expandedKeys</code> and <code>defaultExpandedKeys</code> accept only readonly string arrays,
-          with nonempty unique keys. No scalar/null aliases, metadata property dispatcher or attribute encoding exists.
+          with nonempty unique keys and no sparse slots. Invalid arrays fail before any state write, including before connection.
+          No scalar/null aliases, metadata property dispatcher or attribute encoding exists.
           Collections are copied and returned frozen; item keys must be unique within their direct group.</li>
         <li>On first initialization, an explicit expandedKeys request wins over defaultExpandedKeys (initially []).
           After initialization, default writes only change the reset target. Reconnect retains actual native open state;
@@ -219,6 +220,11 @@
         native open state and authored region identity. Reconnect creates no duplicate summary or extra action.
         Removed content is not resurrected when regions are replaced. No height animation engine, display directive,
         virtualization or automatic disposal of closed content is provided.</p>
+      <p>Existing Source, If and ListTemplate compositions may capture already-rendered items.
+        Their clones adopt the marked native details/summary and the same public regions within each instance,
+        without adding another disclosure owner. Captured native open state survives unless the new group receives
+        explicit expandedKeys or defaultExpandedKeys (including an empty array); reset still uses its own defaults.
+        Native exclusive names and disabled ARIA are managed independently for each group.</p>
       <p>This renderer targets connected light DOM, not shadow-root or legacy m-accordion-item ownership.
         Without JavaScript the authored regions remain readable, but native disclosure controls have not been generated.</p>
       <h3>Styling</h3>

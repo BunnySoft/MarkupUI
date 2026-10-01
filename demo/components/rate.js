@@ -9,7 +9,8 @@ function initialize() {
   const basicRate = document.getElementById("basic-rate")
   const basicStatus = document.getElementById("basic-status")
   basicRate?.addEventListener("m:change", event => {
-    if (basicStatus) basicStatus.textContent = `Selected: ${event.detail.value} of ${basicRate.count}`
+    if (basicStatus) basicStatus.textContent = event.detail.value === null
+      ? "Not rated" : `Selected: ${event.detail.value} of ${basicRate.count}`
   })
 
   const clearableRate = document.getElementById("clearable-rate")
@@ -18,7 +19,6 @@ function initialize() {
     clearableRate?.clear()
   })
 
-  // Authored template controller demo
   const qualityEl = document.getElementById("quality")
   const detailEl = document.getElementById("detail")
   const lockedEl = document.getElementById("locked-rate")
@@ -37,6 +37,7 @@ function initialize() {
       } catch (error) {
         const stateEl = document.getElementById("state")
         if (stateEl) stateEl.textContent = error.message
+        console.error(error)
       }
       const eventsEl = document.getElementById("events")
       if (eventsEl) eventsEl.textContent = `Quality native changes: ${counts.native}; radio commits: ${counts.radio}; clears: ${counts.clear}`
@@ -59,8 +60,7 @@ function initialize() {
     document.getElementById("set-none")?.addEventListener("click", () => { quality.setValue(null); render() })
     document.getElementById("set-half")?.addEventListener("click", () => { detail.setValue(2.5); render() })
     document.getElementById("defaults")?.addEventListener("click", () => {
-      for (const input of qualityEl.querySelectorAll("input")) input.defaultChecked = input.value === "2"
-      quality.refresh(); render()
+      quality.setDefaultValue(2); render()
     })
     document.getElementById("disabled")?.addEventListener("click", () => { qualityEl.disabled = !qualityEl.disabled })
     document.getElementById("cancel")?.addEventListener("click", () => form.addEventListener("reset", event => event.preventDefault(), { once: true }))
@@ -78,4 +78,3 @@ function initialize() {
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true })
 else initialize()
-

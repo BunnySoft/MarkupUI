@@ -350,6 +350,7 @@ describe("canonical Slider ViewElement", () => {
     const slider = document.createElement("m-slider") as Slider
     const authored = document.createElement("input")
     authored.type = "range"
+    authored.setAttribute("aria-label", "Authored level")
     authored.min = "10"
     authored.max = "50"
     authored.step = "2"
@@ -357,6 +358,8 @@ describe("canonical Slider ViewElement", () => {
     authored.disabled = true
     slider.append(authored)
     document.body.append(slider)
+    expect(slider.error).toBeNull()
+    expect(slider.native).toBe(authored)
     expect(slider.min).toBe(10)
     expect(slider.max).toBe(50)
     expect(slider.step).toBe(2)
@@ -497,3 +500,375 @@ describe("canonical Slider ViewElement", () => {
   })
 })
 
+describe("shared Slider transactions", () => {
+  it("prepares both clamped values before accepting formatter output", () => {
+    const { helper, start, end } = pair({ formatValue: (value, index) => {
+      if (index === 1 && value === 100) throw new Error("Reject upper endpoint")
+      return `${value}%`
+    } })
+    const outputs = [...document.querySelectorAll("#window-pair output")].map(output => output.textContent)
+    expect(() => helper.setValue([-999, 999])).toThrow("Reject upper endpoint")
+    expect(helper.value).toEqual([20, 80])
+    expect([start.defaultValue, end.defaultValue]).toEqual(["20", "80"])
+    expect([...document.querySelectorAll("#window-pair output")].map(output => output.textContent)).toEqual(outputs)
+    expect(helper.error).toBe("Reject upper endpoint")
+    helper.setValue([-999, 70])
+    expect(helper.value).toEqual([0, 70])
+    expect(helper.error).toBeNull()
+  })
+
+  it("prepares defaults and constraints atomically without changing authored state on failure", () => {
+    let reject = false
+    const { helper, start, end } = pair({ formatValue: (value, index) => {
+      if (reject && index === 1) throw new Error("Reject preparation")
+      return String(value)
+    } })
+    reject = true
+    expect(() => helper.setMax(60)).toThrow("Reject preparation")
+    expect([start.max, end.max]).toEqual(["100", "100"])
+    expect(helper.value).toEqual([20, 80])
+    expect(() => helper.setDefaultValue(["60", "75"])).toThrow("Reject preparation")
+    expect([start.defaultValue, end.defaultValue]).toEqual(["20", "80"])
+    reject = false
+    helper.setValue([30, 70])
+    helper.setDefaultValue(["15", "85"])
+    expect(helper.value).toEqual([30, 70])
+  })
+
+  it("retains the accepted formatter on failure and restores authored valuetext when clearing it", () => {
+    const { helper, control, output } = single("volume-root", { formatValue: value => `${value}%` })
+    expect(() => helper.setFormatValue(() => { throw new Error("Bad formatter") })).toThrow("Bad formatter")
+    helper.setValue(35)
+    expect(output.value).toBe("35%")
+    helper.setFormatValue(undefined)
+    expect(output.value).toBe("35")
+    expect(control.hasAttribute("aria-valuetext")).toBe(false)
+  })
+
+  it("does not commit stale formatting after a nested accepted value update", () => {
+    const { helper, output } = single()
+    let nested = false
+    expect(() => helper.setFormatValue(value => {
+      if (!nested) { nested = true; helper.setValue(70) }
+      return `${value}%`
+    })).toThrow("superseded")
+    expect(helper.value).toBe(70)
+    expect(output.value).toBe("70")
+    helper.setValue(40)
+    expect(output.value).toBe("40")
+  })
+
+  it("does not write after a formatter disconnects the owner", () => {
+    const { helper, control, output } = single()
+    const before = output.value
+    expect(() => helper.setFormatValue(value => { helper.disconnect(); return String(value) })).toThrow("superseded")
+    expect(helper.connected).toBe(false)
+    expect(control.valueAsNumber).toBe(50)
+    expect(output.value).toBe(before)
+    expect(output.hidden).toBe(true)
+    expect(() => helper.setMin(10)).toThrow("disconnected")
+    expect(() => helper.setDisabled(true)).toThrow("disconnected")
+  })
+})
+
+describe("canonical Slider single owner and range mapping", () => {
+  function element(range = false, content = "") {
+    const slider = document.createElement("m-slider") as Slider
+    slider.range = range
+    slider.innerHTML = content
+    document.body.append(slider)
+    expect(slider.error).toBeNull()
+    return slider
+  }
+
+  it("keeps generated zero versus authored midpoint, and preserves explicit generated defaults", async () => {
+    const form = document.createElement("form")
+    const generated = document.createElement("m-slider") as Slider
+    generated.value = 25
+    form.append(generated); document.body.append(form)
+    expect(generated.defaultValue).toBe("25")
+    generated.value = 75
+    form.reset(); await flush()
+    expect(generated.value).toBe(25)
+    const authored = document.createElement("m-slider") as Slider
+    authored.innerHTML = '<input type="range" aria-label="Midpoint" min="10" max="50">'
+    const midpoint = authored.querySelector("input")!.valueAsNumber
+    document.body.append(authored)
+    expect(authored.error).toBeNull()
+    expect(authored.value).toBe(midpoint)
+    expect(authored.defaultValue).toBe("")
+    expect((authored.native as HTMLInputElement).hasAttribute("value")).toBe(false)
+  })
+
+  it("reads direct native writes live without reflecting them into defaults or replaying stale host value", async () => {
+    const slider = document.createElement("m-slider") as Slider
+    slider.value = 20
+    slider.setAttribute("aria-label", "Level")
+    slider.reverse = true; slider.vertical = true
+    document.body.append(slider)
+    const control = slider.native as HTMLInputElement
+    control.valueAsNumber = 75
+    expect(slider.value).toBe(75)
+    expect(slider.defaultValue).toBe("20")
+    slider.remove(); document.body.append(slider); await flush()
+    expect(slider.native).toBe(control)
+    expect(slider.value).toBe(75)
+    expect(control.dir).toBe("rtl")
+    expect(slider.hasAttribute("data-vertical")).toBe(true)
+    expect(control.getAttribute("aria-label")).toBe("Level")
+  })
+
+  it("rejects a second Web owner for the canonical native root", () => {
+    const slider = element()
+    expect(() => createSlider(slider)).toThrow("owner")
+    const range = element(true)
+    expect(() => createSliderPair(range.querySelector("fieldset")!)).toThrow("owner")
+  })
+
+  it("maps generated range defaults, independent clamps, crossing and native indexed stepping", () => {
+    const slider = element(true)
+    expect(slider.value).toEqual([0, 100])
+    expect(slider.defaultValue).toEqual(["0", "100"])
+    const controls = slider.native as readonly [HTMLInputElement, HTMLInputElement]
+    expect(controls.map(control => control.getAttribute("aria-label"))).toEqual(["Start", "End"])
+    slider.value = [90, 10]
+    expect(slider.value).toEqual([90, 10])
+    expect(slider.ordered).toBe(false)
+    slider.value = [-999, 999]
+    expect(slider.value).toEqual([0, 100])
+    expect(controls.map(control => [control.min, control.max])).toEqual([["0", "100"], ["0", "100"]])
+    slider.stepDown(2, 1)
+    expect(slider.value).toEqual([0, 98])
+    slider.step = "any"; slider.value = [0.125, 99.875]
+    expect(slider.value).toEqual([0.125, 99.875])
+    expect(() => slider.stepUp()).toThrow()
+    expect(() => slider.value = 25).toThrow("2 finite")
+    expect(() => slider.value = [NaN, 25]).toThrow("2 finite")
+    expect(slider.value).toEqual([0.125, 99.875])
+  })
+
+  it("retains pair defaults, per-endpoint bounds, labels, listeners and actual native form owners", async () => {
+    const form = document.createElement("form")
+    form.id = "pair-form"
+    const external = document.createElement("form"); external.id = "external-form"
+    document.body.append(form, external)
+    const slider = document.createElement("m-slider") as Slider
+    slider.range = true
+    slider.innerHTML = `<fieldset><legend>Endpoints</legend>
+      <label for="canonical-start">Start</label><input id="canonical-start" type="range" name="start" min="0" max="40" value="20" aria-describedby="canonical-help">
+      <label for="canonical-end">End</label><input id="canonical-end" type="range" name="end" form="external-form" min="50" max="100" value="80">
+      <p id="canonical-help">Help</p></fieldset>`
+    const controls = [...slider.querySelectorAll("input")]
+    const label = slider.querySelector("label")
+    const native = vi.fn(); controls[0]!.addEventListener("input", native)
+    form.append(slider)
+    expect(slider.error).toBeNull()
+    expect(slider.native).toEqual(controls)
+    expect(slider.labels[0]).toBe(label)
+    expect(slider.form).toBe(form)
+    slider.value = [99, 0]
+    expect(slider.value).toEqual([40, 50])
+    expect(slider.defaultValue).toEqual(["20", "80"])
+    form.reset(); await flush()
+    expect(slider.value).toEqual([20, 50])
+    external.reset(); await flush()
+    expect(slider.value).toEqual([20, 80])
+    slider.disabled = true
+    expect((slider.querySelector("fieldset") as HTMLFieldSetElement).disabled).toBe(true)
+    expect(controls[0]!.disabled).toBe(false)
+    expect(new FormData(form).has("start")).toBe(false)
+    slider.disabled = false
+    controls[0]!.dispatchEvent(new Event("input", { bubbles: true }))
+    expect(native).toHaveBeenCalledTimes(1)
+    expect(controls[0]!.getAttribute("aria-describedby")).toBe("canonical-help")
+    expect(slider.querySelector("label")).toBe(label)
+  })
+
+  it("shares event semantics: silent setters/reset, deduplicated native changes and one deferred pair commit", async () => {
+    const form = document.createElement("form"), slider = document.createElement("m-slider") as Slider
+    slider.range = true; slider.value = [20, 80]
+    form.append(slider); document.body.append(form)
+    const changes = vi.fn(), commits = vi.fn(), native = vi.fn()
+    slider.addEventListener("m:change", changes); slider.addEventListener("m:slider-pair-change", commits)
+    const controls = slider.native as readonly [HTMLInputElement, HTMLInputElement]
+    controls[0].addEventListener("input", native); controls[0].addEventListener("change", native)
+    slider.value = [90, 10]; form.reset(); await flush()
+    expect(changes).not.toHaveBeenCalled(); expect(commits).not.toHaveBeenCalled()
+    controls[0].value = "35"
+    controls[0].dispatchEvent(new Event("input", { bubbles: true }))
+    controls[0].dispatchEvent(new Event("change", { bubbles: true }))
+    expect(changes).toHaveBeenCalledTimes(1)
+    expect(commits).not.toHaveBeenCalled()
+    await flush()
+    expect(changes.mock.calls[0]![0].detail).toEqual({ value: [35, 80], ordered: true, index: 0 })
+    expect(commits.mock.calls[0]![0].detail).toEqual({ value: [35, 80], ordered: true, index: 0 })
+    expect(commits.mock.calls[0]![0].bubbles).toBe(false)
+    expect(native).toHaveBeenCalledTimes(2)
+    slider.stepUp()
+    expect(changes).toHaveBeenCalledTimes(2)
+    expect(native).toHaveBeenCalledTimes(2)
+    controls[0].dispatchEvent(new Event("change", { bubbles: true }))
+    slider.remove(); document.body.append(slider); await flush()
+    expect(commits).toHaveBeenCalledTimes(1)
+  })
+
+  it("keeps native default writes and canceled resets independent of live values", async () => {
+    const form = document.createElement("form"), slider = document.createElement("m-slider") as Slider
+    slider.range = true
+    form.append(slider); document.body.append(form)
+    slider.value = [25, 75]; slider.defaultValue = ["10", "90"]
+    expect(slider.value).toEqual([25, 75])
+    form.addEventListener("reset", event => event.preventDefault(), { once: true })
+    form.reset(); await flush()
+    expect(slider.value).toEqual([25, 75])
+    form.reset(); await flush()
+    expect(slider.value).toEqual([10, 90])
+    slider.name = "endpoint"
+    expect(new FormData(form).getAll("endpoint")).toEqual(["10", "90"])
+  })
+
+  it("retains authored native ARIA/direction unless explicitly mapped, and preserves later author edits", () => {
+    const slider = element(false, '<input type="range" aria-label="Original" aria-valuetext="Native annotation" aria-describedby="help" dir="rtl">')
+    const control = slider.native as HTMLInputElement
+    slider.min = 10
+    expect(control.getAttribute("aria-label")).toBe("Original")
+    expect(control.getAttribute("aria-valuetext")).toBe("Native annotation")
+    expect(control.getAttribute("aria-describedby")).toBe("help")
+    expect(control.dir).toBe("rtl")
+    slider.setAttribute("aria-label", "Mapped")
+    slider.removeAttribute("aria-label")
+    expect(control.getAttribute("aria-label")).toBe("Original")
+    slider.formatValue = value => `${value}%`
+    control.setAttribute("aria-valuetext", "Later author")
+    slider.remove()
+    expect(control.getAttribute("aria-valuetext")).toBe("Later author")
+  })
+
+  it("pre-upgrade replays range/value/constraints/defaults/formatValue before connection", () => {
+    const parsed = new DOMParser().parseFromString("<m-slider></m-slider>", "text/html")
+    const slider = parsed.querySelector("m-slider") as Slider
+    slider.range = true; slider.value = [25, 75]; slider.min = 10; slider.max = 90; slider.step = "any"
+    slider.defaultValue = ["15", "85"]; slider.formatValue = value => `${value}%`
+    expect(Object.hasOwn(slider, "range")).toBe(true)
+    document.body.append(document.adoptNode(slider))
+    expect(slider).toBeInstanceOf(Slider)
+    expect(slider.error).toBeNull()
+    expect(slider.value).toEqual([25, 75])
+    expect(slider.defaultValue).toEqual(["15", "85"])
+    expect(slider.step).toBe("any")
+    expect((slider.native as readonly HTMLInputElement[]).map(control => control.getAttribute("aria-valuetext"))).toEqual(["25%", "75%"])
+    expect(Object.hasOwn(slider, "range")).toBe(false)
+  })
+
+  it("reports unsupported readonly and invalid attribute gates, and explicitly recovers", () => {
+    const slider = element()
+    const errors = vi.fn(); slider.addEventListener("m:error", errors)
+    expect(() => slider.readonly = true).toThrow("readonly")
+    slider.setAttribute("readonly", "")
+    expect(slider.error).toContain("readonly")
+    expect(errors).toHaveBeenCalledTimes(1)
+    slider.readonly = false; slider.refresh()
+    expect(slider.error).toBeNull()
+    slider.setAttribute("step", "0")
+    expect(slider.error).toContain("step")
+    expect((slider.native as HTMLInputElement).step).toBe("1")
+    slider.step = "any"
+    expect(slider.error).toBeNull()
+    expect(() => slider.range = true).toThrow("materialized")
+  })
+
+  it("keeps the accepted element callback/value/constraints after callback rejection", () => {
+    const slider = element(true)
+    let rejectConstraint = false
+    slider.formatValue = (value, index) => {
+      if (value === 60 || rejectConstraint && index === 1) throw new Error("Reject preparation")
+      return `${value}%`
+    }
+    const accepted = slider.formatValue
+    expect(() => slider.formatValue = () => { throw new Error("Reject candidate") }).toThrow("Reject candidate")
+    expect(slider.formatValue).toBe(accepted)
+    expect(() => slider.value = [20, 60]).toThrow("Reject preparation")
+    expect(slider.value).toEqual([0, 100])
+    rejectConstraint = true
+    expect(() => slider.max = 60).toThrow("Reject preparation")
+    expect(slider.max).toBe(100)
+    expect(slider.hasAttribute("max")).toBe(false)
+    rejectConstraint = false
+    slider.value = [20, 80]
+    expect(slider.error).toBeNull()
+  })
+
+  it("gates stale connect callbacks and recovers without duplicate generated controls", () => {
+    const slider = document.createElement("m-slider") as Slider
+    const errors = vi.fn(); slider.addEventListener("m:error", errors)
+    let changed = false
+    slider.formatValue = value => {
+      if (!changed) { changed = true; slider.value = 90 }
+      return String(value)
+    }
+    document.body.append(slider)
+    expect(slider.error).toContain("superseded")
+    expect(errors).toHaveBeenCalledTimes(1)
+    slider.formatValue = undefined; slider.refresh()
+    expect(slider.error).toBeNull()
+    expect(slider.value).toBe(90)
+    expect(slider.querySelectorAll("input")).toHaveLength(1)
+  })
+
+  it("retains native focus, validity and ancestor fieldset disabling", () => {
+    const fieldset = document.createElement("fieldset")
+    const slider = document.createElement("m-slider") as Slider
+    slider.name = "level"
+    fieldset.append(slider); document.body.append(fieldset)
+    const control = slider.native as HTMLInputElement
+    slider.focus(); expect(document.activeElement).toBe(control)
+    slider.blur(); expect(document.activeElement).not.toBe(control)
+    expect(slider.checkValidity()).toBe(control.checkValidity())
+    expect(slider.reportValidity()).toBe(control.reportValidity())
+    control.setCustomValidity("Invalid level")
+    expect(slider.checkValidity()).toBe(false)
+    control.setCustomValidity("")
+    fieldset.disabled = true
+    expect(control.matches(":disabled")).toBe(true)
+    expect(slider.disabled).toBe(false)
+    slider.value = 70
+    expect(slider.value).toBe(70)
+    expect(slider.hasAttribute("role")).toBe(false)
+    expect(slider.hasAttribute("tabindex")).toBe(false)
+  })
+
+  it("reports replaced native controls and rebinds explicitly without duplicating listeners", async () => {
+    const slider = element()
+    const old = slider.native as HTMLInputElement
+    const replacement = old.cloneNode(false) as HTMLInputElement
+    const errors = vi.fn(), changes = vi.fn()
+    slider.addEventListener("m:error", errors); slider.addEventListener("m:change", changes)
+    old.replaceWith(replacement); await flush()
+    expect(slider.error).toContain("controls/order changed")
+    expect(errors).toHaveBeenCalledTimes(1)
+    slider.refresh()
+    expect(slider.native).toBe(replacement)
+    expect(slider.error).toBeNull()
+    replacement.value = "40"
+    replacement.dispatchEvent(new Event("input", { bubbles: true }))
+    expect(changes).toHaveBeenCalledTimes(1)
+  })
+
+  it("does not claim a nested Slider's native control", async () => {
+    const slider = element(false, '<m-slider id="nested-slider" value="25"></m-slider>')
+    const nested = slider.querySelector<Slider>("m-slider")!
+    expect(nested.error).toBeNull()
+    expect(nested.value).toBe(25)
+    expect(slider.value).toBe(0)
+    slider.value = 75; await flush()
+    expect(nested.value).toBe(25)
+    expect(slider.native).not.toBe(nested.native)
+  })
+
+  it("fails registration conflicts without replacing the existing constructor", () => {
+    const existing = class extends HTMLElement {}
+    const registry = { get: vi.fn(() => existing), define: vi.fn() }
+    expect(() => registerSlider(registry)).toThrow("different implementation")
+    expect(registry.define).not.toHaveBeenCalled()
+  })
+})

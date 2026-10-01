@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from "vitest"
 import { List, ListItem, ListTemplate, registerList } from "../src/components/list/index.js"
 import { Input } from "../src/components/input/index.js"
 import { Card } from "../src/components/card/index.js"
+import { Collapse } from "../src/components/collapse/index.js"
 import { bind, createStore, type Binding } from "../src/state/index.js"
 import { App } from "../src/components/foundation.js"
 import { readFileSync } from "node:fs"
@@ -124,6 +125,31 @@ describe("portable List template", () => {
     state.set("rows.0.name", "Changed")
     expect(cards[1]!.querySelector("[data-part=title]")!.textContent).toBe("Changed")
     for (const card of cards) expect(card.querySelectorAll("button[data-part=close]")).toHaveLength(1)
+  })
+
+  it("adopts captured Collapse owners and retains native drafts through keyed reorder and rebind", () => {
+    const { list, state, region } = fixture('<m-list-item><m-collapse><m-collapse-item key="one"><m-collapse-header>Section</m-collapse-header><m-collapse-content><input value="Source"></m-collapse-content></m-collapse-item></m-collapse></m-list-item>')
+    list.querySelector<Collapse>("m-collapse")!.expand("one")
+    expect(region.native.content.querySelector("details[open]")).not.toBeNull()
+    stop = bind(list, state)
+    const groups = [...list.querySelectorAll<Collapse>("m-collapse")]
+    const owners = groups.map(group => group.querySelector("details")!)
+    const fields = groups.map(group => group.querySelector("input")!)
+    for (const group of groups) {
+      expect(group.state).toBe("ready")
+      expect(group.expandedKeys).toEqual(["one"])
+      expect(group.querySelectorAll("summary")).toHaveLength(1)
+    }
+    fields[0]!.value = "Retained draft"
+    state.set("rows", [...state.get<{ id: string; name: string }[]>("rows")].reverse())
+    expect([...list.querySelectorAll("m-collapse")]).toEqual([...groups].reverse())
+    stop()
+    stop = bind(list, state)
+    expect(groups.map(group => group.querySelector("details"))).toEqual(owners)
+    expect(groups.map(group => group.querySelector("input"))).toEqual(fields)
+    expect(fields[0]!.value).toBe("Retained draft")
+    groups[0]!.collapse("one")
+    expect(groups[1]!.expandedKeys).toEqual(["one"])
   })
 
   it("requires an explicit focus policy and can focus the surviving list", () => {

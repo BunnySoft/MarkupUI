@@ -45,13 +45,7 @@
     <section data-demo-example="basic" aria-labelledby="basic-heading">
       <header data-demo-header><div><h2 id="basic-heading">Basic transfer</h2><p>Two-column transfer with source and target lists.</p></div></header>
       <div data-demo-preview>
-        <m-transfer id="basic-transfer" source-title="Source" target-title="Target">
-          <option value="item-1">Item 1</option>
-          <option value="item-2">Item 2</option>
-          <option value="item-3">Item 3</option>
-          <option value="item-4">Item 4</option>
-          <option value="item-5">Item 5</option>
-        </m-transfer>
+        <m-transfer id="basic-transfer" source-title="Source" target-title="Target"></m-transfer>
         <m-box margin="12 0 0 0">
           <m-p id="basic-status" role="status">Target members: none</m-p>
         </m-box>
@@ -59,51 +53,21 @@
     </section>
 
     <section data-demo-example="custom" aria-labelledby="custom-heading">
-      <header data-demo-header><div><h2 id="custom-heading">Custom titles and pre-selected items</h2><p>Custom source and target titles with pre-populated target members.</p></div></header>
+      <header data-demo-header><div><h2 id="custom-heading">Custom titles and target members</h2><p>Plain option data, ordered membership and independent native highlights use the same behavior owner.</p></div></header>
       <div data-demo-preview>
-        <m-transfer id="custom-transfer" source-title="Available permissions" target-title="Granted permissions">
-          <m-box data-transfer-columns>
-            <m-box data-transfer-pane data-pane="source">
-              <m-heading level="3" data-transfer-title="source">Available permissions</m-heading>
-              <label><input type="search" data-transfer-filter="source" placeholder="Filter permissions" aria-label="Filter source"></label>
-              <label><select data-transfer-source multiple size="6">
-                <option value="read">Read access</option>
-                <option value="write">Write access</option>
-                <option value="delete">Delete access</option>
-              </select></label>
-              <m-p data-transfer-count="source"></m-p>
-            </m-box>
-            <m-box data-transfer-actions>
-              <m-button data-transfer-action="add" aria-label="Move selected to target">→</m-button>
-              <m-button data-transfer-action="remove" aria-label="Move selected to source">←</m-button>
-              <m-button data-transfer-action="add-all" aria-label="Move all to target">⇥</m-button>
-              <m-button data-transfer-action="remove-all" aria-label="Move all to source">⇤</m-button>
-            </m-box>
-            <m-box data-transfer-pane data-pane="target">
-              <m-heading level="3" data-transfer-title="target">Granted permissions</m-heading>
-              <label><input type="search" data-transfer-filter="target" placeholder="Filter permissions" aria-label="Filter target"></label>
-              <label><select data-transfer-target multiple size="6">
-                <option value="admin">Admin access</option>
-              </select></label>
-              <m-p data-transfer-count="target"></m-p>
-            </m-box>
-          </m-box>
-        </m-transfer>
+        <m-transfer id="custom-transfer" source-title="Available permissions" target-title="Granted permissions"></m-transfer>
       </div>
     </section>
 
     <section data-demo-example="disabled" aria-labelledby="disabled-heading">
       <header data-demo-header><div><h2 id="disabled-heading">Disabled state</h2><p>Disabled transfer locks item movement and interaction.</p></div></header>
       <div data-demo-preview>
-        <m-transfer id="disabled-transfer" source-title="Source" target-title="Target" disabled>
-          <option value="locked-1">Locked Item 1</option>
-          <option value="locked-2">Locked Item 2</option>
-        </m-transfer>
+        <m-transfer id="disabled-transfer" source-title="Source" target-title="Target" disabled></m-transfer>
       </div>
     </section>
 
     <section data-demo-example="controller" aria-labelledby="controller-heading">
-      <header data-demo-header><div><h2 id="controller-heading">Native fieldset with controller</h2><p>Progressive enhancement for native multi-select elements via createTransfer.</p></div></header>
+      <header data-demo-header><div><h2 id="controller-heading">Native fieldset interoperability (Web)</h2><p>Progressive enhancement via createTransfer uses the same owner as m-transfer, not a second membership implementation.</p></div></header>
       <div data-demo-preview>
         <form id="members-form">
           <fieldset class="m-transfer" data-transfer data-transfer-name="members[]" data-transfer-required id="transfer">
@@ -168,6 +132,36 @@
     <section aria-labelledby="api-heading">
       <h2 id="api-heading">API</h2>
       <div id="transfer-api"><p>Loading API documentation.</p></div>
+    </section>
+    <section id="behavior" aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Membership, API and ownership</h2>
+      <p>Set property-only <code>options</code> with plain records containing a unique string
+        <code>value</code>, readable <code>label</code> and optional <code>disabled</code>.
+        Data is copied and validated; updates retain surviving native options and membership.
+        Empty data clears the lists. Native option/fieldset authoring is an explicit Web
+        interoperability path, not required portable markup.</p>
+      <p><code>value</code> is ordered target membership, not highlighted selection.
+        Writes update both native panes through the same controller without emitting
+        <code>m:change</code>. Unknown/duplicate keys and forbidden locked-member changes fail
+        before movement. <code>defaultValue</code> defines initial/reset membership;
+        later writes do not move members. Reset preserves locked members and reports
+        vanished defaults through readonly <code>state</code>.</p>
+      <p><code>moveToTarget</code>/<code>moveToSource</code> move explicit keys, or matching
+        staged options when omitted. Bulk methods use matching unlocked options.
+        Programmatic moves retain highlights and outside focus; successful movement
+        methods emit one <code>m:change</code>. Uncanceled native user actions emit the same
+        public event asynchronously. Highlights emit <code>m:stage</code> without changing membership.</p>
+      <p><code>name</code> serializes membership, not staging; native selects remain unnamed.
+        Configure it before connection or while disconnected. Automatic submission needs
+        native formdata support; <code>appendTo</code> provides explicit manual serialization.
+        <code>required</code> uses native membership validity. <code>disabled</code> disables
+        the fieldset without erasing authored control disables.</p>
+      <p>The element maps properties/data and creates or adopts its native fieldset.
+        <code>createTransfer</code> is the explicit native-Web entry to that same controller.
+        There is no separate button-list mode. Disconnect releases listeners, form ownership
+        and timers; reconnect retains nodes, highlights, membership and defaults.
+        <code>state</code> and methods need a connected owner; pending properties may be
+        assigned before connection. <code>native</code> is Web-only.</p>
     </section>
   </main>
 </body>

@@ -193,6 +193,7 @@
 
     <section aria-labelledby="api-heading">
       <h2 id="api-heading">API</h2>
+      <p>FloatButton <code>type</code> and <code>shape</code>, and FloatButtonGroup <code>shape</code>, reject invalid property assignments with <code>RangeError</code> before changing their attributes. Invalid markup remains readable as authored, but its enum getter throws and presentation synchronization reports a browser Custom Element error (observable through <code>window</code>'s <code>error</code> event). The invalid attribute's last valid presentation is retained, not accepted as the invalid value; other valid attributes still synchronize, and correcting or removing the invalid attribute resumes its synchronization.</p>
       <div id="float-button-api"><p>Loading API documentation.</p></div>
     </section>
   </main>

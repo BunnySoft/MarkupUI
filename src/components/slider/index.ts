@@ -1,6 +1,6 @@
 export { Slider } from "./slider-element.js"
 export { createSlider, createSliderPair } from "./slider.js"
-export type { SliderOptions, SliderController, SliderPairController, SliderPairChange } from "./slider.js"
+export type { SliderOptions, SliderController, SliderPairController, SliderPairChange, SliderValue, SliderDefaultValue, SliderStep } from "./slider.js"
 
 import { Slider } from "./slider-element.js"
 import { ViewElement } from "../../core/index.js"
@@ -10,4 +10,3 @@ export function registerSlider(registry: Pick<CustomElementRegistry, "get" | "de
 }
 
 if (typeof customElements !== "undefined") registerSlider()
-

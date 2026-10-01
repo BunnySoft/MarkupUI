@@ -45,12 +45,12 @@
       <header data-demo-header>
         <div>
           <h2 id="basic-title">Basic Usage</h2>
-          <p>Standard 6-digit one-time passcode entry with change and completion detection.</p>
+          <p>Standard 6-digit entry. Native input/change events bubble; completion is a guarded local transition, not authentication.</p>
         </div>
       </header>
       <div data-demo-preview>
-        <m-input-otp id="basic-otp"></m-input-otp>
-        <m-p id="basic-status">Current value: (empty)</m-p>
+        <m-input-otp id="basic-otp" name="code" aria-label="Six-digit code"></m-input-otp>
+        <m-p id="basic-status">0 native characters entered.</m-p>
         <m-p id="complete-status">Status: Incomplete</m-p>
         <m-box class="demo-tools">
           <m-button id="clear-basic">Clear</m-button>
@@ -68,7 +68,7 @@
       </header>
       <div data-demo-preview>
         <m-text>4-digit masked code:</m-text>
-        <m-input-otp id="mask-otp" length="4" mask value="1234"></m-input-otp>
+        <m-input-otp id="mask-otp" length="4" mask value="1234" aria-label="Four-digit masked code"></m-input-otp>
         <m-box class="demo-tools">
           <m-button id="toggle-mask">Toggle Mask</m-button>
         </m-box>
@@ -84,15 +84,78 @@
       </header>
       <div data-demo-preview>
         <m-box class="demo-row">
-          <m-input-otp size="small" value="123456"></m-input-otp>
-          <m-input-otp size="medium" value="123456"></m-input-otp>
-          <m-input-otp size="large" value="123456"></m-input-otp>
+          <m-input-otp size="small" value="123456" aria-label="Small code field"></m-input-otp>
+          <m-input-otp size="medium" value="123456" aria-label="Medium code field"></m-input-otp>
+          <m-input-otp size="large" value="123456" aria-label="Large code field"></m-input-otp>
         </m-box>
-        <m-input-otp id="disabled-otp" disabled value="654321"></m-input-otp>
+        <m-input-otp id="disabled-otp" disabled value="654321" aria-label="Disabled sample code"></m-input-otp>
         <m-box class="demo-tools">
           <m-button id="toggle-disabled">Toggle Disabled</m-button>
         </m-box>
       </div>
+    </section>
+
+    <section data-demo-example="alphanumeric" aria-labelledby="alphanumeric-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="alphanumeric-title">Alphanumeric preset</h2>
+          <p>The preset accepts ASCII letters and digits without uppercasing, stripping leading zeroes or rewriting invalid drafts.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-input-otp length="8" characters="alphanumeric" value="0aB1cD2e" aria-label="Eight-character code"></m-input-otp>
+      </div>
+    </section>
+
+    <section data-demo-example="native-form" aria-labelledby="native-form-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="native-form-title">Native Web adoption and reset</h2>
+          <p>This explicit Web example keeps the original input, native label, name, default, ARIA, listeners and form association.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <form id="otp-form">
+          <label for="authored-code">Four-character code</label>
+          <m-input-otp id="authored-otp">
+            <input id="authored-code" name="code[0].text" type="text" maxlength="4" pattern="[A-Za-z0-9]{4}" autocomplete="section-login one-time-code" inputmode="text" value="0aB1" required aria-describedby="authored-help">
+          </m-input-otp>
+          <p id="authored-help">Reset restores the native default. Editing is entirely native.</p>
+          <button type="reset">Reset native form</button>
+        </form>
+        <p id="form-status"></p>
+      </div>
+    </section>
+
+    <section data-demo-example="enhancement" aria-labelledby="enhancement-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="enhancement-title">Native Web enhancement</h2>
+          <p><code>createInputOtp</code> uses exactly the same owner as the element. It needs matching native anatomy; it does not generate or edit a field.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <label for="enhance-code">Four-digit native code</label>
+        <input id="enhance-code" class="m-input-otp" type="text" maxlength="4" pattern="[0-9]{4}" autocomplete="one-time-code" inputmode="numeric">
+        <p id="enhance-status" class="m-input-otp-status">Native status</p>
+      </div>
+      <pre><code>const owner = MarkupUIInputOtp.createInputOtp(input, { length: 4, status })
+// Explicit schema updates retain live/default values and native identity.
+owner.configure({ length: 6, characters: "alphanumeric" })
+owner.disconnect()</code></pre>
+    </section>
+
+    <section aria-labelledby="behavior-title">
+      <h2 id="behavior-title">Value, events and lifecycle</h2>
+      <ul>
+        <li>There is one native input, not a group of mirrored digit cells. Native paste, selection, keyboard navigation, autofill and IME are untouched; there is no paste distribution or focus-moving engine.</li>
+        <li><code>value</code> reads the actual native draft. Setting it or calling <code>clear()</code> is silent and never truncates scripted values. The <code>value</code> attribute and <code>defaultValue</code> property set the reset default, respecting native dirty-value semantics.</li>
+        <li>Native <code>input</code>/<code>change</code> replace the old value-carrying <code>m:change</code> event. The sole completion event is <code>m:input-otp-complete</code>, bubbling from the native field with frozen <code>{ length, characters }</code> metadata. It replaces <code>m:complete</code>; no alias or passcode payload remains. Read <code>value</code> explicitly if needed.</li>
+        <li>Completion waits until composition and the current event task settle, includes native/custom validity, and is deduplicated until the code becomes incomplete. Complete-to-complete replacements, programmatic writes, defaults, reset, refresh and schema changes do not emit completion. Disabled, readonly, hidden and inert fields do not notify.</li>
+        <li><code>length</code> is an integer from 1 to 12 (default 6), counted in native UTF-16 code units. <code>characters</code> selects digits (default) or alphanumeric ASCII. Invalid drafts, Unicode and combining sequences stay intact. An authored native pattern or explicit <code>pattern</code> is a Web constraint override; null restores the ASCII preset. Invalid typed data and malformed pattern syntax fail explicitly.</li>
+        <li>Length/preset/pattern updates configure the same owner and preserve native value, default, selection and focus. Text/password masking is live. Other direct native structural changes invalidate and disconnect the owner; restore valid anatomy and call <code>connect()</code> explicitly. <code>refresh()</code> never silently creates another owner.</li>
+        <li>Removal cancels pending completion and releases listeners, observers and status/presentation leases. Reconnection adopts the same input and current defaults. Optional <code>status</code> is a Web-only original plain nonlive node, changed while disconnected. Native names/FormData, labels, authored ARIA and listeners remain native; the host is not another focusable field.</li>
+      </ul>
     </section>
 
     <section aria-labelledby="api-heading">

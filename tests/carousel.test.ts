@@ -397,6 +397,23 @@ describe("Carousel current/default/native command contract", () => {
 })
 
 describe("direct Carousel requests, properties and lifetime", () => {
+  it("keeps component direction and slide gap independent from the shared presentation descriptor", () => {
+    const { element, viewport } = elementFixture({ direction: "vertical", gap: 20, smooth: false })
+    element.viewStyle = { display: "flex", direction: "row", gap: 6, padding: 8 }
+    expect(element.direction).toBe("vertical")
+    expect(element.gap).toBe(20)
+    expect(element.getAttribute("direction")).toBe("vertical")
+    expect(element.getAttribute("gap")).toBe("20")
+    expect(element.state.direction).toBe("vertical")
+    expect(viewport.style.gap).toBe("20px")
+    expect(element.viewStyle).toMatchObject({ direction: "row", gap: "6px", padding: "8px" })
+    element.remove()
+    document.body.append(element)
+    expect(element.direction).toBe("vertical")
+    expect(element.gap).toBe(20)
+    expect(element.style.flexDirection).toBe("row")
+  })
+
   it("validates typed setters before reflecting them", () => {
     const element = document.createElement("m-carousel") as Carousel
     expect(element.currentIndex).toBe(0)
@@ -700,6 +717,128 @@ describe("Carousel opt-in autoplay lifetime", () => {
     expect(scroll.mock.calls.at(-1)![0].behavior).toBe("instant")
     vi.advanceTimersByTime(5000); expect(helper.getCurrentIndex()).toBe(0)
   })
+
+  it("cancels an in-flight automatic move when the public autoplay property is turned off", () => {
+    const { element, viewport, defer, finish } = elementFixture({ autoplay: true, interval: 1000 })
+    const changed = vi.fn()
+    element.addEventListener("m:current-changed", changed)
+    defer()
+    vi.advanceTimersByTime(1000)
+    expect(element.state.targetIndex).toBe(1)
+    element.autoplay = false
+    expect(element.currentIndex).toBe(0)
+    expect(element.state.targetIndex).toBeNull()
+    expect(viewport.scrollLeft).toBe(0)
+    expect(element.state.pauseReasons).toContain("not-enabled")
+    vi.advanceTimersByTime(5000)
+    expect(changed).not.toHaveBeenCalled()
+    element.autoplay = true
+    vi.advanceTimersByTime(999)
+    expect(element.state.targetIndex).toBeNull()
+    vi.advanceTimersByTime(1)
+    expect(element.state.targetIndex).toBe(1)
+    finish(1)
+    expect(changed).toHaveBeenCalledOnce()
+    expect(changed.mock.calls[0]![0].detail.reason).toBe("autoplay")
+  })
+
+  it("cancels an in-flight automatic move when reduced motion becomes active", () => {
+    const { helper, viewport, root, defer } = fixture({ autoplay: true, interval: 1000 })
+    const changed = vi.fn()
+    root.addEventListener("m:current-changed", changed)
+    defer()
+    vi.advanceTimersByTime(1000)
+    expect(helper.state.targetIndex).toBe(1)
+    media.matches = true
+    media.dispatchEvent(new Event("change"))
+    expect(helper.getCurrentIndex()).toBe(0)
+    expect(helper.state.targetIndex).toBeNull()
+    expect(viewport.scrollLeft).toBe(0)
+    expect(helper.state.pauseReasons).toContain("reduced-motion")
+    vi.advanceTimersByTime(5000)
+    expect(changed).not.toHaveBeenCalled()
+    helper.next()
+    expect(helper.getCurrentIndex()).toBe(1)
+    expect(changed).toHaveBeenCalledOnce()
+    expect(changed.mock.calls[0]![0].detail.reason).toBe("api")
+  })
+
+  it("does not finish a pending automatic target when reconfiguration finds the rotation control hidden", () => {
+    const { helper, toggle, root, defer } = fixture({ autoplay: true, interval: 1000 })
+    const changed = vi.fn()
+    root.addEventListener("m:current-changed", changed)
+    defer()
+    vi.advanceTimersByTime(1000)
+    toggle.style.display = "none"
+    helper.set({ gap: 20 })
+    expect(helper.getCurrentIndex()).toBe(0)
+    expect(helper.state.targetIndex).toBeNull()
+    expect(helper.state.pauseReasons).toContain("rotation-control")
+    vi.advanceTimersByTime(5000)
+    expect(changed).not.toHaveBeenCalled()
+  })
+
+  it("does not finish a pending automatic wrap after looping is disabled at the last item", () => {
+    const { helper, root, defer, finish } = fixture({ autoplay: true, interval: 1000 })
+    helper.to(2)
+    finish(2)
+    const changed = vi.fn()
+    root.addEventListener("m:current-changed", changed)
+    defer()
+    vi.advanceTimersByTime(1000)
+    expect(helper.state.targetIndex).toBe(0)
+    helper.set({ loop: false })
+    expect(helper.getCurrentIndex()).toBe(2)
+    expect(helper.state.targetIndex).toBeNull()
+    expect(helper.state.pauseReasons).toContain("boundary")
+    vi.advanceTimersByTime(5000)
+    expect(changed).not.toHaveBeenCalled()
+  })
+
+  it("still completes a pending manual move instantly when reduced motion becomes active", () => {
+    const { helper, root, defer } = fixture({ autoplay: true, interval: 1000 })
+    const changed = vi.fn()
+    root.addEventListener("m:current-changed", changed)
+    defer()
+    helper.to(2)
+    media.matches = true
+    media.dispatchEvent(new Event("change"))
+    expect(helper.getCurrentIndex()).toBe(2)
+    expect(helper.state.targetIndex).toBeNull()
+    expect(changed).toHaveBeenCalledOnce()
+    expect(changed.mock.calls[0]![0].detail.reason).toBe("api")
+    vi.advanceTimersByTime(5000)
+    expect(changed).toHaveBeenCalledOnce()
+  })
+
+  it.each([
+    { rtl: false, position: 160, nearest: 0 },
+    { rtl: false, position: 260, nearest: 1 },
+    { rtl: true, position: -160, nearest: 0 },
+    { rtl: true, position: -260, nearest: 1 },
+  ])("cancels an automatic target at the native position and settles quietly: %j", ({ rtl, position, nearest }) => {
+    const { helper, viewport, root, defer } = fixture({ autoplay: true, interval: 1000 })
+    if (rtl) {
+      viewport.style.direction = "rtl"
+      helper.refresh()
+    }
+    const changed = vi.fn()
+    root.addEventListener("m:current-changed", changed)
+    defer()
+    vi.advanceTimersByTime(1000)
+    viewport.scrollLeft = position
+    helper.set({ autoplay: false })
+    expect(helper.state.targetIndex).toBeNull()
+    expect(viewport.scrollLeft).toBe(position)
+    expect(changed).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(180)
+    expect(helper.getCurrentIndex()).toBe(nearest)
+    expect(changed).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(5000)
+    expect(helper.getCurrentIndex()).toBe(nearest)
+    expect(changed).not.toHaveBeenCalled()
+  })
+
   it("disables without disabling slide fields and cancels all observer/timer work", () => {
     const { helper, root } = fixture({ autoplay: true, interval: 1000, smooth: false })
     const observer = Resize.instances.at(-1)!

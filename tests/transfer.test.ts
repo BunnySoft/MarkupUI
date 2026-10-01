@@ -401,7 +401,7 @@ describe("canonical Transfer ViewElement", () => {
     expect(Transfer.tag).toBe("m-transfer")
     expect(ViewElement.prototype.isPrototypeOf(Transfer.prototype)).toBe(true)
     expect(customElements.get("m-transfer")).toBe(Transfer)
-    expect(Transfer.observedAttributes).toEqual(["source-title", "target-title", "disabled"])
+    expect(Transfer.observedAttributes).toEqual(["source-title", "target-title", "disabled", "name", "required"])
 
     const define = vi.fn()
     expect(() => registerTransfer({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
@@ -528,6 +528,7 @@ describe("canonical Transfer ViewElement", () => {
     expect(event1.composed).toBe(false)
 
     // Select item 1 in target, moveToSource
+    for (const option of targetSelect.options) option.selected = false
     targetSelect.options[0]!.selected = true
     element.moveToSource()
 
@@ -553,7 +554,7 @@ describe("canonical Transfer ViewElement", () => {
     expect(change.mock.calls[3]![0].detail).toEqual({ value: [] })
   })
 
-  it("triggers moves via action buttons in the DOM", () => {
+  it("triggers accepted moves via action buttons in the DOM", async () => {
     const element = document.createElement("m-transfer") as Transfer
     element.innerHTML = `
       <option value="a">A</option>
@@ -567,10 +568,12 @@ describe("canonical Transfer ViewElement", () => {
     const removeAllBtn = element.querySelector<HTMLButtonElement>("button[data-transfer-action='remove-all']")!
 
     addAllBtn.click()
+    await wait()
     expect(targetSelect.options).toHaveLength(2)
     expect(sourceSelect.options).toHaveLength(0)
 
     removeAllBtn.click()
+    await wait()
     expect(sourceSelect.options).toHaveLength(2)
     expect(targetSelect.options).toHaveLength(0)
   })
@@ -609,8 +612,8 @@ describe("canonical Transfer ViewElement", () => {
     const targetSelect = element.querySelector<HTMLSelectElement>("select[data-transfer-target]")!
     const addBtn = element.querySelector<HTMLButtonElement>("button[data-transfer-action='add']")!
 
-    expect(sourceSelect.disabled).toBe(true)
-    expect(targetSelect.disabled).toBe(true)
+    expect(sourceSelect.matches(":disabled")).toBe(true)
+    expect(targetSelect.matches(":disabled")).toBe(true)
     expect(addBtn.disabled).toBe(true)
 
     const change = vi.fn()
@@ -626,13 +629,134 @@ describe("canonical Transfer ViewElement", () => {
 
     // Enable again
     element.disabled = false
-    expect(sourceSelect.disabled).toBe(false)
-    expect(targetSelect.disabled).toBe(false)
+    expect(sourceSelect.matches(":disabled")).toBe(false)
+    expect(targetSelect.matches(":disabled")).toBe(false)
+    sourceSelect.dispatchEvent(new Event("change", { bubbles: true }))
     expect(addBtn.disabled).toBe(false)
 
     element.moveToTarget()
     expect(targetSelect.options).toHaveLength(1)
     expect(change).toHaveBeenCalledTimes(1)
+  })
+
+  it.each(["data", "authored"])("uses one owner and applies value writes to actual membership: %s", mode => {
+    const element = new Transfer()
+    if (mode === "data") element.options = [{ value: "a", label: "Alpha" }, { value: "b", label: "Beta" }]
+    else element.innerHTML = '<option value="a">Alpha</option><option value="b">Beta</option>'
+    document.body.append(element)
+    const change = vi.fn()
+    element.addEventListener("m:change", change)
+    expect(() => createTransfer(element.native!)).toThrow("unowned")
+    element.value = ["b", "a"]
+    expect(element.value).toEqual(["b", "a"])
+    expect([...element.native!.querySelector<HTMLSelectElement>("[data-transfer-target]")!.options].map(option => option.value)).toEqual(["b", "a"])
+    expect(Object.isFrozen(element.value)).toBe(true)
+    expect(change).not.toHaveBeenCalled()
+    expect(() => { element.value = ["missing"] }).toThrow("known")
+    expect(element.value).toEqual(["b", "a"])
+  })
+
+  it("copies and validates data before replacing options and retains surviving native identities", () => {
+    const element = new Transfer()
+    const data = [{ value: "a", label: "Alpha" }, { value: "b", label: "Beta" }]
+    element.options = data
+    document.body.append(element)
+    const a = element.native!.querySelector<HTMLOptionElement>('option[value="a"]')!
+    a.selected = true
+    element.value = ["a"]
+    data[0]!.label = "External mutation"
+    expect(element.options[0]!.label).toBe("Alpha")
+    expect(Object.isFrozen(element.options)).toBe(true)
+    const invalid: unknown[] = [null, {}, [{ value: "a", label: "" }], [{ value: "a", label: "A" }, { value: "a", label: "Again" }], Array(1)]
+    for (const value of invalid) {
+      expect(() => Reflect.set(element, "options", value)).toThrow()
+      expect(element.native!.querySelector('option[value="a"]')).toBe(a)
+    }
+    element.options = [{ value: "a", label: "Updated" }, { value: "c", label: "Gamma" }]
+    expect(element.native!.querySelector('option[value="a"]')).toBe(a)
+    expect(a.selected).toBe(true)
+    expect(a.label).toBe("Updated")
+    expect(element.value).toEqual(["a"])
+    expect(element.native!.querySelector('option[value="b"]')).toBeNull()
+  })
+
+  it("retains defaults, missing keys, staged flags and options through owner reconnect", () => {
+    const element = new Transfer()
+    element.options = [{ value: "a", label: "Alpha" }, { value: "b", label: "Beta" }, { value: "lock", label: "Locked", disabled: true }]
+    element.defaultValue = ["lock", "a"]
+    document.body.append(element)
+    const root = element.native
+    const a = root!.querySelector<HTMLOptionElement>('option[value="a"]')!
+    a.defaultSelected = true
+    element.value = ["lock", "b"]
+    expect(() => { element.value = ["b"] }).toThrow("locked")
+    element.reset()
+    expect(element.value).toEqual(["lock", "a"])
+    expect(element.state.stagedTarget).toEqual(["a"])
+    element.options = [{ value: "b", label: "Beta" }, { value: "lock", label: "Locked", disabled: true }]
+    expect(element.state.missingDefaults).toEqual(["a"])
+    element.remove()
+    expect(() => element.moveAllToTarget()).toThrow("not connected")
+    document.body.append(element)
+    expect(element.native).toBe(root)
+    expect(element.defaultValue).toEqual(["lock", "a"])
+    expect(element.state.missingDefaults).toEqual(["a"])
+    element.reset()
+    expect(element.value).toEqual(["lock"])
+  })
+
+  it("delegates membership validity and serialization while leaving staging unnamed", () => {
+    eventSupport()
+    const form = document.createElement("form")
+    const element = new Transfer()
+    element.options = [{ value: "a", label: "Alpha" }]
+    element.name = "members[]"
+    element.required = true
+    form.append(element)
+    document.body.append(form)
+    expect(element.state.valid).toBe(false)
+    expect(form.checkValidity()).toBe(false)
+    element.value = ["a"]
+    expect(element.state.valid).toBe(true)
+    expect([...element.native!.querySelectorAll<HTMLSelectElement>("select")].every(select => !select.name && !select.required)).toBe(true)
+    const data = new FormData(form)
+    form.dispatchEvent(new FormDataEvent("formdata", { formData: data }))
+    expect(data.getAll("members[]")).toEqual(["a"])
+    expect(() => { element.name = "changed" }).toThrow("Disconnect")
+    expect(element.name).toBe("members[]")
+    element.remove()
+    element.name = "changed"
+    form.append(element)
+    const next = new FormData(form)
+    form.dispatchEvent(new FormDataEvent("formdata", { formData: next }))
+    expect(next.has("members[]")).toBe(false)
+    expect(next.getAll("changed")).toEqual(["a"])
+  })
+
+  it("keeps native staging separate and forwards a single accepted user membership event", async () => {
+    const element = new Transfer()
+    element.options = [{ value: "a", label: "Alpha" }, { value: "b", label: "Beta" }]
+    document.body.append(element)
+    const change = vi.fn(), stage = vi.fn()
+    element.addEventListener("m:change", change)
+    element.addEventListener("m:stage", stage)
+    const source = element.native!.querySelector<HTMLSelectElement>("[data-transfer-source]")!
+    source.options[0]!.selected = true
+    source.dispatchEvent(new Event("change", { bubbles: true }))
+    expect(stage).toHaveBeenCalledOnce()
+    expect(element.value).toEqual([])
+    const add = element.native!.querySelector<HTMLButtonElement>('[data-transfer-action="add"]')!
+    element.addEventListener("click", event => event.preventDefault(), { once: true })
+    add.click()
+    await wait()
+    expect(change).not.toHaveBeenCalled()
+    add.click()
+    await wait()
+    expect(change).toHaveBeenCalledOnce()
+    expect(change.mock.calls[0]![0].detail.value).toEqual(["a"])
+    const data = new FormData()
+    expect(element.appendTo(data, "members")).toBe(1)
+    expect(data.getAll("members")).toEqual(["a"])
   })
 
   it("exposes MarkupUITransfer global", async () => {
@@ -670,4 +794,3 @@ describe("canonical Transfer ViewElement", () => {
     expect(demoHtml).toContain('id="transfer-api"')
   })
 })
-

@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-date-picker.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
@@ -17,6 +18,7 @@
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-date-picker.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
   <script type="module" src="./date-picker.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -25,7 +27,7 @@
 <body>
   <main data-demo-page class="component-docs">
     <h1>Date Picker</h1>
-    <p>A component for selecting dates, times, and date ranges with native calendar and wall-clock support.</p>
+    <p>All seven date, local datetime, range, month, integer year and quarter modes share one native editing, validation and form owner.</p>
     <nav class="component-docs-nav" aria-label="Date Picker documentation">
       <a href="#basic-title">Examples</a>
       <a href="#required-files">Setup</a>
@@ -47,7 +49,7 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-date-picker id="basic-picker" placeholder="Select a date"></m-date-picker>
+        <m-date-picker id="basic-picker" aria-label="Planning date" placeholder="Select a date"></m-date-picker>
         <m-p id="basic-value">Selected date: None</m-p>
       </div>
     </section>
@@ -60,7 +62,7 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-date-picker id="datetime-picker" type="datetime" placeholder="Select date and time"></m-date-picker>
+        <m-date-picker id="datetime-picker" type="datetime" aria-label="Appointment" step="0.001" value="2026-09-30T18:30:45.500"></m-date-picker>
       </div>
     </section>
 
@@ -68,11 +70,13 @@
       <header data-demo-header>
         <div>
           <h2 id="range-title">Date Range</h2>
-          <p>Range selection with start and end date endpoints.</p>
+          <p>Two native endpoints retain partial and reversed values. JavaScript uses a two-string tuple; markup defaults use the same tuple as JSON.</p>
         </div>
       </header>
       <div data-demo-preview>
-        <m-date-picker id="range-picker" type="daterange"></m-date-picker>
+        <m-date-picker id="range-picker" type="daterange" aria-label="Stay" value='["2026-09-30","2026-10-02"]' clearable></m-date-picker>
+        <m-date-picker id="datetime-range-picker" type="datetimerange" aria-label="Local interval"
+          value='["2026-09-30T18:30","2026-10-01T09:00"]' step="0.001" clearable></m-date-picker>
       </div>
     </section>
 
@@ -84,8 +88,9 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-date-picker id="clearable-picker" value="2026-09-13" clearable></m-date-picker>
-        <m-date-picker id="disabled-picker" value="2026-09-13" disabled></m-date-picker>
+        <m-date-picker id="clearable-picker" aria-label="Clearable date" value="2026-09-13" clearable></m-date-picker>
+        <m-date-picker id="disabled-picker" aria-label="Disabled date" value="2026-09-13" disabled></m-date-picker>
+        <m-date-picker id="readonly-picker" aria-label="Read-only quarter" type="quarter" value="2026-Q3" readonly clearable></m-date-picker>
         <m-button id="toggle-disabled">Toggle Disabled</m-button>
       </div>
     </section>
@@ -94,14 +99,66 @@
       <header data-demo-header>
         <div>
           <h2 id="modes-title">Month, Year, and Quarter</h2>
-          <p>Alternative picker modes for different calendar granularities.</p>
+          <p>Month keeps its native YYYY-MM string. Year uses a native number field with integer values 1-9999; quarter uses bounded YYYY-Q1 through YYYY-Q4 text, without a Date or timezone conversion.</p>
         </div>
       </header>
       <div data-demo-preview>
-        <m-date-picker id="month-picker" type="month"></m-date-picker>
-        <m-date-picker id="year-picker" type="year"></m-date-picker>
-        <m-date-picker id="quarter-picker" type="quarter"></m-date-picker>
+        <m-date-picker id="month-picker" type="month" aria-label="Accounting month" value="2026-09"></m-date-picker>
+        <m-date-picker id="year-picker" type="year" aria-label="Accounting year" value="2026" placeholder="YYYY" clearable></m-date-picker>
+        <m-date-picker id="quarter-picker" type="quarter" aria-label="Accounting quarter" value="2026-Q3" placeholder="YYYY-Q1" clearable></m-date-picker>
       </div>
+    </section>
+
+    <section data-demo-example="forms" aria-labelledby="forms-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="forms-title">Native validation and reset</h2>
+          <p>The generated native fields submit their own names and defaults. Required and quarter syntax block ordinary native submission; manual FormData construction does not validate.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-form id="planning-form">
+          <m-date-picker id="form-date-picker" aria-label="Required planning date" name="date" value="2026-09-30" required clearable></m-date-picker>
+          <m-date-picker id="form-year-picker" type="year" aria-label="Required planning year" name="year" value="2026" required clearable></m-date-picker>
+          <m-date-picker id="form-quarter-picker" type="quarter" aria-label="Required planning quarter" name="quarter" value="2026-Q3" required clearable></m-date-picker>
+          <m-button attr-type="submit">Submit values</m-button>
+          <m-button attr-type="reset">Reset defaults</m-button>
+        </m-form>
+        <m-p id="form-result" role="status">No submission yet.</m-p>
+      </div>
+    </section>
+
+    <section aria-labelledby="behavior-title">
+      <h2 id="behavior-title">Values, drafts and lifecycle</h2>
+      <p><code>value</code> is live native state, not the host attribute. <code>defaultValue</code> and the host <code>value</code> attribute configure reset defaults; native dirty flags decide whether a default update also changes the live field. Both programmatic setters are silent and validate the whole incoming model before mutation. Invalid dates, null, Date objects, epoch values, invalid quarters and out-of-domain years throw; they are not sanitized into a successful empty value.</p>
+      <table>
+        <thead><tr><th>Mode</th><th>Canonical application value</th><th>Empty value</th></tr></thead>
+        <tbody>
+          <tr><td>date / month</td><td><code>YYYY-MM-DD</code> / <code>YYYY-MM</code>, years 0001-9999</td><td><code>""</code></td></tr>
+          <tr><td>datetime</td><td>Local <code>YYYY-MM-DDTHH:mm</code>, optional seconds and 1-3 fractional digits; native zero-second serialization may shorten it</td><td><code>""</code></td></tr>
+          <tr><td>daterange / datetimerange</td><td>Readonly two-string tuple; either endpoint may be empty. No comma/slash alias, sorting or linked bounds</td><td><code>["", ""]</code></td></tr>
+          <tr><td>year</td><td>Integer <code>1</code> through <code>9999</code>; markup/form serialization is number text</td><td><code>""</code></td></tr>
+          <tr><td>quarter</td><td><code>YYYY-Q1</code> through <code>YYYY-Q4</code>, years 0001-9999</td><td><code>""</code></td></tr>
+        </tbody>
+      </table>
+      <p>Native user drafts remain editable. An incomplete/invalid quarter or year has <code>value === null</code>, <code>state.badInput === true</code> and the actual native string in <code>state.draft</code>; there is no hidden last-valid host cache. Quarter pattern and year min/max/integer step own native form validity. <code>state.nativeValid</code> reflects native eligibility: readonly/disabled fields may be barred from validation, but their invalid draft still stays null/badInput. <code>state.partial</code>, <code>complete</code> and <code>ordered</code> distinguish partial/reversed ranges; ordering is informational, not a second form validation engine.</p>
+      <p>Original native <code>input</code> and <code>change</code> events bubble unchanged. Accepted user values emit one deduplicated <code>m:change</code> across input/change; invalid or composing entries expose <code>m:date-picker-draft</code>, not a fabricated valid commit. IME commits settle after composition. Explicit <code>clear()</code> emits a native input/change pair per changed endpoint and one clear notification; readonly/disabled eligibility is all-or-nothing. Programmatic writes, refresh, configuration and native reset do not emit editing events.</p>
+      <pre><code>picker.value = ["2026-09-30", ""]; // silent partial range, not a reset default
+picker.defaultValue = ["2026-09-30", "2026-10-02"];
+picker.configure({
+  type: "quarter",
+  value: "2026-Q4",
+  defaultValue: "2026-Q3"
+}); // explicit replacement of schema AND live/default values</code></pre>
+      <p>After initialization, changing <code>type</code> requires <code>configure({ type, value, defaultValue })</code>; incompatible incoming models or native constraints fail before a schema change. Renderer-generated cardinality changes retain the first native field and reuse the second when needed. Authored endpoint cardinality is fixed, so source nodes are never implicitly removed. Scalar hints and settings retain native edits, defaults and focus. Disconnect cancels queued clears/resets and restores only owned mappings; reconnect reuses native nodes and values.</p>
+    </section>
+
+    <section aria-labelledby="native-title">
+      <h2 id="native-title">Native Web interoperability and accessibility</h2>
+      <p>The public <code>native</code> array exposes stable editing, validation, focus and form owners. Authored input ids, labels, names, form associations, listeners, ARIA and custom validity are retained. Put external labels on actual native input ids (the custom-element host is not a labelable form control), or supply host <code>aria-label</code>/<code>aria-labelledby</code>. Host name/form/required/readonly/disabled/min/max/step map to the fields; removing a mapping restores authored settings. Native disabled fieldsets and first-legend exceptions remain authoritative. The host gains no extra tab stop or synthetic focus proxy.</p>
+      <p>Native-only <code>createDatePicker(root, options)</code> remains an explicit Web entry into this same owner: one or two labelled <code>data-date-control</code> inputs inside <code>data-date-picker</code>, with optional initially hidden clear/readout nodes. It retains native date, month, ISO week and local datetime pairs; use explicit <code>{ type: "year" }</code> for one number input or <code>{ type: "quarter" }</code> for one text input. It does not register other elements, add hidden form fields or install a calendar fallback. Unsupported native date modes fail clearly. Year bounds may be narrowed within 1–9999; quarter uses its fixed native pattern, not text min/max.</p>
+      <p><code>format</code> is a retained hint only. It never parses format tokens, converts display text, truncates precision or overrides native locale UI. Native min/max/step and application custom validity stay authoritative. Ordinary field focus/blur and native calendar activation are preserved; no implicit showPicker call or custom calendar is added.</p>
+      <p>DatePicker itself needs only core, its selected family and CSS. Form, Button and Typography assets on this page are extra example selections. Styling uses external theme tokens and the existing native-control skin, including forced colors and print states.</p>
     </section>
 
     <section aria-labelledby="api-heading">

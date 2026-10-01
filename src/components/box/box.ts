@@ -33,15 +33,13 @@ export class Box extends ViewElement {
       this.upgraded = true
       this.upgradeProperties()
     }
-    this.syncStyles()
   }
 
   public disconnectedCallback(): void {
   }
 
-  public attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null): void {
-    if (oldValue === newValue || !this.isConnected) return
-    this.syncStyles()
+  public attributeChangedCallback(name: string, _oldValue: string | null, newValue: string | null): void {
+    this.syncLayoutStyle(name, newValue)
   }
 
   public get display(): BoxDisplay | null {
@@ -77,6 +75,7 @@ export class Box extends ViewElement {
   }
   public set wrap(val: boolean) {
     this.setBooleanAttribute("wrap", val)
+    this.syncLayoutStyle("wrap", val ? "" : null)
   }
 
   public get gap(): string | null {
@@ -135,9 +134,6 @@ export class Box extends ViewElement {
     this.setStringAttribute("border-radius", val)
   }
 
-  private syncStyles(): void {
-    this.syncAllLayoutStyles()
-  }
 }
 
 /**

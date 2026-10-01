@@ -1,4 +1,34 @@
 export type TransferSide = "source" | "target"
+export interface TransferOption {
+  readonly value: string
+  readonly label: string
+  readonly disabled?: boolean
+}
+const optionError = "Use at most 2000 plain options with unique nonempty string values and bounded labels."
+function optionText(value: unknown, label: unknown) {
+  if (typeof value !== "string" || !value || value.length > 256
+    || typeof label !== "string" || !label.trim() || label.length > 1024) throw new TypeError(optionError)
+  return { value, label }
+}
+/** @internal Data projection uses the same key/label rules as native option adoption. */
+export function transferOptions(input: readonly TransferOption[]): readonly TransferOption[] {
+  if (!Array.isArray(input) || Object.getPrototypeOf(input) !== Array.prototype || input.length > 2000) throw new TypeError(optionError)
+  const keys = new Set<string>(), result: TransferOption[] = []
+  for (let index = 0; index < input.length; index++) {
+    const entry: unknown = Object.getOwnPropertyDescriptor(input, String(index))?.value
+    if (!entry || typeof entry !== "object" || ![Object.prototype, null].includes(Object.getPrototypeOf(entry))
+      || Object.getOwnPropertySymbols(entry).length) throw new TypeError(optionError)
+    const cells = Object.getOwnPropertyDescriptors(entry)
+    if (Object.values(cells).some(cell => !("value" in cell))
+      || Object.keys(cells).some(key => !["value", "label", "disabled"].includes(key))) throw new TypeError(optionError)
+    const text = optionText(cells.value?.value, cells.label?.value)
+    const disabled: unknown = cells.disabled?.value
+    if (disabled !== undefined && typeof disabled !== "boolean" || keys.has(text.value)) throw new TypeError(optionError)
+    keys.add(text.value)
+    result.push(Object.freeze({ ...text, ...(disabled === undefined ? {} : { disabled }) }))
+  }
+  return Object.freeze(result)
+}
 export interface TransferOptions {
   value?: readonly string[] | null
   defaultValue?: readonly string[] | null
@@ -35,6 +65,8 @@ export interface TransferController {
   setFilter(side: TransferSide, value: string): void
   appendTo(data: FormData, name?: string): number
   refresh(): void
+  reset(): void
+  connect(): void
   disconnect(): void
 }
 interface Item { key: string; element: HTMLOptionElement; hiddenBefore: boolean; hiddenLast: boolean }
@@ -55,7 +87,7 @@ export function createTransfer(root: HTMLElement, options: TransferOptions = {})
     || Object.keys(options).some(key => !["value", "defaultValue", "name", "required"].includes(key))
     || options.name !== undefined && typeof options.name !== "string"
     || options.required !== undefined && typeof options.required !== "boolean") throw new TypeError("Unsupported Transfer options.")
-  const fieldName = options.name === undefined ? root.getAttribute("data-transfer-name") : options.name
+  let fieldName = options.name === undefined ? root.getAttribute("data-transfer-name") : options.name
   const requiredOption = options.required
   const required = () => requiredOption ?? root.hasAttribute("data-transfer-required")
   if (fieldName !== null && (typeof fieldName !== "string" || !fieldName || fieldName.length > 128)) throw new TypeError("Use a nonempty membership field name of at most 128 characters.")
@@ -68,7 +100,8 @@ export function createTransfer(root: HTMLElement, options: TransferOptions = {})
   }
   const sourceNode = one("[data-transfer-source]", true), targetNode = one("[data-transfer-target]", true)
   if (!(sourceNode instanceof view.HTMLSelectElement) || !(targetNode instanceof view.HTMLSelectElement) || sourceNode === targetNode) throw new TypeError("Use two distinct native selects.")
-  const source = sourceNode, target = targetNode, form = source.form as NamedForm | null
+  const source = sourceNode, target = targetNode
+  let form = source.form as NamedForm | null
   if (fieldName && form && typeof view.FormDataEvent !== "function") throw new TypeError("Native formdata events are unavailable; omit name and call appendTo explicitly.")
   const filters = { source: one('[data-transfer-filter="source"]'), target: one('[data-transfer-filter="target"]') }
   for (const node of Object.values(filters)) if (node && (!(node instanceof view.HTMLInputElement) || !["text", "search"].includes(node.type)
@@ -88,7 +121,7 @@ export function createTransfer(root: HTMLElement, options: TransferOptions = {})
   })
   if (new Set(buttons.map(button => button.name)).size !== buttons.length || !["add", "remove"].every(name => buttons.some(button => button.name === name))) throw new TypeError("Author one add and remove action, and no duplicate actions.")
   const token = {}, borrowed = new Set<HTMLElement>()
-  let items = new Map<string, Item>(), defaults: string[] = [], connected = true, busy = false, generation = 0, refreshing = false
+  let items = new Map<string, Item>(), defaults: string[] = [], connected = false, busy = false, generation = 0, refreshing = false
   let error: unknown = null, fault = false, pendingReset = false, resetToken = 0, initialized = false
   const resetEvents: Event[] = [], timers = new Set<number>(), composing = new Set<HTMLInputElement>()
   const gateBefore = new Map<HTMLSelectElement, string>(), gateLast = new Map<HTMLSelectElement, string>()
@@ -123,8 +156,8 @@ export function createTransfer(root: HTMLElement, options: TransferOptions = {})
     for (const control of [source, target]) {
       if ([...control.children].some(node => !(node instanceof view!.HTMLOptionElement))) throw new TypeError("Use direct native option nodes, not optgroups or renderers.")
       for (const element of list(control)) {
-        if (next.size >= 2000 || !element.hasAttribute("value") || !element.value || element.value.length > 256
-          || !element.label.trim() || element.label.length > 1024 || element.childElementCount || element.hasAttribute("is") || next.has(element.value)) throw new TypeError("Use at most 2000 plain options with unique nonempty string values and bounded labels.")
+        if (next.size >= 2000 || !element.hasAttribute("value") || element.childElementCount || element.hasAttribute("is") || next.has(element.value)) throw new TypeError(optionError)
+        optionText(element.value, element.label)
         if ((element as Owned)[owner] && (element as Owned)[owner] !== token) throw new Error("Transfer option already has an owner.")
         const prior = items.get(element.value)
         next.set(element.value, prior?.element === element ? prior : { key: element.value, element, hiddenBefore: element.hidden, hiddenLast: element.hidden })
@@ -143,7 +176,7 @@ export function createTransfer(root: HTMLElement, options: TransferOptions = {})
   }
   function validate(input: readonly string[] | null) {
     const value = input === null ? [] : input
-    if (!Array.isArray(value) || value.some(key => typeof key !== "string" || !items.has(key)) || new Set(value).size !== value.length) throw new TypeError("Use unique known native string keys, or null for empty membership.")
+    if (!Array.isArray(value) || [...value].some(key => typeof key !== "string" || !items.has(key)) || new Set(value).size !== value.length) throw new TypeError("Use unique known native string keys, or null for empty membership.")
     return [...value]
   }
   function locks(value: readonly string[]) {
@@ -397,7 +430,7 @@ export function createTransfer(root: HTMLElement, options: TransferOptions = {})
       if ((node as Owned)[selectOwner] === token) delete (node as Owned)[selectOwner]
     }
     if (fieldName && form?.[names]?.get(fieldName) === token) { form[names]!.delete(fieldName); if (!form[names]!.size) delete form[names] }
-    items.clear(); borrowed.clear(); texts.length = 0; defaults = []
+    items.clear(); borrowed.clear(); texts.length = 0
   }
   const controller: TransferController = {
     source, target, get connected() { return connected }, get error() { return error }, get value() { live(); return Object.freeze(keys(target)) }, get state() { return state() },
@@ -408,28 +441,38 @@ export function createTransfer(root: HTMLElement, options: TransferOptions = {})
       if (!filter || typeof value !== "string") throw new TypeError("Use an authored filter and a literal string.")
       if (composing.has(filter)) throw new Error("Do not replace a composing filter draft.")
       run(() => { generation++; filter.value = value; paint() })
-    }, appendTo, refresh, disconnect,
+    }, appendTo, refresh, reset() { guard(); run(restoreDefaults) }, connect, disconnect,
   }
-  try {
-    items = collect()
-    defaults = options.defaultValue === undefined ? keys(target) : validate(options.defaultValue)
-    const value = options.value === undefined ? options.defaultValue === undefined ? keys(target) : defaults : validate(options.value)
-    locks(value)
-    for (const node of [root, source, target, ...Object.values(filters), ...Object.values(counts), status, ...buttons.map(action => action.element)]) if (node) {
-      if ((node as Owned)[owner] || (node === source || node === target) && (node as Owned)[selectOwner]) throw new Error("Transfer control/view already has an owner.")
+  function connect() {
+    if (connected) return
+    form = source.form as NamedForm | null
+    fieldName = options.name === undefined ? root.getAttribute("data-transfer-name") : options.name
+    if (fieldName !== null && (typeof fieldName !== "string" || !fieldName || fieldName.length > 128)) throw new TypeError("Use a nonempty membership field name of at most 128 characters.")
+    if (fieldName && form && typeof view!.FormDataEvent !== "function") throw new TypeError("Native formdata events are unavailable; omit name and call appendTo explicitly.")
+    try {
+      items = collect()
+      if (!initialized) defaults = options.defaultValue === undefined ? keys(target) : validate(options.defaultValue)
+      const value = initialized ? keys(target) : options.value === undefined ? options.defaultValue === undefined ? keys(target) : defaults : validate(options.value)
+      locks(value)
+      for (const node of [root, source, target, ...Object.values(filters), ...Object.values(counts), status, ...buttons.map(action => action.element)]) if (node) {
+        if ((node as Owned)[owner] || (node === source || node === target) && (node as Owned)[selectOwner]) throw new Error("Transfer control/view already has an owner.")
+      }
+      for (const node of [root, source, target, ...Object.values(filters), ...Object.values(counts), status, ...buttons.map(action => action.element)]) if (node) { (node as Owned)[owner] = token; borrowed.add(node) }
+      ;(source as Owned)[selectOwner] = token; (target as Owned)[selectOwner] = token
+      if (fieldName && form) { form[names] ??= new Map(); form[names]!.set(fieldName, token) }
+      connected = true; fault = false; error = null
+      run(() => { sync(items); arrange(value); paint() })
+      initialized = true
+      root.addEventListener("click", click); root.addEventListener("change", change); root.addEventListener("input", filterInput)
+      root.addEventListener("compositionstart", filterInput); root.addEventListener("compositionend", filterInput)
+      document.addEventListener("reset", reset, true); document.addEventListener("submit", submit, true); if (fieldName) form?.addEventListener("formdata", formdata)
+      observe()
+    } catch (cause) {
+      if (!borrowed.size) { connected = false; throw cause }
+      connected = true
+      disconnect(); throw cause
     }
-    for (const node of [root, source, target, ...Object.values(filters), ...Object.values(counts), status, ...buttons.map(action => action.element)]) if (node) { (node as Owned)[owner] = token; borrowed.add(node) }
-    ;(source as Owned)[selectOwner] = token; (target as Owned)[selectOwner] = token
-    if (fieldName && form) { form[names] ??= new Map(); form[names]!.set(fieldName, token) }
-    run(() => { sync(items); arrange(value); paint() })
-    initialized = true
-    root.addEventListener("click", click); root.addEventListener("change", change); root.addEventListener("input", filterInput)
-    root.addEventListener("compositionstart", filterInput); root.addEventListener("compositionend", filterInput)
-    document.addEventListener("reset", reset, true); document.addEventListener("submit", submit, true); if (fieldName) form?.addEventListener("formdata", formdata)
-    observe()
-  } catch (cause) {
-    if (!borrowed.size) { connected = false; throw cause }
-    disconnect(); throw cause
   }
+  connect()
   return controller
 }

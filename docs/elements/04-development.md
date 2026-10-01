@@ -33,6 +33,20 @@ migration infrastructure to preserve superseded development behavior.
 Follow existing formatting and `.js` import specifiers in TypeScript. Do not introduce a
 parallel component tree, generic provider hierarchy or a new markup language.
 
+Choose one behavior owner for each logical family contract. A small component can own
+its behavior directly; a controller is not a mandatory file or public framework layer.
+When a concrete native-Web interoperability entry is justified, it must share that owner
+with the element rather than independently implementing the same state/operations.
+Transfer is the current example: the element maps typed data/native structure, while
+`transfer.ts` owns membership, staging, defaults, form integration and lifecycle.
+Retain capabilities when consolidating owners; do not adopt the smaller implementation
+as a reason to remove required functionality or preserve old development APIs as aliases.
+
+Keep `viewStyle` presentation separate from the component's logical attributes. Use
+its existing inline-style mapping, not assignments to same-named behavior attributes.
+Layout convenience attributes are an explicit component contract, not universal
+presentation metadata. See the [shared presentation API](../styling/01-design.md#shared-presentation-api).
+
 ## 3. Implement the public element
 
 Import `ViewElement` from `../../core/index.js`. Declare an own static readonly `tag` with

@@ -28,8 +28,8 @@
 .m-slider-pair__fields { display: grid; gap: 1rem; }
 .m-slider__marks { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; font-size: inherit; }
 @supports (writing-mode: vertical-lr) {
-  .m-slider[data-vertical] { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
-  .m-slider[data-vertical] [data-slider-control] {
+  :is(.m-slider, .m-slider-pair)[data-vertical] { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+  :is(.m-slider, .m-slider-pair)[data-vertical] [data-slider-control] {
     writing-mode: vertical-lr;
     inline-size: var(--m-slider-length, 12rem);
     block-size: 2rem;

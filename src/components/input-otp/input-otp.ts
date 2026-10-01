@@ -1,15 +1,25 @@
 export type InputOtpCharacters = "digits" | "alphanumeric"
+export const inputOtpCharacters: readonly InputOtpCharacters[] = ["digits", "alphanumeric"]
+export interface InputOtpSchema {
+  length?: number
+  characters?: InputOtpCharacters
+  /** Optional native Web pattern override; null restores the selected ASCII preset. */
+  pattern?: string | null
+}
 export interface InputOtpOptions {
   length?: number
   characters?: InputOtpCharacters
+  pattern?: string
   status?: HTMLElement
 }
 export interface InputOtpController {
   readonly input: HTMLInputElement
   readonly length: number
   readonly characters: InputOtpCharacters
+  readonly pattern: string
   readonly connected: boolean
   readonly complete: boolean
+  configure(schema: InputOtpSchema): void
   refresh(): void
   disconnect(): void
 }
@@ -17,22 +27,47 @@ export interface InputOtpController {
 const owner = Symbol.for("markup-ui.input-otp.owner")
 type Owned = Element & { [owner]?: InputOtpController }
 
-/** Observes one native code field. Never edits, normalizes, submits or publishes its value. */
+function plainOptions(options: unknown, keys: readonly string[]): void {
+  if (!options || typeof options !== "object" || Array.isArray(options)
+    || ![Object.prototype, null].includes(Object.getPrototypeOf(options))
+    || Reflect.ownKeys(options).some(key => typeof key !== "string" || !keys.includes(key)
+      || !("value" in Object.getOwnPropertyDescriptor(options, key)!))) {
+    throw new TypeError("Unsupported Input OTP options; use a plain data object.")
+  }
+}
+
+/** @internal */
+export function inputOtpPattern(length: number, characters: InputOtpCharacters): string {
+  if (typeof length !== "number" || !Number.isInteger(length) || length < 1 || length > 12) {
+    throw new RangeError("Use an integer length from 1 to 12.")
+  }
+  if (!inputOtpCharacters.includes(characters)) throw new RangeError("Use digits or alphanumeric ASCII characters.")
+  return `${characters === "digits" ? "[0-9]" : "[A-Za-z0-9]"}{${length}}`
+}
+
+/** @internal Native pattern syntax is validated before any constraint is written. */
+export function validateInputOtpPattern(pattern: string): RegExp {
+  if (typeof pattern !== "string") throw new TypeError("Input OTP pattern must be a string.")
+  return new RegExp(`^(?:${pattern})$`, "v")
+}
+
+/** Observes/configures one native code field. Never edits, normalizes, submits or publishes its value. */
 export function createInputOtp(input: HTMLInputElement, options: InputOtpOptions = {}): InputOtpController {
   const document = input?.ownerDocument, view = document?.defaultView
   if (!view || !(input instanceof view.HTMLInputElement)) throw new TypeError("Input OTP needs one native input.")
-  if (!options || typeof options !== "object" || Array.isArray(options) || Object.keys(options).some(key => !["length", "characters", "status"].includes(key))
-    || options.length !== undefined && typeof options.length !== "number"
+  plainOptions(options, ["length", "characters", "pattern", "status"])
+  if (options.length !== undefined && typeof options.length !== "number"
     || options.characters !== undefined && typeof options.characters !== "string"
+    || options.pattern !== undefined && typeof options.pattern !== "string"
     || options.status !== undefined && !(options.status instanceof view.HTMLElement)) {
     throw new TypeError("Unsupported Input OTP options.")
   }
-  const length = options.length ?? 6, characters = options.characters ?? "digits", status = options.status
-  if (!Number.isInteger(length) || length < 1 || length > 12 || !["digits", "alphanumeric"].includes(characters)) {
-    throw new TypeError("Use a length from 1 to 12 and digits or alphanumeric ASCII characters.")
-  }
-  const pattern = `${characters === "digits" ? "[0-9]" : "[A-Za-z0-9]"}{${length}}`
-  const allowed = new RegExp(`^(?:${pattern})$`)
+  let length = options.length ?? 6, characters = options.characters ?? "digits"
+  const status = options.status
+  let override = options.pattern ?? null
+  let pattern = override ?? inputOtpPattern(length, characters)
+  inputOtpPattern(length, characters)
+  let allowed = validateInputOtpPattern(pattern)
   function anatomy() {
     return input.isConnected && input.getRootNode() === document && ["text", "password"].includes(input.type)
       && input.maxLength === length && input.getAttribute("pattern") === pattern
@@ -43,7 +78,7 @@ export function createInputOtp(input: HTMLInputElement, options: InputOtpOptions
         && !status.isContentEditable && !["role", "aria-live", "tabindex"].some(name => status.hasAttribute(name))
         && !status.closest('label, button, a[href], [aria-live]:not([aria-live="off" i]), [role~="alert" i], [role~="status" i], [role~="log" i]'))
   }
-  if (!anatomy()) throw new TypeError("Author a connected text/password input with matching maxlength, ASCII pattern, one-time-code autocomplete and optional plain nonlive status.")
+  if (!anatomy()) throw new TypeError("Author a connected text/password input with matching maxlength/pattern, one-time-code autocomplete and optional plain nonlive status.")
   const nodes = [input, ...(status ? [status] : [])]
   for (const node of nodes) if ((node as Owned)[owner]) throw new Error("Input OTP node already has an owner.")
   let connected = true, composing = false, compositionGeneration = 0, generation = 0
@@ -104,6 +139,26 @@ export function createInputOtp(input: HTMLInputElement, options: InputOtpOptions
     if (!composing) completed = structural()
     present()
   }
+  function configure(schema: InputOtpSchema) {
+    if (!connected) throw new Error("Input OTP is disconnected; create a new owner explicitly.")
+    plainOptions(schema, ["length", "characters", "pattern"])
+    const nextLength = schema.length === undefined ? length : schema.length
+    const nextCharacters = schema.characters === undefined ? characters : schema.characters
+    const preset = inputOtpPattern(nextLength, nextCharacters)
+    const nextOverride = schema.pattern === undefined ? override : schema.pattern
+    const nextPattern = nextOverride ?? preset
+    const nextAllowed = validateInputOtpPattern(nextPattern)
+    if (!anatomy()) {
+      disconnect()
+      throw new TypeError("Input OTP anatomy changed; reconnect explicitly after restoring the native field.")
+    }
+    settleReset()
+    cancel()
+    length = nextLength; characters = nextCharacters; override = nextOverride
+    pattern = nextPattern; allowed = nextAllowed
+    input.maxLength = length; input.pattern = pattern
+    completed = structural(); observed = boundary(); present()
+  }
   function changed() {
     if (!connected) return
     cancel()
@@ -123,6 +178,7 @@ export function createInputOtp(input: HTMLInputElement, options: InputOtpOptions
       completed = full; observed = boundary(); present()
       if (notify) input.dispatchEvent(new view!.CustomEvent("m:input-otp-complete", {
         detail: Object.freeze({ length, characters }),
+        bubbles: true, cancelable: false, composed: false,
       }))
     }, 0)
   }
@@ -131,7 +187,8 @@ export function createInputOtp(input: HTMLInputElement, options: InputOtpOptions
   }
   const observer = new view.MutationObserver(records => {
     if (!anatomy()) { disconnect(); return }
-    if (!sameBoundary(observed, boundary()) || records.some(record => record.target === input && record.attributeName === "value")) refresh()
+    if (!sameBoundary(observed, boundary())
+      || timer === null && records.some(record => record.target === input && record.attributeName === "value")) refresh()
   })
   function disconnect() {
     if (!connected) return
@@ -146,8 +203,9 @@ export function createInputOtp(input: HTMLInputElement, options: InputOtpOptions
     text = attribute = null
     for (const node of nodes) if ((node as Owned)[owner] === api) delete (node as Owned)[owner]
   }
-  const api: InputOtpController = { input, length, characters, get connected() { return connected },
-    get complete() { return connected && !composing && anatomy() && structural() }, refresh, disconnect }
+  const api: InputOtpController = { input, get length() { return length }, get characters() { return characters },
+    get pattern() { return pattern }, get connected() { return connected },
+    get complete() { return connected && !composing && anatomy() && structural() }, configure, refresh, disconnect }
   for (const node of nodes) Object.defineProperty(node, owner, { value: api, configurable: true })
   listen(input, "input", event => { settleReset(true); if ((event as InputEvent).isComposing) composing = true; changed() })
   listen(input, "change", () => { settleReset(true); changed() })

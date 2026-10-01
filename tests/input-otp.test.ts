@@ -128,6 +128,13 @@ describe("completion is a local transition, not authentication or selection inte
     edit(input, ""); edit(input, "001234"); helper.refresh(); await flush()
     expect(completed).not.toHaveBeenCalled()
   })
+  it("does not confuse a dirty default mutation with a later native edit", async () => {
+    const { input, completed, form } = fixture()
+    input.defaultValue = "005678"; edit(input, "001234"); input.defaultValue = "009876"
+    await flush(); expect(completed).toHaveBeenCalledOnce(); expect(input.value).toBe("001234")
+    form.reset(); await flush()
+    expect(input.value).toBe("009876"); expect(completed).toHaveBeenCalledOnce()
+  })
   it("does not complete with external custom validity, including messages installed after input listeners", async () => {
     const { input, helper, completed } = fixture()
     input.addEventListener("input", () => input.setCustomValidity("External local error"), { once: true })
@@ -301,12 +308,222 @@ describe("canonical InputOtp ViewElement", () => {
     expect(InputOtp.tag).toBe("m-input-otp")
     expect(ViewElement.prototype.isPrototypeOf(InputOtp.prototype)).toBe(true)
     expect(customElements.get("m-input-otp")).toBe(InputOtp)
-    expect(InputOtp.observedAttributes).toEqual(["value", "length", "disabled", "mask", "size"])
+    expect(InputOtp.observedAttributes).toEqual([
+      "value", "length", "characters", "pattern", "disabled", "mask", "size", "name", "form",
+      "required", "readonly", "aria-label", "aria-labelledby", "aria-describedby",
+    ])
 
     const define = vi.fn()
     expect(() => registerInputOtp({ get: name => name === "m-input-otp" ? class extends HTMLElement {} : undefined, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
     expect(() => registerInputOtp()).not.toThrow()
+  })
+
+  describe("shared InputOtp owner and typed native mapping", () => {
+    function element(markup = "") {
+      const otp = document.createElement("m-input-otp") as InputOtp
+      otp.innerHTML = markup
+      document.body.append(otp)
+      return otp
+    }
+
+    it("computes live values from the sole field and maps the value attribute only to reset defaults", async () => {
+      const form = document.createElement("form"), otp = document.createElement("m-input-otp") as InputOtp
+      otp.setAttribute("value", "001234"); otp.name = "otp[0].text"; form.append(otp); document.body.append(form)
+      const input = otp.native!, complete = vi.fn()
+      otp.addEventListener("m:input-otp-complete", complete)
+      expect(otp.value).toBe("001234"); expect(otp.defaultValue).toBe("001234"); expect(otp.form).toBe(form)
+      otp.value = "invalid draft beyond maxlength"
+      expect(new FormData(form).getAll("otp[0].text")).toEqual(["invalid draft beyond maxlength"])
+      expect(otp.getAttribute("value")).toBe("001234"); expect(otp.complete).toBe(false)
+      otp.defaultValue = "005678"
+      expect(otp.value).toBe("invalid draft beyond maxlength"); expect(input.defaultValue).toBe("005678")
+      form.reset(); await flush()
+      expect(otp.value).toBe("005678"); expect(otp.complete).toBe(true); expect(complete).not.toHaveBeenCalled()
+      edit(input, "00567"); expect(otp.value).toBe("00567"); expect(otp.getAttribute("value")).toBe("005678")
+      form.addEventListener("reset", event => event.preventDefault(), { once: true }); form.reset(); await flush()
+      expect(otp.value).toBe("00567")
+      otp.clear(); expect(input.value).toBe(""); expect(input.defaultValue).toBe("005678")
+      otp.removeAttribute("value"); form.reset(); await flush(); expect(otp.value).toBe("")
+    })
+
+    it("retains authored identity, labels, ARIA, defaults, listeners and native disables/masking", () => {
+      const otp = document.createElement("m-input-otp") as InputOtp
+      otp.innerHTML = '<label for="authored">Code</label><input id="authored" name="code" maxlength="4" value="AB01" pattern="[A-Z0-9]{4}" type="password" disabled aria-label="Original" aria-describedby="help">'
+      const input = otp.querySelector("input")!, label = otp.querySelector("label")!, listener = vi.fn()
+      input.addEventListener("input", listener); document.body.append(otp)
+      expect(otp.native).toBe(input); expect(input.labels![0]).toBe(label); expect(otp.length).toBe(4)
+      expect(otp.disabled).toBe(true); expect(otp.mask).toBe(true); expect(otp.defaultValue).toBe("AB01")
+      expect(otp.pattern).toBe("[A-Z0-9]{4}"); expect(input.getAttribute("aria-label")).toBe("Original")
+      expect(input.getAttribute("aria-describedby")).toBe("help"); expect(otp.name).toBe("code")
+      otp.disabled = false; otp.mask = false; input.focus(); input.setSelectionRange(1, 3)
+      input.name = "actual-code"; expect(otp.name).toBe("actual-code")
+      otp.refresh(); expect(document.activeElement).toBe(input); expect([input.selectionStart, input.selectionEnd]).toEqual([1, 3])
+      edit(input, "AB02"); expect(listener).toHaveBeenCalledOnce(); expect(otp.value).toBe("AB02")
+      expect(otp.querySelectorAll("input")).toHaveLength(1)
+    })
+
+    it("updates schema on the same owner without losing drafts, defaults, focus or selection", async () => {
+      const otp = element(), input = otp.native!, completed = vi.fn()
+      otp.addEventListener("m:input-otp-complete", completed)
+      otp.value = "001234"; otp.defaultValue = "005678"; input.focus(); input.setSelectionRange(1, 4)
+      otp.length = 8; otp.characters = "alphanumeric"
+      expect(otp.connected).toBe(true); expect(otp.native).toBe(input)
+      expect(input.pattern).toBe("[A-Za-z0-9]{8}"); expect(input.inputMode).toBe("text")
+      expect(otp.value).toBe("001234"); expect(otp.defaultValue).toBe("005678")
+      expect(document.activeElement).toBe(input); expect([input.selectionStart, input.selectionEnd]).toEqual([1, 4])
+      expect(() => createInputOtp(input, { length: 8, characters: "alphanumeric" })).toThrow("owner")
+      edit(input, "0aB1cD2e"); await flush()
+      expect(otp.complete).toBe(true); expect(completed).toHaveBeenCalledOnce()
+      expect(completed.mock.calls[0]![0].detail).toEqual({ length: 8, characters: "alphanumeric" })
+      input.inputMode = "tel"; otp.length = 4; expect(input.inputMode).toBe("tel")
+    })
+
+    it("rejects invalid typed data before changing native or host state", () => {
+      const otp = element(), input = otp.native!, before = input.outerHTML
+      for (const value of [null, [], {}, 123456, true]) {
+        expect(() => { otp.value = value as never }).toThrow("string")
+        expect(() => { otp.defaultValue = value as never }).toThrow("string")
+        expect(() => { otp.name = value as never }).toThrow("string")
+      }
+      for (const value of [null, [], {}, "6", 0, 13, NaN]) expect(() => { otp.length = value as never }).toThrow()
+      for (const value of [null, [], {}, "unicode"]) expect(() => { otp.characters = value as never }).toThrow()
+      for (const value of [null, [], {}, "false"]) {
+        expect(() => { otp.disabled = value as never }).toThrow()
+        expect(() => { otp.mask = value as never }).toThrow()
+      }
+      expect(() => { otp.pattern = "[" }).toThrow(SyntaxError)
+      expect(input.outerHTML).toBe(before); expect(otp.hasAttribute("value")).toBe(false)
+    })
+
+    it.each(["", "0", "-1", "13", "4.5", "invalid"])("rejects an authored invalid maxlength %j instead of silently adopting six", length => {
+      const otp = document.createElement("m-input-otp") as InputOtp
+      otp.innerHTML = `<input maxlength="${length}">`
+      expect(() => otp.length).toThrow()
+      expect(otp.native!.getAttribute("maxlength")).toBe(length)
+    })
+
+    it("preserves custom native pattern capability and resets an override explicitly", async () => {
+      const otp = element('<input maxlength="4" pattern="[A-Z]{4}" value="ABCD">'), input = otp.native!
+      const completed = vi.fn(); otp.addEventListener("m:input-otp-complete", completed)
+      expect(otp.complete).toBe(true)
+      otp.length = 6; expect(input.pattern).toBe("[A-Z]{4}"); expect(input.value).toBe("ABCD")
+      otp.pattern = "[A-Z]{6}"; edit(input, "ABCDEF"); await flush()
+      expect(otp.complete).toBe(true); expect(completed).toHaveBeenCalledOnce()
+      otp.pattern = null; expect(input.pattern).toBe("[0-9]{6}"); expect(otp.complete).toBe(false)
+      otp.pattern = "[A-Z]{6}"; otp.removeAttribute("pattern")
+      expect(input.pattern).toBe("[0-9]{6}")
+      otp.pattern = ""; expect(input.pattern).toBe(""); expect(otp.complete).toBe(false)
+    })
+
+    it("leaves Unicode and paste as one native draft, deferring completion through composition", async () => {
+      const otp = element(), input = otp.native!, completed = vi.fn(), nativeEvents = vi.fn()
+      otp.addEventListener("m:input-otp-complete", completed); otp.addEventListener("input", nativeEvents)
+      edit(input, "１２３４５６"); await flush()
+      expect(otp.value).toBe("１２３４５６"); expect(otp.complete).toBe(false)
+      const paste = new Event("paste", { bubbles: true, cancelable: true })
+      input.dispatchEvent(paste); expect(paste.defaultPrevented).toBe(false)
+      otp.length = 2; otp.pattern = ".+"
+      input.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }))
+      input.value = "e\u0301"; input.dispatchEvent(new InputEvent("input", { bubbles: true, isComposing: true }))
+      await flush(); expect(otp.complete).toBe(false); expect(completed).not.toHaveBeenCalled()
+      input.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true }))
+      input.dispatchEvent(new InputEvent("input", { bubbles: true })); await flush()
+      expect(otp.value).toBe("e\u0301"); expect(otp.complete).toBe(true); expect(completed).toHaveBeenCalledOnce()
+      otp.value = "😀"; expect(otp.value).toBe("😀"); expect(otp.complete).toBe(true)
+      expect(nativeEvents).toHaveBeenCalledTimes(3); expect(otp.querySelectorAll("input")).toHaveLength(1)
+    })
+
+    it("suppresses unavailable completion and preserves native fieldset/name/form semantics", async () => {
+      const form = document.createElement("form"), fieldset = document.createElement("fieldset")
+      const otp = document.createElement("m-input-otp") as InputOtp, completed = vi.fn()
+      otp.name = "code"; otp.required = true; fieldset.append(otp); form.append(fieldset); document.body.append(form)
+      otp.addEventListener("m:input-otp-complete", completed)
+      fieldset.disabled = true; otp.refresh(); edit(otp.native!, "001234"); await flush()
+      expect(completed).not.toHaveBeenCalled(); expect(new FormData(form).getAll("code")).toEqual([])
+      fieldset.disabled = false; otp.clear(); otp.readOnly = true; edit(otp.native!, "005678"); await flush()
+      expect(completed).not.toHaveBeenCalled(); expect(new FormData(form).getAll("code")).toEqual(["005678"])
+      otp.readOnly = false; otp.clear(); edit(otp.native!, "005678"); await flush()
+      expect(completed).toHaveBeenCalledOnce()
+    })
+
+    it("does not recreate invalidated owners until explicitly connected with valid native anatomy", async () => {
+      const otp = element(), input = otp.native!, completed = vi.fn()
+      otp.addEventListener("m:input-otp-complete", completed)
+      edit(input, "001234"); input.type = "number"; await flush()
+      expect(otp.connected).toBe(false); expect(completed).not.toHaveBeenCalled()
+      expect(() => otp.connect()).toThrow("Author"); otp.refresh(); expect(otp.connected).toBe(false)
+      input.type = "text"; otp.connect(); expect(otp.connected).toBe(true); expect(otp.value).toBe("001234")
+      expect(otp.complete).toBe(true); expect(completed).not.toHaveBeenCalled()
+    })
+
+    it("shares native ownership across element and enhancement and restores optional status on detach", async () => {
+      const status = document.createElement("p"); status.textContent = "Original status"; document.body.append(status)
+      const otp = document.createElement("m-input-otp") as InputOtp
+      otp.status = status; document.body.append(otp)
+      const input = otp.native!, completed = vi.fn()
+      otp.addEventListener("m:input-otp-complete", completed)
+      expect(() => createInputOtp(input)).toThrow("owner")
+      expect(() => { otp.status = null }).toThrow("Disconnect")
+      edit(input, "001234"); otp.remove(); await flush()
+      expect(otp.connected).toBe(false); expect(completed).not.toHaveBeenCalled(); expect(status.textContent).toBe("Original status")
+      document.body.append(otp); expect(otp.native).toBe(input); expect(otp.value).toBe("001234")
+      expect(otp.connected).toBe(true); expect(completed).not.toHaveBeenCalled()
+      otp.clear(); edit(input, "005678"); await flush(); expect(completed).toHaveBeenCalledOnce()
+      otp.disconnect(); expect(status.textContent).toBe("Original status")
+      const enhancement = createInputOtp(input); helpers.push(enhancement)
+      expect(() => otp.connect()).toThrow("owner")
+      enhancement.disconnect(); otp.status = null; otp.connect(); expect(otp.connected).toBe(true)
+    })
+
+    it("restores only leased presentation, retaining author attributes and later native styles", () => {
+      const otp = document.createElement("m-input-otp") as InputOtp
+      otp.innerHTML = '<input class="author" data-size="custom" style="--m-input-otp-length:9!important" value="001234">'
+      const input = otp.querySelector("input")!, priority = input.style.getPropertyPriority("--m-input-otp-length")
+      document.body.append(otp)
+      expect(input.classList.contains("m-input-otp")).toBe(true); otp.remove()
+      expect(input.className).toBe("author"); expect(input.dataset.size).toBe("custom")
+      expect(input.style.getPropertyValue("--m-input-otp-length")).toBe("9")
+      expect(input.style.getPropertyPriority("--m-input-otp-length")).toBe(priority)
+      document.body.append(otp)
+      input.dataset.size = "external"; input.style.setProperty("--m-input-otp-length", "11", "important")
+      otp.remove()
+      expect(input.dataset.size).toBe("external"); expect(input.style.getPropertyValue("--m-input-otp-length")).toBe("11")
+      expect(input.defaultValue).toBe("001234"); expect(input.value).toBe("001234")
+    })
+
+    it("replays real own pre-upgrade writes through the existing helper without caching live values", () => {
+      const otp = document.createElement("m-input-otp") as InputOtp
+      otp.innerHTML = '<input id="pre-code" value="old-default">'
+      for (const [name, value] of Object.entries({
+        value: "0aB1", defaultValue: "00AA", length: 4, characters: "alphanumeric", mask: true,
+        disabled: true, size: "small", name: "pre-code",
+      })) Object.defineProperty(otp, name, { value, writable: true, configurable: true })
+      const input = otp.querySelector("input")!
+      document.body.append(otp)
+      expect(otp.native).toBe(input); expect(otp.value).toBe("0aB1"); expect(otp.defaultValue).toBe("00AA")
+      expect(otp.getAttribute("value")).toBe("00AA"); expect(input.pattern).toBe("[A-Za-z0-9]{4}")
+      expect(input.type).toBe("password"); expect(input.disabled).toBe(true); expect(input.name).toBe("pre-code")
+      expect(otp.size).toBe("small"); expect(Object.hasOwn(otp, "value")).toBe(false)
+    })
+
+    it("keeps enhancement schema changes explicit, strict, silent and on one native field", async () => {
+      const { input, helper, completed } = fixture({}, "001234")
+      input.focus(); input.setSelectionRange(1, 4)
+      helper.configure({ length: 8, characters: "alphanumeric" })
+      expect(helper.connected).toBe(true); expect(helper.length).toBe(8); expect(helper.characters).toBe("alphanumeric")
+      expect(helper.pattern).toBe("[A-Za-z0-9]{8}")
+      expect(input.value).toBe("001234"); expect(input.defaultValue).toBe("001234")
+      expect([input.selectionStart, input.selectionEnd]).toEqual([1, 4])
+      const original = input.outerHTML
+      for (const data of [[], null, new Date(), Object.create({ length: 4 }), { length: null }, { pattern: "[" }, { extra: true }]) {
+        expect(() => helper.configure(data as never)).toThrow()
+      }
+      expect(input.outerHTML).toBe(original); expect(completed).not.toHaveBeenCalled()
+      edit(input, "0aB1cD2e"); helper.configure({ length: 6 }); await flush()
+      expect(completed).not.toHaveBeenCalled(); expect(input.value).toBe("0aB1cD2e")
+      helper.disconnect(); expect(() => helper.configure({ length: 4 })).toThrow("disconnected")
+    })
   })
 
   it("handles typed properties, attributes and defaults", () => {
@@ -320,7 +537,8 @@ describe("canonical InputOtp ViewElement", () => {
 
     otp.value = "123456"
     expect(otp.value).toBe("123456")
-    expect(otp.getAttribute("value")).toBe("123456")
+    expect(otp.getAttribute("value")).toBeNull()
+    expect(otp.defaultValue).toBe("")
 
     otp.length = 4
     expect(otp.length).toBe(4)
@@ -405,14 +623,17 @@ describe("canonical InputOtp ViewElement", () => {
     expect(input.value).toBe("112233")
   })
 
-  it("emits m:change and m:complete events with correct contract", () => {
+  it("preserves native editing events and emits the owner's one metadata-only completion event", async () => {
     const otp = document.createElement("m-input-otp") as InputOtp
     document.body.append(otp)
 
     const changeSpy = vi.fn()
     const completeSpy = vi.fn()
-    otp.addEventListener("m:change", changeSpy)
-    otp.addEventListener("m:complete", completeSpy)
+    otp.addEventListener("input", changeSpy)
+    otp.addEventListener("m:input-otp-complete", completeSpy)
+    const obsolete = vi.fn()
+    otp.addEventListener("m:change", obsolete)
+    otp.addEventListener("m:complete", obsolete)
 
     const input = otp.querySelector<HTMLInputElement>("input")!
 
@@ -420,7 +641,7 @@ describe("canonical InputOtp ViewElement", () => {
     input.dispatchEvent(new Event("input", { bubbles: true }))
 
     expect(changeSpy).toHaveBeenCalledOnce()
-    expect(changeSpy.mock.calls[0]![0].detail).toEqual({ value: "123" })
+    expect(changeSpy.mock.calls[0]![0].target).toBe(input)
     expect(changeSpy.mock.calls[0]![0].bubbles).toBe(true)
     expect(changeSpy.mock.calls[0]![0].cancelable).toBe(false)
     expect(changeSpy.mock.calls[0]![0].composed).toBe(false)
@@ -428,10 +649,13 @@ describe("canonical InputOtp ViewElement", () => {
 
     input.value = "123456"
     input.dispatchEvent(new Event("input", { bubbles: true }))
+    input.dispatchEvent(new Event("change", { bubbles: true }))
+    await flush()
 
     expect(changeSpy).toHaveBeenCalledTimes(2)
     expect(completeSpy).toHaveBeenCalledOnce()
-    expect(completeSpy.mock.calls[0]![0].detail).toEqual({ value: "123456" })
+    expect(completeSpy.mock.calls[0]![0].detail).toEqual({ length: 6, characters: "digits" })
+    expect(completeSpy.mock.calls[0]![0].target).toBe(input)
     expect(completeSpy.mock.calls[0]![0].bubbles).toBe(true)
     expect(completeSpy.mock.calls[0]![0].cancelable).toBe(false)
     expect(completeSpy.mock.calls[0]![0].composed).toBe(false)
@@ -439,19 +663,23 @@ describe("canonical InputOtp ViewElement", () => {
     // Replacing complete with another complete does not infer new completion
     input.value = "654321"
     input.dispatchEvent(new Event("input", { bubbles: true }))
+    await flush()
     expect(changeSpy).toHaveBeenCalledTimes(3)
     expect(completeSpy).toHaveBeenCalledOnce()
 
     // Deleting to incomplete rearms completion
     input.value = "65432"
     input.dispatchEvent(new Event("input", { bubbles: true }))
+    await flush()
     expect(changeSpy).toHaveBeenCalledTimes(4)
     expect(completeSpy).toHaveBeenCalledOnce()
 
     input.value = "654321"
     input.dispatchEvent(new Event("input", { bubbles: true }))
+    await flush()
     expect(changeSpy).toHaveBeenCalledTimes(5)
     expect(completeSpy).toHaveBeenCalledTimes(2)
+    expect(obsolete).not.toHaveBeenCalled()
   })
 
   it("upgrades properties assigned before connection", () => {
@@ -476,4 +704,3 @@ describe("canonical InputOtp ViewElement", () => {
     expect(preInput.type).toBe("password")
   })
 })
-
