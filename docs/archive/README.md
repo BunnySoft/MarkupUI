@@ -18,6 +18,8 @@ documentation in a separate section.
 | [Previous inventory](architecture/03-inventory.md) | Earlier implementation forms and route dispositions. | [Current inventory](../elements/03-inventory.md) |
 | [Previous sequence](architecture/04-sequence.md) | Earlier per-element completion workflow. | [Full rewrite](../architecture/04-rewrite.md) |
 | [Metadata discussion](architecture/05-meta-background.md) | Why class-owned metadata replaces a handwritten parallel description. | [ElementMeta](../architecture/05-meta.md) |
+| [Production checkpoints](architecture/07-production-checkpoints.md) | Previous verification, sizes, resource observations and scoped failures. | [Production status](../architecture/09-production.md) |
+| [Previous handoff](architecture/08-handoff-checkpoints.md) | Detailed session ownership, evidence and historical next-step notes. | [Current handoff](../../HANDOFF.md) |
 | [Previous package overview](overview.md) | Earlier package usage and examples. | [Current documentation](../README.md) |
 
 Use these records to understand a decision or compare behavior. Resolve implementation

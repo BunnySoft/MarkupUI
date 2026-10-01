@@ -6,26 +6,18 @@ is not automatically a delivered API.
 
 ## Current status
 
-As of September 30, 2026, Asia/Shanghai (verification recorded September 29 UTC),
-the Web catalog provides 89 selectable families / 205 tags,
-an optional full-catalog bundle, and separate root/plugin entries. The size optimization
-plan is complete through S6. Subsequent Theme, Field, AccordionItem and App lifecycle
-fixes and root stylesheet cleanup have passed local integrated verification.
+As of October 1, 2026, the agreed development and local verification work is complete
+at implementation commit `d2bd145`. The Web catalog provides 89 selectable families /
+205 tags, optional aggregate and separate root/plugin entries; S0-S6 optimization and
+the scoped canonical-owner/ownership/lifecycle corrections are delivered.
 
-The first-five checkpoint adds portable If, a batched fallback-placement improvement,
-retained-root/primitive fixes and Chart/data hardening. Its 589 focused tests, 96-entry
-packed consumer and three-engine/two-layout ESM/classic workflows passed. The final full
-rerun passed 5,447/5,447 tests in 153 files. Repeated resource measurements and a dependency audit are recorded
-in the [checkpoint](architecture/09-production.md#first-five-checkpoint).
-The 588 catalog checks remain the earlier full retained-root checkpoint.
-These are local results, not production approval. Full contract approval, human accessibility/device acceptance,
-security/performance review, Chart engine-inclusive cost review and clean remote
-CI evidence remain open. The [production readiness page](architecture/09-production.md)
-owns the current task summary, evidence and remaining work order.
-
-The [session handoff](../HANDOFF.md) records implementation ownership, local evidence
-paths, reproduction commands and the next-session boundaries. The current local commit
-authorization does not authorize pushing or publishing.
+The latest full suite passed 5,754 cases in 153 files. Actual packed consumption and
+representative three-engine/two-viewport workflows passed locally. These are not
+production publication, real-device/accessibility or clean multi-OS/Node CI approvals.
+The [production page](architecture/09-production.md) summarizes current evidence.
+The [handoff](../HANDOFF.md) contains reproduction commands and a
+[future-work list](../HANDOFF.md#future-work) for later release preparation;
+those items are not scheduled for current execution.
 
 Public authoring uses `m-*`; native HTML semantics belong to the Web renderer or an
 explicit Web interoperability example. Non-Web renderers are not delivered.
@@ -82,3 +74,5 @@ Do not treat a past comparison or passing test record as acceptance of the rewri
 
 - [Archive](archive/README.md): previous implementations, architecture discussions,
   binding alternatives and pinned visual/API comparisons.
+- [Production checkpoint archive](archive/architecture/07-production-checkpoints.md):
+  earlier verification/resource measurements, kept separate from current status.
