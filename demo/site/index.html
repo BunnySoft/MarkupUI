@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en" data-m-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Fieldnotes: a small, fully interactive workspace built with MarkupUI and no application framework.">
+  <title>Overview - Fieldnotes</title>
+  <link rel="icon" href="data:,">
+  <link id="m-styles" rel="stylesheet" href="../../dist/markup-ui.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-all.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-scrollbar.css">
+  <link rel="stylesheet" href="./site.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-state.global.js"></script>
+  <script defer src="../../dist/markup-ui.global.js"></script>
+  <script defer src="../../dist/markup-ui-chart-renderer.global.js"></script>
+  <script defer src="../../dist/markup-ui-all.global.js"></script>
+  <script defer src="./site.js"></script>
+  <script defer src="./overview.js"></script>
+</head>
+<body data-page="overview">
+  <m-link class="skip-link" href="#main">Skip to content</m-link>
+  <m-layout class="site-shell" has-sider>
+    <m-layout-sider id="site-sidebar" class="sidebar m-scrollbar" width="228"></m-layout-sider>
+    <m-layout class="workspace">
+      <m-layout-header id="site-header" class="topbar"></m-layout-header>
+      <m-layout-content>
+        <main id="main" class="page stack" tabindex="-1">
+          <m-p id="site-error" role="alert" hidden></m-p>
+          <m-box class="page-heading" style="margin-bottom:0">
+            <m-page-header><m-heading slot="title" level="1">Good things ahead, Jamie.</m-heading><m-p slot="subtitle">Here's what's growing in your workspace today.</m-p></m-page-header>
+            <m-tooltip text="Replay a local loading preview; no server request is made."><m-button id="refresh-overview" appearance="secondary">Refresh overview</m-button></m-tooltip>
+          </m-box>
+          <m-box class="hero">
+            <m-box class="hero-copy">
+              <m-span class="hero-kicker">A little focus goes a long way</m-span>
+              <m-heading level="2">Less busywork.<br>More <m-gradient-text type="success">good work.</m-gradient-text></m-heading>
+              <m-p>A calm place to plan your next project, bring your people together, and make something that matters.</m-p>
+              <m-button type="primary" id="explore-projects">Explore your projects <m-span aria-hidden="true">&rarr;</m-span></m-button>
+            </m-box>
+            <svg class="hero-art" viewBox="0 0 330 240" fill="none" aria-hidden="true">
+              <circle cx="210" cy="116" r="95" fill="#dfe7d2"/>
+              <ellipse cx="204" cy="207" rx="100" ry="13" fill="#d0dbc2"/>
+              <path d="M142 177c-43-44-35-81-11-89 23-8 43 44 31 88" fill="#a2b58b"/>
+              <path d="M183 178c-19-81 5-117 32-103s-1 75-20 106" fill="#798f69"/>
+              <path d="M195 180c33-63 66-77 78-55 10 21-38 49-64 61" fill="#b3c39c"/>
+              <path d="m163 142 47 2-6 55c-2 17-35 17-37 0z" fill="#eee7d6"/>
+              <path d="M154 143c0-6 68-6 68 0s-68 6-68 0" fill="#d7ccb4"/>
+              <path d="M173 181c-5-42-17-62-29-76M186 171c0-41 13-65 25-78M197 175c21-27 39-35 58-43" stroke="#647d51" stroke-width="2"/>
+              <rect x="51" y="146" width="72" height="48" rx="6" fill="#faf9f2" transform="rotate(-9 51 146)"/>
+              <path d="m64 160 19-3m-17 11 36-6m-34 14 25-4" stroke="#a9b79b" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="270" cy="55" r="15" fill="#f3ecd9"/>
+              <path d="m267 55 3 3 6-7" stroke="#a9a078" stroke-width="2"/>
+            </svg>
+          </m-box>
+          <m-box id="overview-loading" hidden aria-label="Refreshing sample overview">
+            <m-spin size="small" description="Preparing the local preview"></m-spin>
+            <m-skeleton text repeat="2"></m-skeleton>
+          </m-box>
+          <m-grid id="overview-stats" class="stat-grid" style="margin:0">
+            <m-grid-item class="stat-card"><m-statistic label="Active projects" value="12"></m-statistic><m-span class="stat-change">+2 <m-span class="muted">from last month</m-span></m-span></m-grid-item>
+            <m-grid-item class="stat-card"><m-statistic label="Tasks completed" value="128"></m-statistic><m-span class="stat-change">+18.5% <m-span class="muted">this month</m-span></m-span></m-grid-item>
+            <m-grid-item class="stat-card"><m-statistic label="Team members" value="24"></m-statistic><m-span class="stat-change">+3 <m-span class="muted">new collaborators</m-span></m-span></m-grid-item>
+            <m-grid-item class="stat-card"><m-statistic label="On-time delivery" value="96" suffix="%"></m-statistic><m-span class="stat-change">+4.2% <m-span class="muted">looking good</m-span></m-span></m-grid-item>
+          </m-grid>
+          <m-box class="two-column">
+            <m-box class="stack">
+              <m-card class="surface" content-style="padding:22px">
+                <m-box class="section-heading"><m-heading level="2">Your projects</m-heading><m-link href="./projects.html">View all projects &rarr;</m-link></m-box>
+                <m-box class="project-row"><m-span class="project-icon">N</m-span><m-box class="project-info"><m-strong>New horizons</m-strong><m-small>Brand refresh &middot; 8 tasks remaining</m-small></m-box><m-progress percentage="72" label="New horizons completion"></m-progress><m-avatar size="small" class="avatar-peach">AL</m-avatar></m-box>
+                <m-box class="project-row"><m-span class="project-icon peach">F</m-span><m-box class="project-info"><m-strong>Field guide</m-strong><m-small>Design system &middot; 12 tasks remaining</m-small></m-box><m-progress percentage="46" label="Field guide completion" color="#b79873"></m-progress><m-avatar size="small">MK</m-avatar></m-box>
+                <m-box class="project-row"><m-span class="project-icon green">O</m-span><m-box class="project-info"><m-strong>Open studio</m-strong><m-small>Website launch &middot; 3 tasks remaining</m-small></m-box><m-progress percentage="89" label="Open studio completion" color="#809767"></m-progress><m-avatar size="small">SR</m-avatar></m-box>
+              </m-card>
+              <m-card class="surface">
+                <m-box class="section-heading"><m-heading level="2">A little momentum</m-heading><m-tag type="success" size="small" round>This week</m-tag></m-box>
+                <m-timeline>
+                  <m-timeline-item type="success" title="The new brand is taking shape" content="Alex shared the first round of New horizons concepts." time="2 hours ago"></m-timeline-item>
+                  <m-timeline-item type="info" title="One more thing, done" content="Morgan completed the component accessibility review." time="4 hours ago"></m-timeline-item>
+                  <m-timeline-item type="default" title="Welcome to the team, Sam" content="Our studio just got a little more creative." time="Yesterday"></m-timeline-item>
+                </m-timeline>
+                <m-divider></m-divider>
+                <m-space justify="space-between" align="center"><m-small class="muted">Milestone: <m-number-animation from="0" to="128" duration="800"></m-number-animation> tasks shipped</m-small><m-link href="./insights.html">See your insights &rarr;</m-link></m-space>
+              </m-card>
+            </m-box>
+            <m-box class="stack">
+              <m-card class="surface calendar-card">
+                <m-box class="section-heading"><m-heading level="2">On the horizon</m-heading><m-time id="today-label" type="date"></m-time></m-box>
+                <m-calendar id="workspace-calendar" aria-label="Workspace calendar"></m-calendar>
+                <m-box class="meeting"><m-strong>Studio check-in</m-strong><m-p id="meeting-date">A little time to share what you're making.</m-p><m-tag size="small" round>10:00 - 10:30</m-tag></m-box>
+              </m-card>
+              <m-box class="tip-card">
+                <m-space justify="space-between" align="center"><m-strong>A note for your day</m-strong><m-button id="toggle-note" size="tiny" appearance="quaternary" aria-expanded="true">Hide</m-button></m-space>
+                <m-collapse-transition id="daily-note"><m-box data-collapse-transition-content><m-p>You don't have to do it all today. Just the next good thing.</m-p></m-box></m-collapse-transition>
+              </m-box>
+            </m-box>
+          </m-box>
+          <m-box class="equal-columns">
+            <m-card class="surface">
+              <m-box class="section-heading"><m-heading level="2">Your review queue</m-heading><m-button id="complete-review" size="small" appearance="secondary">Mark reviewed</m-button></m-box>
+              <m-p id="review-pending" class="muted">New horizons / First-round creative direction is ready for a second pair of eyes.</m-p>
+              <m-empty id="review-empty" hidden size="small" description="All clear. Nothing left to review."></m-empty>
+            </m-card>
+            <m-card class="surface">
+              <m-carousel class="banner-carousel" aria-label="Workspace shortcuts">
+                <m-carousel-viewport id="workspace-tips" tabindex="0" aria-label="Swipe through workspace tips">
+                  <m-carousel-item key="team"><m-strong>Better, together.</m-strong><m-p class="section-subtitle">A shared space makes room for everyone's best ideas.</m-p><m-link href="./team.html">Meet your team &rarr;</m-link></m-carousel-item>
+                  <m-carousel-item key="library"><m-strong>Keep the inspiration close.</m-strong><m-p class="section-subtitle">A small collection of useful things, ready when you are.</m-p><m-link href="./library.html">Browse the library &rarr;</m-link></m-carousel-item>
+                </m-carousel-viewport>
+                <m-carousel-controls hidden><m-button size="tiny"><button type="button" data-part="prev">Previous</button></m-button><m-button size="tiny"><button type="button" data-part="next">Next</button></m-button></m-carousel-controls>
+                <m-carousel-readout>Workspace shortcuts</m-carousel-readout>
+              </m-carousel>
+            </m-card>
+          </m-box>
+        </main>
+      </m-layout-content>
+      <m-layout-footer id="site-footer">
+        <m-span>Thoughtfully composed with <m-link href="../index.html">MarkupUI</m-link>.</m-span>
+        <m-span>Plain HTML, CSS &amp; JavaScript <m-span class="footer-dot">/</m-span> Local sample data</m-span>
+      </m-layout-footer>
+    </m-layout>
+  </m-layout>
+  <m-box id="site-overlays"></m-box>
+  <noscript>This interactive showcase needs JavaScript. Enable it to load MarkupUI controls and navigation.</noscript>
+</body>
+</html>

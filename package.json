@@ -485,6 +485,31 @@
       "types": "./dist/query/index.d.ts",
       "import": "./dist/query/index.js"
     },
+    "./ui": {
+      "types": "./dist/core/ui.d.ts",
+      "import": "./dist/markup-ui-ui.js"
+    },
+    "./ui/box": {
+      "types": "./dist/components/box/ui.d.ts",
+      "import": "./dist/markup-ui-ui-box.js"
+    },
+    "./ui/typography": {
+      "types": "./dist/components/typography/ui.d.ts",
+      "import": "./dist/markup-ui-ui-typography.js"
+    },
+    "./ui/button": {
+      "types": "./dist/components/button/ui.d.ts",
+      "import": "./dist/markup-ui-ui-button.js"
+    },
+    "./ui/flex": {
+      "types": "./dist/components/flex/ui.d.ts",
+      "import": "./dist/markup-ui-ui-flex.js"
+    },
+    "./a2ui": {
+      "types": "./dist/plugins/a2ui.d.ts",
+      "import": "./dist/markup-ui-a2ui.js"
+    },
+    "./a2ui/catalog.json": "./dist/a2ui-catalog.json",
     "./advanced": {
       "types": "./dist/plugins/advanced.d.ts",
       "import": "./dist/markup-ui-advanced.js"
@@ -529,6 +554,7 @@
     "test:watch": "vitest",
     "test:browser": "node scripts/browser-check.mjs",
     "test:catalog": "node scripts/browser-check.mjs --catalog",
+    "test:showcase": "node scripts/showcase-check.mjs",
     "test:package": "node scripts/package-check.mjs"
   },
   "dependencies": {},

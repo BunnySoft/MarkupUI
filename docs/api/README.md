@@ -3,6 +3,10 @@
 This section describes the APIs implemented by the current rewrite, not every component
 in the target inventory.
 
+Optional authoring entries: [chainable JavaScript builders](02-ui-builders.md) and the
+[standalone A2UI v1.0 minimal renderer](03-a2ui.md). Both reuse existing components;
+neither is required by core or by HTML-authored pages.
+
 1. [Core and ViewElement](01-core.md): direct DOM access, registration and small typed helpers.
 2. [Avatar demo and API](../../demo/components/avatar.html): examples, required files, reflected API tables and behavior.
 3. [Button demo and API](../../demo/components/button.html): accepted native Button/ButtonGroup behavior, required files and generated API.

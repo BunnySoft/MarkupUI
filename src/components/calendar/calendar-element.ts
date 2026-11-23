@@ -33,6 +33,8 @@ export class Calendar extends ViewElement {
   }
 
   public connectedCallback(): void {
+    // Container adoption can deliver stale or repeated connection notifications.
+    if (!this.isConnected || this.initializing || this.controller?.connected) return
     if (!this.upgraded) { this.upgraded = true; this.upgradeProperties() }
     this.classList.add("m-calendar")
     this.dataset.calendar = ""

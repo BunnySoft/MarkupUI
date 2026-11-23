@@ -1,4 +1,4 @@
-import { corePlugin as sharedCorePlugin } from "./build-boundaries.mjs"
+import { authoringPlugin, corePlugin as sharedCorePlugin } from "./build-boundaries.mjs"
 import { execFileSync } from "node:child_process"
 import { createHash } from "node:crypto"
 import { gzipSync } from "node:zlib"
@@ -35,6 +35,7 @@ execFileSync(process.execPath, [tsc, "-p", resolve(root, "tsconfig.json")], {
   cwd: root,
   stdio: "inherit",
 })
+await copyFile(resolve(root, "src", "plugins", "a2ui", "catalog.json"), resolve(dist, "a2ui-catalog.json"))
 
 const shared = {
   bundle: true,
@@ -43,6 +44,13 @@ const shared = {
   sourcemap: true,
   target: ["es2022"],
 }
+const uiFamilies = ["box", "typography", "button", "flex"]
+const authoringEntries = [
+  ["ui-builder", resolve(root, "src", "core", "ui-builder.ts")],
+  ["ui", resolve(root, "src", "core", "ui.ts")],
+  ...uiFamilies.map(name => [`ui-${name}`, resolve(root, "src", "components", name, "ui.ts")]),
+  ["a2ui", resolve(root, "src", "plugins", "a2ui.ts")],
+]
 const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps", "loading-bar", "dialog", "modal", "drawer", "message", "notification", "collapse-transition", "input", "checkbox", "radio", "switch", "select", "input-number", "slider", "rate", "form"]
 const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts", dialog: "global.ts", modal: "global.ts", drawer: "global.ts", message: "global.ts", notification: "global.ts", "collapse-transition": "global.ts", input: "global.ts", checkbox: "global.ts", radio: "global.ts", switch: "global.ts", select: "global.ts", "input-number": "global.ts", slider: "global.ts", rate: "global.ts" }
 const styleOnlyComponents = ["scrollbar", "global-style"]
@@ -144,6 +152,11 @@ components.push("marquee")
 classicEntries.marquee = "global.ts"
 
 await Promise.all([
+  ...authoringEntries.map(([name, entry]) => build({
+    ...shared, entryPoints: [entry], format: "esm", minify: true,
+    plugins: [authoringPlugin(root), corePlugin("esm")],
+    outfile: resolve(dist, `markup-ui-${name}.js`),
+  })),
   ...["esm", "iife"].map(format => build({
     ...shared,
     entryPoints: [resolve(root, "demo/chart-engine.js")],
@@ -632,6 +645,8 @@ bundleBudgets["markup-ui-native-radio.global.js"] = 2_000
 bundleBudgets["markup-ui-native-select.js"] = 4_000
 bundleBudgets["markup-ui-native-select.global.js"] = 4_000
 
+for (const [name] of authoringEntries) bundleBudgets[`markup-ui-${name}.js`] = name === "a2ui" ? 7_000 : 1_500
+
 for (const [name, budget] of Object.entries(bundleBudgets)) {
   const content = await readFile(resolve(dist, name))
   const gzipBytes = gzipSync(content, { level: 9 }).length
@@ -686,6 +701,17 @@ for (const [name, file, dependencies, css, runtimeBudget] of [
   ["root-classic", "markup-ui.global.js", ["markup-ui-core.global.js", "markup-ui-state.global.js"], ["markup-ui.css"], bundleBudgets["markup-ui.min.js"]],
   ["advanced", "markup-ui-advanced.js", ["markup-ui.js", "markup-ui-core.js", "markup-ui-state.js"], ["markup-ui.css", "markup-ui-advanced.css"]],
   ["widgets", "markup-ui-widgets.js", ["markup-ui.js", "markup-ui-core.js", "markup-ui-state.js"], ["markup-ui.css", "markup-ui-widgets.css"]],
+  ["ui-builder", "markup-ui-ui-builder.js", [], [], 1_500],
+  ...uiFamilies.map(name => [
+    `ui-${name}`, `markup-ui-ui-${name}.js`,
+    ["markup-ui-ui-builder.js", `markup-ui-${name}.js`, "markup-ui-core.js"],
+    [`markup-ui-${name}.css`], 12_000,
+  ]),
+  ["ui", "markup-ui-ui.js",
+    ["markup-ui-ui-builder.js", "markup-ui-core.js", ...uiFamilies.flatMap(name => [`markup-ui-ui-${name}.js`, `markup-ui-${name}.js`])],
+    uiFamilies.map(name => `markup-ui-${name}.css`), 25_000],
+  ["a2ui", "markup-ui-a2ui.js", ["markup-ui-box.js", "markup-ui-button.js", "markup-ui-core.js"],
+    ["markup-ui-box.css", "markup-ui-button.css"], 18_000],
 ]) {
   const sizes = await Promise.all([file, ...dependencies].map(async asset =>
     gzipSync(await readFile(resolve(dist, asset)), { level: 9 }).length))

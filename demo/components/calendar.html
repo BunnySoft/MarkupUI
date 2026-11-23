@@ -124,7 +124,9 @@
         policy without clearing unavailable selections. Native table/template adoption requires
         a connected document-root scope, an accessible name, noninteractive fallback content,
         separate plain number/marks/note parts and distinct labelled type=button actions.
-        Disconnect restores adopted fallback nodes, listeners and still-owned attributes.</p>
+        Disconnect restores adopted fallback nodes, listeners and still-owned attributes.
+        Repeated connection notifications during container adoption reuse the active owner;
+        removing and reconnecting the element restores one controller without duplicate events.</p>
     </section>
 
     <section aria-labelledby="api-heading">

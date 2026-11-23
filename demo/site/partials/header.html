@@ -1,0 +1,26 @@
+<m-flex align="center" size="small">
+  <m-button id="mobile-nav-toggle" appearance="quaternary" aria-label="Open navigation">
+    <m-icon aria-hidden="true"><img src="./icons.svg#menu" alt="" width="20" height="20"></m-icon>
+  </m-button>
+  <m-breadcrumb aria-label="Breadcrumb">
+    <m-breadcrumb-item href="./index.html">Workspace</m-breadcrumb-item>
+    <m-breadcrumb-item aria-current="page"><m-span id="current-page"></m-span></m-breadcrumb-item>
+  </m-breadcrumb>
+</m-flex>
+<m-flex align="center" size="small">
+  <m-tag size="small" round class="demo-label">Interactive demo</m-tag>
+  <m-tooltip text="Updates from your demo workspace">
+    <m-badge dot type="success">
+      <m-button id="notifications-toggle" appearance="quaternary" aria-label="Open notifications">
+        <m-icon aria-hidden="true"><img src="./icons.svg#bell" alt="" width="20" height="20"></m-icon>
+      </m-button>
+    </m-badge>
+  </m-tooltip>
+  <m-dropdown id="account-menu">
+    <m-dropdown-trigger>Jamie</m-dropdown-trigger>
+    <m-dropdown-menu label="Account actions">
+      <m-dropdown-item key="settings" href="./settings.html">Workspace settings</m-dropdown-item>
+      <m-dropdown-item key="reference" href="../index.html">Component reference</m-dropdown-item>
+    </m-dropdown-menu>
+  </m-dropdown>
+</m-flex>

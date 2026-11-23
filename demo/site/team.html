@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-m-theme="light">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team - Fieldnotes</title><link rel="icon" href="data:,">
+  <link id="m-styles" rel="stylesheet" href="../../dist/markup-ui.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-all.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-scrollbar.css">
+  <link rel="stylesheet" href="./site.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-state.global.js"></script>
+  <script defer src="../../dist/markup-ui.global.js"></script>
+  <script defer src="../../dist/markup-ui-chart-renderer.global.js"></script>
+  <script defer src="../../dist/markup-ui-all.global.js"></script>
+  <script defer src="./site.js"></script>
+  <script defer src="./team.js"></script>
+</head>
+<body data-page="team">
+  <m-link class="skip-link" href="#main">Skip to content</m-link>
+  <m-layout class="site-shell" has-sider>
+    <m-layout-sider id="site-sidebar" class="sidebar m-scrollbar" width="228"></m-layout-sider>
+    <m-layout class="workspace">
+      <m-layout-header id="site-header" class="topbar"></m-layout-header>
+      <m-layout-content><main id="main" class="page stack" tabindex="-1">
+        <m-p id="site-error" role="alert" hidden></m-p>
+        <m-box class="page-heading" style="margin-bottom:0"><m-page-header><m-heading slot="title" level="1">Good people. Great ideas.</m-heading><m-p slot="subtitle">Everyone brings a little something different.</m-p></m-page-header><m-tag type="success" round>12 sample teammates</m-tag></m-box>
+        <m-box class="toolbar" style="margin:0"><m-input id="people-search" type="search" aria-label="Search team members" placeholder="Find a name, role, or team..." clearable></m-input><m-auto-complete id="team-city" aria-label="Filter team by city" placeholder="Any city"><m-option value="Portland">Portland</m-option><m-option value="London">London</m-option><m-option value="Copenhagen">Copenhagen</m-option></m-auto-complete></m-box>
+        <m-box>
+          <m-box id="people-grid" class="people-grid"></m-box>
+          <m-empty id="people-empty" hidden description="No one here by that name. Try another search."></m-empty>
+          <m-space justify="space-between" align="center"><m-p id="people-count" class="muted" role="status"></m-p><m-pagination id="people-pages" page="1" count="2"></m-pagination></m-space>
+        </m-box>
+        <m-box class="equal-columns">
+          <m-card class="surface">
+            <m-heading level="2">Bring the right people together</m-heading><m-p class="section-subtitle">Choose collaborators for the New horizons review. Nothing is sent.</m-p>
+            <m-transfer id="review-team" source-title="Studio team" target-title="Review circle" name="reviewers"></m-transfer>
+            <m-divider></m-divider><m-p id="review-team-status" class="muted" role="status"></m-p>
+          </m-card>
+          <m-card class="surface">
+            <m-heading level="2">Leave a little encouragement</m-heading><m-p class="section-subtitle">A local message preview, with a mention for someone who helped.</m-p>
+            <m-form id="kudos-form">
+              <m-mention id="team-message" prefix="@" aria-label="Team message" placeholder="Try @alex to mention a teammate"><m-option value="alex">Alex Lee</m-option><m-option value="morgan">Morgan Kim</m-option><m-option value="sam">Sam Rivera</m-option></m-mention>
+              <m-box class="field" style="margin-top:16px"><m-span>How did the collaboration feel?</m-span><m-rate id="team-rating" label="Collaboration rating" value="4"></m-rate></m-box>
+              <m-space justify="end"><m-button id="preview-message" type="primary" attr-type="submit">Preview your note</m-button></m-space>
+            </m-form>
+            <m-box id="message-preview" class="note" style="margin-top:16px" hidden><m-strong>Your local note</m-strong><m-p id="message-copy"></m-p></m-box>
+          </m-card>
+        </m-box>
+        <m-box class="equal-columns">
+          <m-card class="surface team-capacity">
+            <m-heading level="2">Find your corner of the studio</m-heading><m-p class="section-subtitle">Explore teams by discipline.</m-p>
+            <m-cascader id="studio-discipline" label="Studio discipline" placeholder="Explore a team" options='[{"value":"creative","label":"Creative","children":[{"value":"brand","label":"Brand design"},{"value":"digital","label":"Digital experiences"}]},{"value":"delivery","label":"Delivery","children":[{"value":"engineering","label":"Engineering"},{"value":"strategy","label":"Strategy"}]}]'></m-cascader>
+            <m-thing id="discipline-description" title="A small, multidisciplinary studio" description="Designers, builders, and thoughtful problem-solvers."><m-thing-content><m-p class="muted">Pick a discipline above to discover where your next collaboration could start.</m-p></m-thing-content></m-thing>
+          </m-card>
+          <m-card class="surface">
+            <m-heading level="2">Our ways of working</m-heading><m-list><m-list-item><m-strong>Make space.</m-strong> Listen before you solve.</m-list-item><m-list-item><m-strong>Stay curious.</m-strong> A good question opens doors.</m-list-item><m-list-item><m-strong>Share early.</m-strong> Small feedback makes a big difference.</m-list-item></m-list>
+          </m-card>
+        </m-box>
+      </main></m-layout-content>
+      <m-layout-footer id="site-footer">
+        <m-span>Thoughtfully composed with <m-link href="../index.html">MarkupUI</m-link>.</m-span>
+        <m-span>Plain HTML, CSS &amp; JavaScript <m-span class="footer-dot">/</m-span> Local sample data</m-span>
+      </m-layout-footer>
+    </m-layout>
+  </m-layout>
+  <m-box id="site-overlays"></m-box>
+  <noscript>Enable JavaScript to use this MarkupUI showcase.</noscript>
+</body>
+</html>

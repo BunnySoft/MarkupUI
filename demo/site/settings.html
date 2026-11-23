@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en" data-m-theme="light">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings - Fieldnotes</title><link rel="icon" href="data:,">
+  <link id="m-styles" rel="stylesheet" href="../../dist/markup-ui.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-all.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-scrollbar.css">
+  <link rel="stylesheet" href="./site.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-state.global.js"></script>
+  <script defer src="../../dist/markup-ui.global.js"></script>
+  <script defer src="../../dist/markup-ui-chart-renderer.global.js"></script>
+  <script defer src="../../dist/markup-ui-all.global.js"></script>
+  <script defer src="./site.js"></script>
+  <script defer src="./settings.js"></script>
+</head>
+<body data-page="settings">
+  <m-link class="skip-link" href="#main">Skip to content</m-link>
+  <m-layout class="site-shell" has-sider>
+    <m-layout-sider id="site-sidebar" class="sidebar m-scrollbar" width="228"></m-layout-sider>
+    <m-layout class="workspace">
+      <m-layout-header id="site-header" class="topbar"></m-layout-header>
+      <m-layout-content><main id="main" class="page stack" tabindex="-1">
+        <m-p id="site-error" role="alert" hidden></m-p>
+        <m-box class="page-heading" style="margin-bottom:0"><m-page-header><m-heading slot="title" level="1">A space that feels like you.</m-heading><m-p slot="subtitle">A few little preferences to make yourself at home.</m-p></m-page-header><m-button id="save-settings" type="primary">Save changes</m-button></m-box>
+        <m-alert type="info" title="Your browser, your sandbox">Preferences and projects stay in local storage on this browser. No real account, messages, uploads, or authentication service is connected.</m-alert>
+        <m-form id="settings-form">
+          <m-box class="two-column">
+            <m-box class="stack">
+              <m-card class="surface">
+                <m-heading level="2">The basics</m-heading><m-p class="section-subtitle">Tell your workspace what to call itself.</m-p>
+                <m-box class="form-grid">
+                  <m-form-item class="field full"><m-label for="workspace-name">Workspace name</m-label><m-input id="workspace-name" name="workspace" value="Studio workspace" required maxlength="40"></m-input></m-form-item>
+                  <m-form-item class="field"><m-label for="workspace-seats">Planned team size</m-label><m-input-number id="workspace-seats" name="seats" value="24" min="1" max="100" step="1" required aria-label="Planned team size"></m-input-number></m-form-item>
+                  <m-form-item class="field"><m-label for="workspace-language">Language</m-label><m-select id="workspace-language"><select name="language" aria-label="Language"><option value="en">English</option><option value="fr">French (preference preview)</option><option value="de">German (preference preview)</option></select></m-select></m-form-item>
+                  <m-form-item class="field"><m-span id="workday-label">Your day starts at</m-span><m-time-picker id="workday-start" name="start" value="09:00:00" aria-labelledby="workday-label"></m-time-picker></m-form-item>
+                  <m-form-item class="field"><m-span>Workspace accent preview</m-span><m-color-picker id="workspace-color" name="color" value="#226b57"></m-color-picker></m-form-item>
+                </m-box>
+                <m-box id="accent-preview" class="note" style="border-left:4px solid #226b57">A little personal touch. Your accent appears on the workspace card in the sidebar.</m-box>
+              </m-card>
+              <m-card class="surface">
+                <m-heading level="2">Keep a healthy rhythm</m-heading>
+                <m-box class="setting-row"><m-box><m-strong>Weekly studio summary</m-strong><m-p>Save your preference for a weekly digest. This demo sends no email.</m-p></m-box><m-switch id="weekly-summary" name="summary" checked>Weekly summary</m-switch></m-box>
+                <m-box class="setting-row"><m-box><m-strong>A quieter workspace</m-strong><m-p>Preview a preference for fewer interruptions.</m-p></m-box><m-switch id="quiet-mode" name="quiet">Quiet mode</m-switch></m-box>
+                <m-box class="field" style="margin-top:20px"><m-radio-group id="review-cadence"><legend>Preferred review cadence</legend><m-radio name="cadence" value="weekly" checked>Weekly</m-radio><m-radio name="cadence" value="fortnightly">Every two weeks</m-radio><m-radio name="cadence" value="monthly">Monthly</m-radio></m-radio-group></m-box>
+              </m-card>
+              <m-card class="surface">
+                <m-heading level="2">Things worth remembering</m-heading><m-p class="section-subtitle">A few short team principles. Add, remove, or reorder your notes.</m-p>
+                <m-dynamic-input id="workspace-notes" min="0" max="5" name="notes[]" field-label="Team principle"></m-dynamic-input>
+              </m-card>
+            </m-box>
+            <m-box class="stack">
+              <m-card class="surface">
+                <m-heading level="2">Your studio assets</m-heading><m-p class="section-subtitle">Select up to three images to preview the file queue. Files are not uploaded or persisted.</m-p>
+                <m-upload id="studio-assets" multiple accept="image/*" label="Studio image assets"><m-upload-trigger><m-button appearance="secondary">Choose images</m-button></m-upload-trigger><m-upload-file-list></m-upload-file-list></m-upload>
+                <m-p id="asset-status" class="muted" role="status" style="margin-top:12px">No files selected.</m-p>
+              </m-card>
+              <m-card class="surface">
+                <m-heading level="2">A quick verification preview</m-heading><m-p class="section-subtitle">Try the sample code <m-strong>123456</m-strong>. This is a control demo, not real authentication.</m-p>
+                <m-input-otp id="sample-code" length="6" aria-label="Sample six-digit verification code"></m-input-otp>
+                <m-space justify="end" style="margin-top:16px"><m-button id="verify-code" appearance="secondary">Check sample code</m-button></m-space>
+                <m-p id="code-status" class="muted" role="status" style="margin-top:10px">Waiting for the sample code.</m-p>
+                <m-result id="verification-result" class="success-panel" hidden status="success" title="Preview complete" description="The sample code matched. No account was authenticated."></m-result>
+              </m-card>
+              <m-card class="surface">
+                <m-heading level="2">A fresh start</m-heading><m-p class="section-subtitle">Reset only Fieldnotes preferences and projects in this browser.</m-p><m-button id="reset-workspace" appearance="secondary" type="error">Reset demo data</m-button>
+              </m-card>
+            </m-box>
+          </m-box>
+        </m-form>
+        <m-dialog id="reset-dialog" title="Start fresh?" type="warning" closable><m-p>This removes saved Fieldnotes projects and preferences from this browser. It won't touch other local storage.</m-p><m-dialog-footer><m-dialog-action><m-button id="cancel-reset" appearance="secondary">Keep my changes</m-button><m-button id="confirm-reset" type="error">Reset Fieldnotes</m-button></m-dialog-action></m-dialog-footer></m-dialog>
+      </main></m-layout-content>
+      <m-layout-footer id="site-footer">
+        <m-span>Thoughtfully composed with <m-link href="../index.html">MarkupUI</m-link>.</m-span>
+        <m-span>Plain HTML, CSS &amp; JavaScript <m-span class="footer-dot">/</m-span> Local sample data</m-span>
+      </m-layout-footer>
+    </m-layout>
+  </m-layout>
+  <m-box id="site-overlays"></m-box>
+  <noscript>Enable JavaScript to use this MarkupUI showcase.</noscript>
+</body>
+</html>

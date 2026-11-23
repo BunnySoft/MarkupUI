@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en" data-m-theme="light">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Projects - Fieldnotes</title><link rel="icon" href="data:,">
+  <link id="m-styles" rel="stylesheet" href="../../dist/markup-ui.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-all.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-scrollbar.css">
+  <link rel="stylesheet" href="./site.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-state.global.js"></script>
+  <script defer src="../../dist/markup-ui.global.js"></script>
+  <script defer src="../../dist/markup-ui-chart-renderer.global.js"></script>
+  <script defer src="../../dist/markup-ui-all.global.js"></script>
+  <script defer src="./site.js"></script>
+  <script defer src="./projects.js"></script>
+</head>
+<body data-page="projects">
+  <m-link class="skip-link" href="#main">Skip to content</m-link>
+  <m-layout class="site-shell" has-sider>
+    <m-layout-sider id="site-sidebar" class="sidebar m-scrollbar" width="228"></m-layout-sider>
+    <m-layout class="workspace">
+      <m-layout-header id="site-header" class="topbar"></m-layout-header>
+      <m-layout-content><main id="main" class="page stack" tabindex="-1">
+        <m-p id="site-error" role="alert" hidden></m-p>
+        <m-box class="page-heading" style="margin-bottom:0"><m-page-header><m-heading slot="title" level="1">Room for good work.</m-heading><m-p slot="subtitle">From a first spark to the final little detail.</m-p></m-page-header><m-button id="new-project" type="primary">+ New project</m-button></m-box>
+        <m-box class="note">This is your sandbox. Add or archive projects freely; changes stay in this browser.</m-box>
+        <m-tabs>
+          <m-tab title="All projects" name="all">
+            <m-card class="surface">
+              <m-box class="toolbar">
+                <m-input id="project-search" type="search" placeholder="Find a project..." aria-label="Search projects" clearable></m-input>
+                <m-select id="project-status" aria-label="Filter by status"><select aria-label="Filter by status"><option value="">All statuses</option><option value="In progress">In progress</option><option value="In review">In review</option><option value="Planning">Planning</option></select></m-select>
+                <m-popconfirm id="archive-projects" title="Archive the selected projects from this local workspace?" positive-text="Archive" negative-text="Keep them"><m-popconfirm-trigger><m-button appearance="secondary">Archive selected</m-button></m-popconfirm-trigger></m-popconfirm>
+              </m-box>
+              <m-box class="table-wrap"><m-data-table id="project-table" label="Workspace projects" single-line size="small"></m-data-table></m-box>
+              <m-p id="project-summary" class="muted" role="status"></m-p>
+            </m-card>
+          </m-tab>
+          <m-tab title="Project files" name="files">
+            <m-card class="surface">
+              <m-heading level="2">A place for everything</m-heading>
+              <m-p class="section-subtitle">Choose a file to see its brief. Drag the divider to make room.</m-p>
+              <m-split>
+                <m-split-pane><m-tree id="project-files"><m-tree-node value="brand" title="New horizons" expanded><m-tree-node value="brief" title="Creative brief"></m-tree-node><m-tree-node value="research" title="Research notes"></m-tree-node></m-tree-node><m-tree-node value="web" title="Open studio" expanded><m-tree-node value="launch" title="Launch checklist"></m-tree-node></m-tree-node></m-tree></m-split-pane>
+                <m-split-pane><m-heading level="3" id="file-title">Creative brief</m-heading><m-p id="file-content" class="section-subtitle">Make a brand that feels as thoughtful as the people behind it. Explore warm colors, generous space, and an optimistic voice.</m-p><m-tag size="small">Workspace document</m-tag></m-split-pane>
+              </m-split>
+            </m-card>
+          </m-tab>
+        </m-tabs>
+        <m-box class="equal-columns">
+          <m-card class="surface">
+            <m-box class="section-heading"><m-heading level="2">Open studio / Launch plan</m-heading><m-tag type="success" size="small">On track</m-tag></m-box>
+            <m-steps id="launch-steps" current="2" vertical>
+              <m-step title="Find the direction" description="Research, references, and a shared vision."></m-step>
+              <m-step title="Make it real" description="Build the pages. Sweat the small details."></m-step>
+              <m-step title="Share it with the world" description="One final review, then we're live."></m-step>
+            </m-steps>
+            <m-space justify="end"><m-button id="advance-launch" size="small" appearance="secondary">Complete current step</m-button></m-space>
+          </m-card>
+          <m-card class="surface">
+            <m-heading level="2">The finishing touches</m-heading><m-p class="section-subtitle">A small checklist for a confident launch.</m-p>
+            <m-space vertical size="large">
+              <m-checkbox name="launch-review" value="mobile" checked>Check the small-screen experience</m-checkbox>
+              <m-checkbox name="launch-review" value="keyboard">Take a keyboard-only tour</m-checkbox>
+              <m-checkbox name="launch-review" value="copy">Read the copy out loud</m-checkbox>
+            </m-space>
+            <m-divider></m-divider><m-p id="checklist-status" class="muted" role="status">1 of 3 finishing touches complete.</m-p>
+          </m-card>
+        </m-box>
+        <m-modal id="project-modal" title="Something new starts here" closable>
+          <m-form id="project-form"><form>
+            <m-p class="section-subtitle">Give your idea a name. The rest can grow from here.</m-p>
+            <m-form-item class="field"><m-label for="project-name">Project name</m-label><m-input id="project-name" name="name" required maxlength="60" placeholder="A good working title"></m-input></m-form-item>
+            <m-form-item class="field"><m-label for="project-owner">Project lead</m-label><m-select id="project-owner"><select name="owner" aria-label="Project lead"><option value="Jamie Davis">Jamie Davis</option><option value="Alex Lee">Alex Lee</option><option value="Morgan Kim">Morgan Kim</option><option value="Sam Rivera">Sam Rivera</option></select></m-select></m-form-item>
+            <m-box class="form-grid">
+              <m-form-item class="field"><m-span id="due-label">Target date</m-span><m-date-picker id="project-due" aria-labelledby="due-label" placeholder="Choose a date"></m-date-picker></m-form-item>
+              <m-form-item class="field"><m-span>Home folder</m-span><m-tree-select id="project-folder" label="Home folder" default-value="studio" options='[{"value":"studio","label":"Studio"},{"value":"client","label":"Client work","children":[{"value":"brand","label":"Brand"},{"value":"web","label":"Web"}]}]'></m-tree-select></m-form-item>
+            </m-box>
+            <m-form-item class="field"><m-span>Labels</m-span><m-dynamic-tags id="project-labels" editor-label="New project label" max="5" maxlength="24"></m-dynamic-tags></m-form-item>
+            <m-box class="form-actions"><m-button id="cancel-project" appearance="secondary">Not now</m-button><m-button type="primary" attr-type="submit">Create project</m-button></m-box>
+          </form></m-form>
+        </m-modal>
+      </main></m-layout-content>
+      <m-layout-footer id="site-footer">
+        <m-span>Thoughtfully composed with <m-link href="../index.html">MarkupUI</m-link>.</m-span>
+        <m-span>Plain HTML, CSS &amp; JavaScript <m-span class="footer-dot">/</m-span> Local sample data</m-span>
+      </m-layout-footer>
+    </m-layout>
+  </m-layout>
+  <m-box id="site-overlays"></m-box>
+  <noscript>Enable JavaScript to use this MarkupUI showcase.</noscript>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JavaScript UI and A2UI - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../dist/markup-ui-themes.css">
+  <link rel="stylesheet" href="../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../dist/markup-ui-flex.css">
+  <link rel="stylesheet" href="./ui-api.css">
+  <script type="module" src="./ui-api.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <a href="./site/">Fieldnotes</a> / <a href="./">Component reference</a>
+      <h1>Two ways to compose MarkupUI</h1>
+      <p>Readable JavaScript and an optional A2UI renderer. Real elements, no app build or web framework.</p>
+    </header>
+    <section aria-label="JavaScript UI builder">
+      <m-box id="builder-example" class="panel"></m-box>
+    </section>
+    <section aria-labelledby="a2ui-title">
+      <h2 id="a2ui-title">A2UI minimal catalog</h2>
+      <p>Local v1.0 messages create this surface. Button actions go back to this page's JavaScript, not a server.</p>
+      <m-box id="host-controls"></m-box>
+      <m-box id="agent-example" class="panel"></m-box>
+      <h3>Latest outgoing action</h3>
+      <pre id="action-output">No actions yet.</pre>
+    </section>
+    <p id="demo-error" role="alert" hidden></p>
+    <footer><a href="./ui-api.js">Read the plain JavaScript source</a></footer>
+  </main>
+</body>
+</html>

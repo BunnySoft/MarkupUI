@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:markup-ui:a2ui:minimal:1",
+  "protocolVersion": "1.0",
+  "catalogId": "urn:markup-ui:a2ui:minimal:1",
+  "title": "MarkupUI minimal Web catalog",
+  "description": "Text, Button, Row and Column using literal strings, absolute JSON Pointer bindings and event actions.",
+  "instructions": "Use root as the root component ID. Every component has at most one parent, Button accepts only Text, and cycles are forbidden. Forward references are allowed. Text is plain text, not Markdown or HTML. No functions, templates, checks, weight, accessibility overrides or metadata. Negotiate this catalog explicitly; it is not the full Basic Catalog. See the MarkupUI A2UI documentation for bounded input, pointer and lifecycle rules.",
+  "components": {
+    "Text": {
+      "allOf": [{ "$ref": "#/$defs/common" }],
+      "type": "object",
+      "properties": {
+        "component": { "const": "Text" },
+        "text": { "$ref": "#/$defs/string" },
+        "variant": { "enum": ["body", "caption"], "default": "body" }
+      },
+      "required": ["component", "text"],
+      "unevaluatedProperties": false
+    },
+    "Button": {
+      "allOf": [{ "$ref": "#/$defs/common" }],
+      "type": "object",
+      "properties": {
+        "component": { "const": "Button" },
+        "child": { "$ref": "#/$defs/id", "description": "ID of a Text component." },
+        "variant": { "enum": ["default", "primary", "borderless"], "default": "default" },
+        "action": {
+          "type": "object",
+          "properties": {
+            "event": {
+              "type": "object",
+              "properties": {
+                "name": { "$ref": "#/$defs/id" },
+                "context": { "type": "object", "additionalProperties": { "$ref": "#/$defs/value" } },
+                "userMessage": { "$ref": "#/$defs/string" }
+              },
+              "required": ["name"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["event"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["component", "child", "action"],
+      "unevaluatedProperties": false
+    },
+    "Row": {
+      "allOf": [{ "$ref": "#/$defs/layout" }],
+      "properties": { "component": { "const": "Row" } },
+      "required": ["component"],
+      "unevaluatedProperties": false
+    },
+    "Column": {
+      "allOf": [{ "$ref": "#/$defs/layout" }],
+      "properties": { "component": { "const": "Column" } },
+      "required": ["component"],
+      "unevaluatedProperties": false
+    }
+  },
+  "functions": {},
+  "$defs": {
+    "anyComponent": {
+      "oneOf": [
+        { "$ref": "#/components/Text" },
+        { "$ref": "#/components/Button" },
+        { "$ref": "#/components/Row" },
+        { "$ref": "#/components/Column" }
+      ]
+    },
+    "id": { "type": "string", "pattern": "\\S", "maxLength": 128 },
+    "common": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "@catalogId": { "const": "urn:markup-ui:a2ui:minimal:1" }
+      },
+      "required": ["id"]
+    },
+    "binding": {
+      "type": "object",
+      "properties": { "@path": { "type": "string", "pattern": "^(?:$|/(?:[^~]|~[01])*)$" } },
+      "required": ["@path"],
+      "additionalProperties": false
+    },
+    "string": { "oneOf": [{ "type": "string" }, { "$ref": "#/$defs/binding" }] },
+    "value": {
+      "oneOf": [
+        { "type": ["string", "number", "boolean", "array"] },
+        { "type": "object", "propertyNames": { "not": { "pattern": "^@([^@]|$)" } } },
+        { "$ref": "#/$defs/binding" }
+      ]
+    },
+    "layout": {
+      "allOf": [{ "$ref": "#/$defs/common" }],
+      "type": "object",
+      "properties": {
+        "children": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "align": { "enum": ["start", "center", "end", "stretch"], "default": "stretch" },
+        "justify": { "enum": ["start", "center", "end", "spaceBetween", "spaceAround", "spaceEvenly"], "default": "start" }
+      },
+      "required": ["children"]
+    }
+  }
+}

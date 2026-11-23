@@ -28,6 +28,8 @@ See the [release evidence and remaining gates](docs/architecture/09-production.m
 | Styling | Component CSS and theme resources; short, scoped `data-part` / `data-state` markers. |
 | Development | One canonical API; no compatibility aliases or migration layer. |
 | Delivery | Small shared core plus independently selectable components/plugins, without a jQuery dependency. |
+| JavaScript authoring | Optional fluent builders over real elements; plain JS, no consumer compiler. |
+| Agent UI | Standalone optional A2UI v1.0 minimal-catalog renderer; not full protocol conformance. |
 
 The [element directory](docs/elements/05-element-index.md) lists current family tags
 separately from root/plugin elements. Presence in the directory does not establish
@@ -43,6 +45,10 @@ or a second full runtime. It shares core and the Chart adapter; ECharts remains
 application supplied. See [loading and costs](docs/architecture/07-modules.md#optional-full-catalog).
 
 Start with the [documentation guide](docs/README.md).
+
+Try the [JavaScript UI / A2UI playground](http://localhost:4173/demo/ui-api.html).
+The [builder API](docs/api/02-ui-builders.md) and [A2UI API](docs/api/03-a2ui.md) explain
+the optional ESM entries, their dependencies and the deliberately limited A2UI catalog.
 
 | Topic | Purpose |
 | --- | --- |
@@ -71,6 +77,104 @@ Implementation remains in separate TypeScript, CSS, shared-type and entry files.
 language or consumer-side framework/compiler is required by this rewrite.
 Read the [source pattern](docs/architecture/06-source.md) and
 [module delivery design](docs/architecture/07-modules.md) before changing the code.
+
+### Fieldnotes example website
+
+After `pnpm install --frozen-lockfile` and `pnpm build`, run `pnpm demo` and open
+[Fieldnotes](http://localhost:4173/demo/site/). Its six linked pages cover a workspace
+overview, projects, team, insights, resource library, and settings. The Library page
+includes a component coverage map. The original component reference remains at `/demo/`.
+
+The website under `demo/site` is **HTML-first, with ordinary deferred script tags**,
+like a traditional jQuery/Bootstrap site, with **AJAX-style page navigation**. Internal
+navigation replaces only the contents of `#main`; the header, sidebar, footer and shared
+overlays keep their actual DOM nodes. There are no application module imports, JSX,
+routing framework or website build. Edit and refresh.
+The library's TypeScript needs rebuilding only when library source changes or `dist`
+is missing. Serve over HTTP rather than opening `file://`, because shared HTML
+fragments are fetched from the same origin.
+
+| Edit | Responsibility |
+| --- | --- |
+| `index.html`, `projects.html`, etc. | Page structure, controls, footer and explicit CSS/script tags. |
+| `partials/*.html` | Shared header, sidebar, navigation and notification/drawer markup. Links are relative to the hosting page. |
+| `site.css`, `icons.svg` | Shared application styling and an authored SVG icon sheet. |
+| `site.js` | Load shared fragments with MarkupUI's `m(...).load()`, navigate between pages, and provide page lifecycle/local helpers. |
+| `overview.js`, `projects.js`, etc. | Page-specific sample data and event handlers using `m(...)` and direct component APIs. |
+| `catalog.js` | Coverage-map data, loaded by Library only; not an asset loader. |
+
+This all-controls demo **deliberately selects the optional full catalog** for simple,
+consistent loading. The head loads core, state, the root facade (`m` / `MarkupUI`),
+the Chart adapter, and `MarkupUIAll`, followed by `site.js` and the page's script.
+Keep that dependency order. The `m-styles` stylesheet link marks the root styles as
+already installed, leaving `site.css` last for application overrides.
+Other applications can still load only their selected families; the aggregate is
+not a new library requirement. Do not mix the full catalog with selected component
+scripts or ESM factories in the same page.
+
+Start with `demo/site/index.html` and `demo/site/overview.js`. A page script follows
+this ordinary JavaScript pattern:
+
+```js
+Fieldnotes.page("overview", function () {
+  m("#refresh-overview").on("click", () => {
+    document.getElementById("site-loading").start()
+  })
+})
+```
+
+`Fieldnotes.page(id, initialize)` registers a page initializer. It runs after the
+shared shell on a direct visit, and again whenever that page's content is loaded.
+Keep page data and helpers inside that callback so classic scripts do not share
+top-level declarations. Return a cleanup function for application-owned timers and
+controllers; it runs before leaving the page. Components handle their own disconnect
+lifecycles. This is a demo helper, not another UI framework or a new core dependency.
+
+Ordinary same-site links, menu items and `Fieldnotes.navigate("./projects.html")` use
+the same navigation path. URLs/titles/selected menus update, Back/Forward work, and
+every HTML file still supports direct loading and refresh. Same-page anchors, external
+links and modified native link clicks retain browser behavior. New page visits focus
+the main region and scroll to the top or requested anchor. Transient page state resets
+on each visit; browser-stored projects/preferences persist.
+
+Only the six authored same-origin documents are eligible for partial navigation.
+The helper parses their HTML and imports `#main` content, upgrading the detached
+component tree before connecting it and preserving authored SVG and
+native forms; it is **not an arbitrary-HTML loader or sanitizer**. Response scripts
+and document heads are never copied. Only known page scripts/dependencies are loaded,
+once per document, with ECharts first loaded when Insights is visited. Shared shell
+fragments still use the existing sanitized `.load()` API.
+Failed requests leave the current content usable with a visible error; newer
+navigation cancels older requests. A failed Back/Forward request restores the visible
+page's URL. No full-page reload is used as a silent fallback.
+
+Projects authors its native `<form>` explicitly so controls retain form ownership.
+Insights similarly authors the Popselect's native button and choice panel so ownership
+survives container reconnection, and creates its chart with options before connecting it. Its engine remains
+the local `demo/vendor/echarts.global.js` build.
+
+The shared classic library assets measure **349,142 JavaScript + 66,816 CSS gzip bytes**
+(415,958 combined), excluding page assets and ECharts. Insights adds 203,838 gzip bytes
+for ECharts. These are individual-file gzip level-9 sums, not dev-server transfer sizes.
+The existing full-catalog classic runtime remains above its advisory recommendation
+(331,554 vs. 315,000 bytes); no limits or frozen S0 baseline were changed.
+This is the explicit convenience-versus-payload tradeoff for this demo.
+Data Table's themed native pager adds 314 gzip bytes to its selected stylesheet:
+2,502 bytes versus the 2,500-byte advisory recommendation. Its JavaScript and
+dependencies are unchanged; the 2-byte CSS overage is reported rather than removing
+control states or changing the frozen baseline.
+
+The separate `/demo/ui-api.html` playground continues to demonstrate optional fluent
+builders and A2UI using their ESM entries. Those are alternative authoring examples,
+not dependencies of the HTML-first Fieldnotes pages.
+
+All data is illustrative. Projects and preferences persist in this browser's local
+storage; other interactions are page-local previews. File selection never uploads,
+the sample verification code does not authenticate, and no backend is required.
+`pnpm test:showcase` checks the six pages, actual component coverage, local workflows,
+persistent shell identity, repeated page visits, Back/Forward, navigation errors/races,
+the JavaScript/A2UI playground, and desktop/mobile layouts in installed Playwright
+Chromium (`pnpm exec playwright install chromium`).
 
 ## References
 

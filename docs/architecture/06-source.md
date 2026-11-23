@@ -38,6 +38,15 @@ The root exports `ViewElement` and exposes it as `m.elements.Base`; it does not 
 an `MElement` compatibility alias. Optional plugins keep only their distinct retained
 tags and do not redefine selected component families.
 
+Optional fluent construction is owned by `src/core/ui-builder.ts` and each supported
+family's `ui.ts`; `src/core/ui.ts` is only a convenience entry. These separate wrappers
+delegate to direct component properties and `viewStyle`, not runtime metadata.
+They are not imported by the mandatory core or the ordinary family entries.
+The standalone A2UI adapter lives in `src/plugins/a2ui.ts`, with its bounded JSON,
+protocol/catalog validation and published catalog in `src/plugins/a2ui/`.
+It creates the existing Box, Span and Button implementations rather than another
+component tree. See [builder](../api/02-ui-builders.md) and [A2UI](../api/03-a2ui.md) APIs.
+
 ## Component-family pattern
 
 Avatar is the first proving family. The same responsibilities apply to later components:

@@ -1,5 +1,26 @@
 import { dirname, resolve } from "node:path"
 
+/** Optional authoring entries consume canonical families instead of bundling new constructors. */
+export function authoringPlugin(root) {
+  const entries = new Map([
+    [resolve(root, "src", "core", "ui-builder.js"), "./markup-ui-ui-builder.js"],
+    ...["box", "typography", "button", "flex"].flatMap(name => [
+      [resolve(root, "src", "components", name, "index.js"), `./markup-ui-${name}.js`],
+      [resolve(root, "src", "components", name, "ui.js"), `./markup-ui-ui-${name}.js`],
+    ]),
+  ])
+  return {
+    name: "shared-authoring-components",
+    setup(builder) {
+      builder.onResolve({ filter: /(?:index|ui|ui-builder)\.js$/ }, args => {
+        if (!args.importer) return
+        const path = entries.get(resolve(dirname(args.importer), args.path))
+        if (path) return { path, external: true }
+      })
+    },
+  }
+}
+
 export function corePlugin(root, format, { bundleNative = false } = {}) {
   return {
     name: "shared-element-core",

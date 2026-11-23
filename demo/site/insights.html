@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" data-m-theme="light">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Insights - Fieldnotes</title><link rel="icon" href="data:,">
+  <link id="m-styles" rel="stylesheet" href="../../dist/markup-ui.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-all.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-scrollbar.css">
+  <link rel="stylesheet" href="./site.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-state.global.js"></script>
+  <script defer src="../../dist/markup-ui.global.js"></script>
+  <script defer src="../../dist/markup-ui-chart-renderer.global.js"></script>
+  <script defer src="../../dist/markup-ui-all.global.js"></script>
+  <script defer src="../vendor/echarts.global.js"></script>
+  <script defer src="./site.js"></script>
+  <script defer src="./insights.js"></script>
+</head>
+<body data-page="insights">
+  <m-link class="skip-link" href="#main">Skip to content</m-link>
+  <m-layout class="site-shell" has-sider>
+    <m-layout-sider id="site-sidebar" class="sidebar m-scrollbar" width="228"></m-layout-sider>
+    <m-layout class="workspace">
+      <m-layout-header id="site-header" class="topbar"></m-layout-header>
+      <m-layout-content><main id="main" class="page stack" tabindex="-1">
+        <m-p id="site-error" role="alert" hidden></m-p>
+        <m-box class="page-heading" style="margin-bottom:0"><m-page-header><m-heading slot="title" level="1">Look how far you've come.</m-heading><m-p slot="subtitle">Small steps add up. Here's the bigger picture.</m-p></m-page-header><m-button id="export-report" appearance="secondary">Export report</m-button></m-box>
+        <m-grid class="stat-grid" style="margin:0">
+          <m-grid-item class="stat-card"><m-statistic label="Tasks delivered" value="128"></m-statistic><m-span class="stat-change">+18.5% this month</m-span></m-grid-item>
+          <m-grid-item class="stat-card"><m-statistic label="Focus hours" value="342"></m-statistic><m-span class="stat-change">Time well spent</m-span></m-grid-item>
+          <m-grid-item class="stat-card"><m-statistic label="Team happiness" value="4.8" suffix="/5"></m-statistic><m-span class="stat-change">A little more joy</m-span></m-grid-item>
+          <m-grid-item class="stat-card"><m-statistic label="Weekly rhythm" value="92" suffix="%"></m-statistic><m-span class="stat-change">Steady, not rushed</m-span></m-grid-item>
+        </m-grid>
+        <m-card class="surface chart-card">
+          <m-box class="section-heading"><m-box><m-heading level="2">Making steady progress</m-heading><m-p class="muted">Completed work across the studio. Illustrative sample data.</m-p></m-box>
+            <m-popselect id="report-period" value="month" placeholder="Choose a period">
+              <m-button id="period-label" size="small" appearance="secondary"><button type="button">By month</button></m-button>
+              <m-popselect-panel><select aria-label="Report period"><option value="month">By month</option><option value="week">By week</option></select></m-popselect-panel>
+            </m-popselect>
+          </m-box>
+          <m-box id="chart-mount"></m-box>
+        </m-card>
+        <m-box class="equal-columns">
+          <m-card class="surface">
+            <m-box class="section-heading"><m-heading level="2">Your creative rhythm</m-heading><m-popover placement="bottom-end"><m-popover-trigger><m-button size="tiny" appearance="quaternary" aria-label="About the activity heatmap">About</m-button></m-popover-trigger><m-popover-content><m-p>Each square is a day. Darker squares mean more sample tasks completed. Explore cells with your keyboard for exact values.</m-p></m-popover-content></m-popover></m-box>
+            <m-box class="heatmap-wrap"><m-heatmap id="activity-heatmap" label="Studio activity from August through November 2026"></m-heatmap></m-box>
+            <m-p id="heatmap-status" class="muted" role="status">Every little bit counts.</m-p>
+          </m-card>
+          <m-card class="surface">
+            <m-heading level="2">Room to breathe</m-heading><m-p class="section-subtitle">Try a weekly focus target. This is a local planning estimate, not a forecast.</m-p>
+            <m-slider id="focus-target" min="10" max="40" step="1" value="24" aria-label="Weekly focus hours"></m-slider>
+            <m-space justify="space-between"><m-small class="muted">10 hours</m-small><m-strong id="focus-label">24 hours / week</m-strong><m-small class="muted">40 hours</m-small></m-space>
+            <m-divider></m-divider><m-progress id="focus-progress" percentage="60" label="Share of a 40-hour week"></m-progress><m-p id="focus-note" class="muted" style="margin-top:12px">16 hours left for collaboration, learning, and a little breathing room.</m-p>
+          </m-card>
+        </m-box>
+        <m-box class="two-column">
+          <m-card class="surface">
+            <m-heading level="2">A healthy balance</m-heading><m-p class="section-subtitle">A sample weekly effort breakdown.</m-p>
+            <m-box class="table-wrap">
+              <m-table striped single-line>
+                <table><caption class="muted">Studio time allocation</caption><thead><tr><th scope="col">Discipline</th><th scope="col">Hours</th><th scope="col">Share</th></tr></thead><tbody><tr><th scope="row">Design &amp; exploration</th><td>132</td><td>39%</td></tr><tr><th scope="row">Engineering</th><td>116</td><td>34%</td></tr><tr><th scope="row">Research &amp; strategy</th><td>58</td><td>17%</td></tr><tr><th scope="row">Reviews &amp; collaboration</th><td>36</td><td>10%</td></tr></tbody></table>
+              </m-table>
+            </m-box>
+          </m-card>
+          <m-box class="stack">
+            <m-box class="countdown-banner"><m-span class="eyebrow">Next studio reflection</m-span><m-countdown id="reflection-timer" duration="172800000"></m-countdown><m-p class="muted" style="margin:10px 0">A two-day sample timer. Pause whenever you need.</m-p><m-button id="pause-reflection" size="small" appearance="secondary">Pause timer</m-button></m-box>
+            <m-card class="surface"><m-descriptions title="About this report" column="1"><m-description-item label="Workspace">Fieldnotes Studio</m-description-item><m-description-item label="Source">Local, illustrative fixtures</m-description-item><m-description-item label="Chart renderer">App-supplied Apache ECharts</m-description-item></m-descriptions></m-card>
+          </m-box>
+        </m-box>
+      </main></m-layout-content>
+      <m-layout-footer id="site-footer">
+        <m-span>Thoughtfully composed with <m-link href="../index.html">MarkupUI</m-link>.</m-span>
+        <m-span>Plain HTML, CSS &amp; JavaScript <m-span class="footer-dot">/</m-span> Local sample data</m-span>
+      </m-layout-footer>
+    </m-layout>
+  </m-layout>
+  <m-box id="site-overlays"></m-box>
+  <noscript>Enable JavaScript to use this MarkupUI showcase.</noscript>
+</body>
+</html>

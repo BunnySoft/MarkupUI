@@ -1,0 +1,19 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #23332f;
+  background: #f5f7f4;
+  line-height: 1.6;
+}
+body { margin: 0; }
+main { max-width: 860px; padding: 32px 20px; margin: auto; }
+h1 { line-height: 1.2; }
+section { margin-block: 32px; }
+a { color: #235d4a; }
+.panel { display: block; padding: 24px; background: white; border: 1px solid #d5dfd9; border-radius: 12px; }
+#host-controls { display: block; margin-bottom: 16px; }
+pre { padding: 20px; background: #e8eee9; border-radius: 8px; overflow: auto; font-size: 13px; }
+#demo-error { color: #9c2525; }
+@media (max-width: 480px) {
+  main { padding: 20px 12px; }
+  .panel { padding: 16px; }
+}

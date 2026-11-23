@@ -126,6 +126,25 @@ describe("root shared-core distribution", () => {
     }
   })
 
+  it("keeps optional authoring entries outside core and canonical component implementations", () => {
+    const manifest = JSON.parse(read("manifest.json"))
+    const helper = "markup-ui-ui-builder.js"
+    expect(manifest.entryPayloads.a2ui.dependencies).toEqual(["markup-ui-box.js", "markup-ui-button.js", "markup-ui-core.js"])
+    expect(manifest.entryPayloads.a2ui.css).toEqual(["markup-ui-box.css", "markup-ui-button.css"])
+    for (const name of ["box", "typography", "button", "flex"]) {
+      expect(manifest.entryPayloads[`ui-${name}`].dependencies).toEqual([helper, `markup-ui-${name}.js`, "markup-ui-core.js"])
+      expect(read(`markup-ui-ui-${name}.js`)).toContain(`./markup-ui-${name}.js`)
+      const map = JSON.parse(read(`markup-ui-ui-${name}.js.map`))
+      expect(map.sources.every((source: string) => source.endsWith(`/components/${name}/ui.ts`))).toBe(true)
+    }
+    const map = JSON.parse(read("markup-ui-a2ui.js.map"))
+    expect(map.sources.every((source: string) => source.includes("/plugins/"))).toBe(true)
+    for (const file of ["markup-ui-core.js", "markup-ui.js", "markup-ui-all.js"]) {
+      expect(read(file)).not.toContain("urn:markup-ui:a2ui")
+      expect(read(file)).not.toContain("UI mount target")
+    }
+  })
+
   it("verifies dependency-inclusive measurements and reports size recommendations in both formats", () => {
     const manifest = JSON.parse(read("manifest.json"))
     const measure = (file: string) => gzipSync(readFileSync(resolve("dist", file)), { level: 9 }).length

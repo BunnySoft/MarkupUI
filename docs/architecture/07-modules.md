@@ -56,6 +56,41 @@ Dependencies must be explicit. For example, a menu component may need positionin
 but that must not pull in an entire feedback/navigation catalog. Document the required
 files and ordering in the component's API page.
 
+## Optional JavaScript and A2UI authoring
+
+The ESM-only `./ui` convenience entry composes the optional `./ui/box`,
+`./ui/typography`, `./ui/button` and `./ui/flex` factories. Selected factory entries
+share one construction helper and import the already-canonical family runtime/core.
+They add no builder code to ordinary component, core or aggregate bundles.
+The independent `./a2ui` plugin imports only Box, Button and core; it does not depend
+on the builder convenience entry. Its separately exported catalog JSON is for
+host/agent negotiation, not a production property engine.
+
+Both additions remain outside `./all` and require ESM-selected families, not a mix
+with aggregate/classic constructors. `entryPayloads` records their complete transitive
+runtime closure and selected family CSS, counting shared files once. There is no new
+component family or artificial A2UI element tag.
+See the [builder API](../api/02-ui-builders.md) and
+[minimal A2UI profile](../api/03-a2ui.md) for precise support and examples.
+
+Initial built payloads, gzip level 9, in bytes:
+
+| Selected entry | Entry alone | Complete runtime | Selected CSS | Runtime + CSS |
+| --- | ---: | ---: | ---: | ---: |
+| UI convenience | 190 | 13,986 | 6,057 | 20,043 |
+| UI Box | 239 | 5,060 | 757 | 5,817 |
+| UI Typography | 270 | 5,235 | 2,158 | 7,393 |
+| UI Button | 255 | 6,275 | 2,472 | 8,747 |
+| UI Flex | 224 | 3,487 | 670 | 4,157 |
+| A2UI | 4,162 | 12,401 | 3,229 | 15,630 |
+
+These are complete cold-load paths; selecting both shares the common files, so do not
+add both totals. Optional theme CSS and the host-selected catalog JSON are separate.
+Use the current manifest for later measurements. The new entry recommendations are not
+exceeded; existing advisory warnings remain, including Box's 4,306-byte ESM runtime
+against its 4,000-byte recommendation. No functionality or frozen S0 measurement changed
+to fit these numbers.
+
 ## Optional Full Catalog
 
 `@dataengine/markup-ui/all` serves `markup-ui-all.js` with declarations in `all.d.ts`.

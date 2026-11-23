@@ -11,6 +11,7 @@ import { ViewElement } from "../src/core/index.js"
 import "../src/components/box/index.js"
 import "../src/components/form/index.js"
 import "../src/components/button/index.js"
+import "../src/components/card/index.js"
 
 const helpers: CalendarController[] = []
 function fixture(options: CalendarOptions = {}, bind = true) {
@@ -373,6 +374,38 @@ describe("Calendar default styles", () => {
 })
 
 describe("canonical Calendar ViewElement", () => {
+  it("keeps one controller when a newly connected container moves its children", () => {
+    const parsed = new DOMParser().parseFromString(
+      '<m-card><m-calendar value="2024-02-15"></m-calendar></m-card>', "text/html",
+    )
+    const card = document.importNode(parsed.body.firstElementChild!, true)
+    const errors: unknown[] = []
+    const recordError = (event: ErrorEvent) => {
+      errors.push(event.error)
+      event.preventDefault()
+    }
+    window.addEventListener("error", recordError)
+    try {
+      document.body.append(card)
+      const calendar = card.querySelector<Calendar>("m-calendar")!
+      expect(errors).toEqual([])
+      expect(calendar.connected).toBe(true)
+      const table = calendar.table
+      const changed = vi.fn()
+      calendar.addEventListener("m:change", changed)
+      calendar.select("2024-02-16")
+      expect(changed).toHaveBeenCalledOnce()
+      card.remove()
+      expect(calendar.connected).toBe(false)
+      document.body.append(card)
+      expect(calendar.table).toBe(table)
+      expect(calendar.value).toBe("2024-02-16")
+      expect(errors).toEqual([])
+    } finally {
+      window.removeEventListener("error", recordError)
+    }
+  })
+
   it("registers canonical Calendar with own tag, ViewElement inheritance and registration conflict safety", () => {
     expect(Calendar.prototype instanceof ViewElement).toBe(true)
     expect(customElements.get("m-calendar")).toBe(Calendar)

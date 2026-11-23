@@ -82,6 +82,10 @@
     <section aria-labelledby="behavior-heading">
       <h2 id="behavior-heading">Data, Forms and Ownership</h2>
       <p>Public examples author only m-* elements. The Web renderer creates the captioned table, headers, filters, page controls, summary text and scoped native checkboxes. The composed Data Table stylesheet includes Table styling; no Table registration or native template is required.</p>
+      <p>The built-in Previous/Next buttons and page-size select use Data Table's own theme-aware styles,
+        including hover, pressed, disabled, keyboard-focus and forced-color states. They remain native
+        controls and need neither Button/Pagination registration nor their stylesheets. These scoped
+        rules do not change unrelated application buttons or table sorting controls.</p>
       <p>options defines labelled columns, optional text/number sorting, literal filtering, page sizes, selection name/scope and summaries. Custom comparators, predicates and summaries receive immutable data records and must return synchronous finite numbers, booleans and text respectively. They never need an HTML row. JSON attributes support data and callback-free configuration.</p>
       <p>data supports at most 2,000 unique keyed rows and 64 columns, including the selection column. Sort ties preserve source order. Filtering precedes sorting and paging. Changing data keeps surviving native rows and unchanged cells, including their edits, listeners and focus. A rejected callback leaves committed data and DOM unchanged.</p>
       <p>Row checked flags establish native reset defaults; checkedKeys represents current selection. Disabled choices are protected. Filtering and paging hide rows without disabling their fields, so hidden selected checkboxes remain successful form controls. Use reveal or revealAll before focusing invalid fields. Loading reports aria-busy without disabling form controls.</p>

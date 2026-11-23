@@ -1041,12 +1041,39 @@ try {
                 }
                 if (slug === "data-table") {
                   const table = page.locator("#demo-data-table")
+                  const previous = table.locator('[data-data-page="previous"]')
+                  const next = table.locator('[data-data-page="next"]')
+                  await page.mouse.move(0, 0)
+                  const pagerStyle = await next.evaluate(button => {
+                    const css = getComputedStyle(button)
+                    return { appearance: css.appearance, height: css.minBlockSize, padding: css.paddingInlineStart,
+                      border: css.borderTopStyle, radius: css.borderRadius, native: button instanceof HTMLButtonElement }
+                  })
+                  assert.deepEqual(pagerStyle, { appearance: "none", height: "28px", padding: "10px", border: "solid", radius: "3px", native: true })
+                  assert.equal(await previous.isDisabled(), true)
+                  assert.equal(await previous.evaluate(button => getComputedStyle(button).cursor), "not-allowed")
+                  const lightColor = await next.evaluate(button => getComputedStyle(button).color)
+                  await page.evaluate(() => document.documentElement.dataset.mTheme = "dark")
+                  assert.equal(await next.evaluate(button => getComputedStyle(button).colorScheme), "dark")
+                  assert.notEqual(await next.evaluate(button => getComputedStyle(button).color), lightColor)
+                  await page.evaluate(() => document.documentElement.dataset.mTheme = "light")
+                  await page.keyboard.press("Tab")
+                  await next.focus()
+                  assert.equal(await next.evaluate(button => getComputedStyle(button).outlineStyle), "solid")
+                  assert.equal(await next.evaluate(button => getComputedStyle(button).outlineWidth), "3px")
+                  if (name === "chromium") {
+                    await page.emulateMedia({ forcedColors: "active" })
+                    assert.equal(await previous.evaluate(button => getComputedStyle(button).opacity), "1")
+                    assert.notEqual(await previous.evaluate(button => getComputedStyle(button).color),
+                      await next.evaluate(button => getComputedStyle(button).color))
+                    await page.emulateMedia({ forcedColors: "none" })
+                  }
                   assert.deepEqual(await table.evaluate(element => Array.from(element.state.visibleKeys)), ["alpha", "bravo"])
                   await table.getByRole("button", { name: "Score", exact: true }).focus()
                   await page.keyboard.press("Enter")
                   await page.waitForFunction(() => document.querySelector("#demo-data-table").state.sort?.order === "ascending")
                   assert.deepEqual(await table.evaluate(element => Array.from(element.state.visibleKeys)), ["bravo", "charlie"])
-                  await table.getByRole("button", { name: "Next", exact: true }).click()
+                  await next.press("Enter")
                   assert.deepEqual(await table.evaluate(element => Array.from(element.state.visibleKeys)), ["alpha", "delta"])
                   await table.getByRole("checkbox", { name: "Select alpha", exact: true }).check()
                   await page.getByRole("button", { name: "Submit selection", exact: true }).click()

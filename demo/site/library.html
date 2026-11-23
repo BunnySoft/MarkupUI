@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en" data-m-theme="light">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Library - Fieldnotes</title><link rel="icon" href="data:,">
+  <link id="m-styles" rel="stylesheet" href="../../dist/markup-ui.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-all.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-scrollbar.css">
+  <link rel="stylesheet" href="./site.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-state.global.js"></script>
+  <script defer src="../../dist/markup-ui.global.js"></script>
+  <script defer src="../../dist/markup-ui-chart-renderer.global.js"></script>
+  <script defer src="../../dist/markup-ui-all.global.js"></script>
+  <script defer src="./catalog.js"></script>
+  <script defer src="./site.js"></script>
+  <script defer src="./library.js"></script>
+</head>
+<body data-page="library">
+  <m-link class="skip-link" href="#main">Skip to content</m-link>
+  <m-layout class="site-shell" has-sider>
+    <m-layout-sider id="site-sidebar" class="sidebar m-scrollbar" width="228"></m-layout-sider>
+    <m-layout class="workspace">
+      <m-layout-header id="site-header" class="topbar"></m-layout-header>
+      <m-layout-content><main id="main" class="page stack" tabindex="-1">
+        <m-p id="site-error" role="alert" hidden></m-p>
+        <m-box class="page-heading" style="margin-bottom:0"><m-page-header><m-heading slot="title" level="1">Keep a little inspiration.</m-heading><m-p slot="subtitle">Ideas, resources, and useful things worth coming back to.</m-p></m-page-header><m-tag round>Made to be explored</m-tag></m-box>
+        <m-marquee id="library-marquee" speed="25" pause-on-hover>THE STUDIO NOTEBOOK &nbsp; / &nbsp; Make something thoughtful. &nbsp; / &nbsp; Share what you learn. &nbsp; / &nbsp; Leave room for a little wonder.</m-marquee>
+        <m-space justify="end"><m-button id="pause-marquee" size="tiny" appearance="quaternary">Pause announcement</m-button></m-space>
+        <m-affix class="library-nav"><m-anchor aria-label="Library sections"><m-anchor-link href="#inspiration" title="Inspiration"></m-anchor-link><m-anchor-link href="#notes" title="Field notes"></m-anchor-link><m-anchor-link href="#activity" title="Activity"></m-anchor-link><m-anchor-link href="#coverage" title="Component coverage"></m-anchor-link></m-anchor></m-affix>
+        <m-box id="inspiration" class="library-section">
+          <m-box class="section-heading"><m-heading level="2">On the inspiration shelf</m-heading><m-small class="muted">Three starting points</m-small></m-box>
+          <m-box class="three-columns">
+            <m-card class="surface resource">
+              <m-watermark content="FIELDNOTES" class="library-cover"><m-image src="../components/image.first.svg" alt="Layered amber mountains, a warm color reference" preview-disabled></m-image></m-watermark>
+              <m-tag size="tiny" type="warning">COLOR &amp; FEELING</m-tag><m-heading level="3">A palette of possibilities</m-heading><m-ellipsis>Muted earth tones, warm paper, and the colors you find when you slow down and look around.</m-ellipsis><m-link href="./settings.html">Try your own palette &rarr;</m-link>
+            </m-card>
+            <m-card class="surface resource">
+              <m-box class="library-cover"><m-image src="../components/carousel-2.svg" alt="Green landscape with simple geometric shapes"></m-image></m-box>
+              <m-tag size="tiny" type="success">DESIGN &amp; NATURE</m-tag><m-heading level="3">The shape of calm</m-heading><m-ellipsis>Organic shapes and generous space. A visual reminder that not everything needs to shout to be heard.</m-ellipsis><m-link href="#notes">Read the field notes &rarr;</m-link>
+            </m-card>
+            <m-card class="surface resource">
+              <m-box class="library-cover"><m-image src="../components/carousel-1.svg" alt="Blue geometric landscape with a bright horizon"></m-image></m-box>
+              <m-tag size="tiny" type="info">BUILD &amp; EXPLORE</m-tag><m-heading level="3">Design in the details</m-heading><m-ellipsis>Native behavior, thoughtful components, and the joy of making things work just as they should.</m-ellipsis><m-link href="../index.html">Explore the components &rarr;</m-link>
+            </m-card>
+          </m-box>
+        </m-box>
+        <m-box id="notes" class="library-section equal-columns">
+          <m-card class="surface">
+            <m-heading level="2">Notes from the workbench</m-heading><m-p class="section-subtitle">A few principles behind this little website.</m-p>
+            <m-collapse>
+              <m-collapse-item key="small"><m-collapse-header>Start with HTML. Add a little JavaScript.</m-collapse-header><m-collapse-content><m-p>These are six real HTML pages with ordinary script tags and small page scripts. Internal navigation refreshes only the main content, keeping the shared header, sidebar, and footer in place. Direct links and browser Back/Forward still work. This demo chooses the optional full catalog; smaller applications can still select individual MarkupUI families.</m-p></m-collapse-content></m-collapse-item>
+              <m-collapse-item key="native"><m-collapse-header>Let the platform do its thing.</m-collapse-header><m-collapse-content><m-p>MarkupUI owns the controls. Plain JavaScript connects them to local sample data and loads page content without replacing the shell. No React, Vue, routing framework, or application compilation step is needed.</m-p></m-collapse-content></m-collapse-item>
+              <m-collapse-item key="honest"><m-collapse-header>Keep the demo honest.</m-collapse-header><m-collapse-content><m-p>People, projects, and analytics are illustrative. Nothing is sent to a service. Project and preference changes are saved in this browser; other interactions are temporary previews.</m-p></m-collapse-content></m-collapse-item>
+            </m-collapse>
+          </m-card>
+          <m-card class="surface">
+            <m-heading level="2">A thoughtful starting point</m-heading><m-p class="section-subtitle">Find a word in our studio mantra.</m-p>
+            <m-input id="note-search" aria-label="Highlight words in the studio mantra" value="thoughtful" placeholder="A word to look for"></m-input>
+            <m-p style="margin:16px 0"><m-highlight id="studio-mantra" text="Make thoughtful things. Take small steps. Share the work, celebrate the people, and keep a little space for your next thoughtful idea." keywords='["thoughtful"]'></m-highlight></m-p>
+            <m-code language="javascript">Fieldnotes.page("library", function () {
+  m("#save").on("click", () => {
+    Fieldnotes.notify("A small, thoughtful interaction.")
+  })
+})</m-code>
+          </m-card>
+        </m-box>
+        <m-box id="activity" class="library-section equal-columns">
+          <m-card class="surface">
+            <m-heading level="2">The studio feed</m-heading><m-p class="section-subtitle">Scroll for more local notes, or load the next few yourself.</m-p>
+            <m-infinite-scroll id="studio-feed" class="feed m-scrollbar" distance="40"><m-box id="feed-items"></m-box></m-infinite-scroll>
+            <m-space justify="space-between" align="center" style="margin-top:12px"><m-p id="feed-status" class="muted" role="status"></m-p><m-button id="more-notes" size="small" appearance="secondary">Load more</m-button></m-space>
+          </m-card>
+          <m-card class="surface">
+            <m-heading level="2">The full notebook</m-heading><m-p class="section-subtitle">1,000 sample entries, with only the visible rows mounted.</m-p>
+            <m-virtual-list id="notebook" class="virtual-feed m-scrollbar" height="220px" item-size="40" aria-label="Virtual studio notebook"><ol class="m-virtual-list__items" role="list" aria-label="Notebook entries"></ol></m-virtual-list>
+            <m-space justify="end" style="margin-top:12px"><m-button id="first-entry" size="small" appearance="secondary">First entry</m-button><m-button id="last-entry" size="small" appearance="secondary">Last entry</m-button></m-space>
+          </m-card>
+        </m-box>
+        <m-card class="surface">
+          <m-box class="section-heading"><m-heading level="2">A transparent little activity log</m-heading><m-button id="log-entry" size="small" appearance="secondary">Add a local note</m-button></m-box>
+          <m-log id="activity-log" rows="4"><pre class="m-code-block" data-log-viewport tabindex="0" role="region" aria-label="Local demo activity"><code class="m-code" data-log-output>[ready] Fieldnotes library opened.
+[local] Sample resources are ready to explore.
+[privacy] No analytics or remote services are connected.</code></pre></m-log>
+        </m-card>
+        <m-card id="coverage" class="surface library-section">
+          <m-box class="section-heading"><m-box><m-heading level="2">A whole toolkit, one little website.</m-heading><m-p class="muted">89 selectable component families, plus Global Style and Scrollbar styling.</m-p></m-box><m-tag type="success" round id="coverage-count"></m-tag></m-box>
+          <m-p class="section-subtitle">Shared navigation, layout, and feedback controls appear throughout. The cards below list each page's additional families. These are working compositions, not 205 separate tag demonstrations. Optional root/plugin-only surfaces such as Equation, QR Code, and the legacy Data Grid are outside this showcase.</m-p>
+          <m-box id="coverage-grid" class="coverage-grid"></m-box>
+          <m-divider></m-divider><m-p id="shared-coverage" class="muted"></m-p>
+        </m-card>
+        <m-space justify="end"><m-tooltip text="Open the component coverage map"><m-float-button id="coverage-shortcut" data-position="relative" type="primary" aria-label="Jump to component coverage">?</m-float-button></m-tooltip></m-space>
+      </main></m-layout-content>
+      <m-layout-footer id="site-footer">
+        <m-span>Thoughtfully composed with <m-link href="../index.html">MarkupUI</m-link>.</m-span>
+        <m-span>Plain HTML, CSS &amp; JavaScript <m-span class="footer-dot">/</m-span> Local sample data</m-span>
+      </m-layout-footer>
+    </m-layout>
+  </m-layout>
+  <m-box id="site-overlays"></m-box>
+  <noscript>Enable JavaScript to use this MarkupUI showcase.</noscript>
+</body>
+</html>

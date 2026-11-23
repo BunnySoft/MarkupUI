@@ -1,6 +1,6 @@
 /* The build composes the independent native Table stylesheet before these rules. */
-:where([data-m-theme="light"]) { --_m-data-table-hover: initial; --_m-data-table-sort: initial; --_m-data-table-primary: initial; }
-:where([data-m-theme="dark"]) { --_m-data-table-hover: #26262a; --_m-data-table-sort: #333337; --_m-data-table-primary: #63e2b7; }
+:where([data-m-theme="light"]) { --_m-data-table-hover: initial; --_m-data-table-sort: initial; --_m-data-table-primary: initial; --_m-data-table-scheme: light; }
+:where([data-m-theme="dark"]) { --_m-data-table-hover: #26262a; --_m-data-table-sort: #333337; --_m-data-table-primary: #63e2b7; --_m-data-table-scheme: dark; }
 :where(.m-data-table) {
   min-inline-size: 0;
   color: var(--m-data-table-color, inherit);
@@ -26,6 +26,41 @@
   align-items: center;
   gap: .75rem;
   margin-block: .75rem;
+}
+:where(.m-data-table) > .m-data-table-controls :is([data-data-page], [data-data-page-size]) {
+  color-scheme: var(--_m-data-table-scheme, light);
+  box-sizing: border-box;
+  min-block-size: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--m-data-table-control-border, light-dark(#e0e0e6, rgba(255, 255, 255, .24)));
+  border-radius: 3px;
+  color: var(--m-data-table-color, var(--m-table-color, var(--_m-table-color, #333639)));
+  background: transparent;
+  font: inherit;
+  line-height: 1.5;
+}
+:where(.m-data-table) > .m-data-table-controls [data-data-page] { appearance: none; cursor: pointer; }
+:where(.m-data-table) > .m-data-table-controls [data-data-page-size] {
+  background: var(--m-data-table-control-background, light-dark(#fff, rgba(255, 255, 255, .1)));
+}
+:where(.m-data-table) > .m-data-table-controls [data-data-page]:enabled:is(:hover, :focus-visible) {
+  color: var(--m-color-primary-hover, var(--_m-data-table-primary, #36ad6a));
+  border-color: currentColor;
+}
+:where(.m-data-table) > .m-data-table-controls [data-data-page]:enabled:active {
+  color: var(--m-color-primary-pressed, var(--_m-data-table-primary, #0c7a43));
+  border-color: currentColor;
+}
+:where(.m-data-table) > .m-data-table-controls [data-data-page-size]:enabled:hover {
+  border-color: var(--m-color-primary-hover, var(--_m-data-table-primary, #36ad6a));
+}
+:where(.m-data-table) > .m-data-table-controls :is([data-data-page], [data-data-page-size]):focus-visible {
+  outline: 3px solid var(--m-data-table-focus, var(--m-color-primary, var(--_m-data-table-primary, #18a058)));
+  outline-offset: 2px;
+}
+:where(.m-data-table) > .m-data-table-controls :is([data-data-page], [data-data-page-size]):disabled {
+  opacity: .5;
+  cursor: not-allowed;
 }
 :where(.m-data-table) > .m-data-table-scroll > .m-table > thead > tr > th > [data-data-sort] {
   font: inherit;
@@ -64,6 +99,17 @@
   :where(.m-data-table) > .m-data-table-scroll > .m-table[data-data-sticky-header] > thead > tr > th { position: static; }
 }
 @media (forced-colors: active) {
+  :where(.m-data-table) > .m-data-table-controls :is([data-data-page], [data-data-page-size]) {
+    color: ButtonText;
+    background: ButtonFace;
+    border-color: ButtonText;
+  }
+  :where(.m-data-table) > .m-data-table-controls :is([data-data-page], [data-data-page-size]):disabled {
+    color: GrayText;
+    border-color: GrayText;
+    opacity: 1;
+  }
+  :where(.m-data-table) > .m-data-table-controls :is([data-data-page], [data-data-page-size]):focus-visible { outline-color: Highlight; }
   :where(.m-data-table) > .m-data-table-scroll > .m-table > thead > tr > th > [data-data-sort]:disabled {
     opacity: 1;
     color: GrayText;

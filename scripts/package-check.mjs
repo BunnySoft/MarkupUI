@@ -53,7 +53,9 @@ await writeFile(resolve(consumer, "types.ts"), entries.map((entry, index) => `im
   + `import { ColorPicker, type ColorMode, type ColorPickerOptions } from "@dataengine/markup-ui/color-picker"; const color = new ColorPicker(); const colorMode: ColorMode = "hsl"; const colorSettings: ColorPickerOptions = { modes: ["hex", "rgb", colorMode], showAlpha: true, value: "rgba(255, 0, 0, 0.5)" }; color.configure(colorSettings); const colorText: string = color.value; const colorRepresentation: string = color.formattedValue;\n`
   + `import { NumberAnimation } from "@dataengine/markup-ui/number-animation"; const animation = new NumberAnimation(); animation.play(); animation.pause(); animation.resume(); animation.reset();\n`
   + `import { TreeSelect, type TreeSelectValue } from "@dataengine/markup-ui/tree-select"; const tree = new TreeSelect(); tree.multiple = true; tree.value = ["a"]; tree.defaultValue = ["a"]; const treeValue: TreeSelectValue = tree.value;\n`
-  + `import { Chart, ChartEncode } from "@dataengine/markup-ui/chart"; const chart = new Chart(); chart.option = { series: [{ type: "pie" }] }; const encode = new ChartEncode(); encode.x = ["month", 0];\n`)
+  + `import { Chart, ChartEncode } from "@dataengine/markup-ui/chart"; const chart = new Chart(); chart.option = { series: [{ type: "pie" }] }; const encode = new ChartEncode(); encode.x = ["month", 0];\n`
+  + `import * as ui from "@dataengine/markup-ui/ui"; import { span } from "@dataengine/markup-ui/ui/box"; const built = ui.box(ui.heading("Title").level(2), span("Hello"), ui.button("Go").type("primary")).gap(8).build();\n`
+  + `import { createA2UIRenderer, type A2UIAction } from "@dataengine/markup-ui/a2ui"; const renderer = createA2UIRenderer(built, { onAction(message: A2UIAction) { console.log(message.action.context); } }); renderer.dispose();\n`)
 await writeFile(resolve(consumer, "tsconfig.json"), JSON.stringify({
   compilerOptions: { module: "NodeNext", moduleResolution: "NodeNext", target: "ES2022", lib: ["ES2022", "DOM", "DOM.Iterable"], strict: true, noEmit: true, types: [] },
   files: ["types.ts"],
@@ -89,7 +91,25 @@ if (aggregate) {
     }
   }
   await assert.rejects(import("@dataengine/markup-ui/grid"), /different implementation|already defined/);
-} else assert.equal(root.ViewElement, core.ViewElement);
+} else {
+  assert.equal(root.ViewElement, core.ViewElement);
+  const ui = await import("@dataengine/markup-ui/ui");
+  const { span } = await import("@dataengine/markup-ui/ui/box");
+  const { Box, Span } = await import("@dataengine/markup-ui/box");
+  const { Button } = await import("@dataengine/markup-ui/button");
+  const built = ui.box(span("Hello"), ui.button("Go").type("primary")).mount(document.body);
+  assert.ok(built instanceof Box);
+  assert.ok(built.firstChild instanceof Span);
+  assert.ok(built.lastChild instanceof Button);
+  assert.equal(built.lastChild.control.textContent, "Go");
+  built.remove();
+  const { createA2UIRenderer } = await import("@dataengine/markup-ui/a2ui");
+  const renderer = createA2UIRenderer(document.body, { onAction() {} });
+  renderer.receive({ version: "1.0", createSurface: { surfaceId: "packed", components: [{ id: "root", component: "Text", text: "Packed A2UI" }] } });
+  assert.ok(renderer.getSurface("packed").firstChild instanceof Span);
+  assert.equal(renderer.getSurface("packed").textContent, "Packed A2UI");
+  renderer.dispose();
+}
 assert.ok(chart.Chart.prototype instanceof core.ViewElement);
 assert.equal(customElements.get("m-chart"), chart.Chart);
 assert.equal(typeof chart.configureChartEngine, "function");
