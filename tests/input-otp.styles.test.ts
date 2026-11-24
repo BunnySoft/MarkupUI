@@ -44,12 +44,11 @@ describe("Input OTP single-field default styles", () => {
     })
   })
 
-  it("selects local light/dark color and shadow defaults, including nested light reset", () => {
+  it("selects local light/dark colors, including nested light reset", () => {
     withRules(rules => {
       for (const theme of ["light", "dark"]) {
         const rule = rules.find(rule => selector(rule) === `:where([data-m-theme=${theme}])`)!
         expect(rule.style.getPropertyValue("--_m-otp-scheme")).toBe(theme)
-        expect(rule.style.getPropertyValue("--_m-otp-shadow")).toBe(theme === "light" ? "0 0 0 2px" : "0 0 8px 0")
       }
     })
     expect(compact(css)).toContain("light-dark(#333639,rgba(255,255,255,.82))")
@@ -72,10 +71,14 @@ describe("Input OTP single-field default styles", () => {
   it("avoids adding a second focus/disabled surface inside the shared Input owner", () => {
     withRules(rules => {
       const focus = rules.find(rule => selector(rule) === ".m-input-otp:not([data-input-control]):enabled:focus")!
-      expect(focus.style.getPropertyValue("box-shadow")).not.toBe("")
+      expect(focus.style.getPropertyValue("box-shadow")).toBe("")
+      expect(focus.style.getPropertyValue("outline")).toBe("none")
       const disabled = rules.find(rule => selector(rule) === ".m-input-otp:not([data-input-control]):disabled")!
       expect(disabled.style.getPropertyValue("opacity")).toBe("")
-      const outline = rules.find(rule => selector(rule) === ".m-input-otp:focus-visible")!
+      const forced = rules.find(rule => rule instanceof CSSMediaRule
+        && compact(rule.conditionText) === "(forced-colors:active)") as CSSMediaRule
+      const outline = [...forced.cssRules].find(rule => rule instanceof CSSStyleRule
+        && selector(rule) === ".m-input-otp:not([data-input-control]):enabled:focus") as CSSStyleRule
       expect(outline.style.getPropertyValue("outline")).toBe("2px solid Highlight")
     })
   })

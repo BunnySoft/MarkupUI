@@ -86,6 +86,19 @@ behavior and reduced-motion preferences. Avoid conveying state by color alone.
 Logical direction, keyboard ownership and semantic orientation must agree with the paint.
 Any CSSOM writes required for sizing or fitting must be documented for CSP-sensitive hosts.
 
+### Form focus presentation
+
+Input, InputNumber, Select, TimePicker, ColorPicker, InputOTP and DynamicInput use a
+1px themed focus boundary, not an outer shadow plus a second outline. Input owns its
+wrapper boundary; InputNumber uses a single inset shadow as its border. Composed fields
+must not add another indicator inside Input. Native arrows, menus and editing remain intact.
+
+Buttons, native radio/switch controls and Upload keep a 1px themed keyboard outline;
+borderless Select uses an inset outline so removing its resting border never hides focus.
+Family focus overrides take precedence over theme primary/status colors. Forced-colors
+mode retains a distinct 2px system indicator rather than removing keyboard feedback.
+These rules belong to each selected family's stylesheet, not a mandatory global reset.
+
 ## References
 
 - [Web profile](../architecture/02-web.md)

@@ -145,6 +145,36 @@ try {
         const download = await downloadPromise
         assert.equal(download.suggestedFilename(), "fieldnotes-sample-report.csv")
       } else if (entry.id === "library") {
+        const marquee = page.locator("#library-marquee")
+        const motion = marquee.locator("[data-marquee-toggle]")
+        await page.mouse.move(0, 0)
+        const motionStyle = await motion.evaluate(button => {
+          const css = getComputedStyle(button)
+          return { appearance: css.appearance, height: css.minBlockSize, padding: css.paddingInlineStart,
+            border: css.borderTopStyle, radius: css.borderRadius, native: button instanceof HTMLButtonElement }
+        })
+        assert.deepEqual(motionStyle, { appearance: "none", height: "44px", padding: "14px", border: "solid", radius: "3px", native: true })
+        const lightColor = await motion.evaluate(button => getComputedStyle(button).color)
+        await page.evaluate(() => document.documentElement.dataset.mTheme = "dark")
+        assert.equal(await motion.evaluate(button => getComputedStyle(button).colorScheme), "dark")
+        assert.notEqual(await motion.evaluate(button => getComputedStyle(button).color), lightColor)
+        await page.evaluate(() => document.documentElement.dataset.mTheme = "light")
+        await motion.hover()
+        assert.notEqual(await motion.evaluate(button => getComputedStyle(button).color), lightColor)
+        await page.mouse.move(0, 0)
+        await motion.press("Enter")
+        assert.equal(await motion.textContent(), "Pause motion and use static view")
+        assert.equal(await motion.evaluate(button => getComputedStyle(button).outlineWidth), "3px")
+        assert.equal(await marquee.getAttribute("data-marquee-running"), null, "Reduced motion must still prevent animation.")
+        await motion.press("Enter")
+        assert.equal(await motion.textContent(), "Play motion")
+        await motion.evaluate(button => button.disabled = true)
+        assert.equal(await motion.evaluate(button => getComputedStyle(button).cursor), "not-allowed")
+        assert.equal(await motion.evaluate(button => getComputedStyle(button).opacity), "0.5")
+        await page.emulateMedia({ forcedColors: "active" })
+        assert.equal(await motion.evaluate(button => getComputedStyle(button).opacity), "1")
+        await motion.evaluate(button => button.disabled = false)
+        await page.emulateMedia({ forcedColors: "none" })
         assert.equal(await text("#coverage-count"), "89 / 89 families")
         assert.equal(await page.locator("#coverage-grid .coverage-card").count(), 6)
         await click("#last-entry button")
@@ -157,6 +187,218 @@ try {
         await click("#log-entry button")
         assert.match(await text("#activity-log"), /note 1/)
       } else if (entry.id === "settings") {
+        const color = page.locator("#workspace-color")
+        const apply = color.locator("[data-color-apply]")
+        const mode = color.locator("[data-color-mode]")
+        const draft = color.locator("[data-color-hex]")
+        const language = page.locator("#workspace-language select")
+        const originalColor = await color.evaluate(element => element.value)
+        await page.mouse.move(0, 0)
+        const controlStyles = await color.locator("button, [data-color-mode]").evaluateAll(controls => controls.map(control => {
+          const css = getComputedStyle(control)
+          return { border: css.borderTopStyle, thickness: css.borderTopWidth, radius: css.borderRadius, padding: css.paddingInlineStart }
+        }))
+        assert.deepEqual(controlStyles, Array(4).fill({ border: "solid", thickness: "1px", radius: "3px", padding: "10px" }))
+        assert.equal(await apply.evaluate(button => getComputedStyle(button).appearance), "none")
+        assert.notEqual(await color.locator("[data-color-control]").evaluate(input => getComputedStyle(input).appearance), "none",
+          "The RGB chooser must retain its native appearance.")
+        const lightColor = await apply.evaluate(button => getComputedStyle(button).color)
+        await page.evaluate(() => document.documentElement.dataset.mTheme = "dark")
+        assert.equal(await apply.evaluate(button => getComputedStyle(button).colorScheme), "dark")
+        assert.notEqual(await apply.evaluate(button => getComputedStyle(button).color), lightColor)
+        await page.evaluate(() => document.documentElement.dataset.mTheme = "light")
+        await apply.hover()
+        assert.notEqual(await apply.evaluate(button => getComputedStyle(button).color), lightColor)
+        await page.mouse.move(0, 0)
+        const fields = [
+          ["draft", draft], ["language", language], ["color mode", mode],
+          ["RGB chooser", color.locator("[data-color-control]")],
+          ["time", page.locator("#workday-start input")],
+          ["team principle", page.locator("#workspace-notes input").first()],
+          ["OTP", page.locator("#sample-code input")],
+        ]
+        for (const select of [language, mode]) {
+          assert.notEqual(await select.evaluate(control => getComputedStyle(control).appearance), "none",
+            "The selects must retain native arrows and picker behavior.")
+        }
+        for (const theme of ["light", "dark"]) {
+          await page.evaluate(theme => document.documentElement.dataset.mTheme = theme, theme)
+          for (const [label, field] of fields) {
+            await field.evaluate(control => control.blur())
+            await page.mouse.move(0, 0)
+            const fieldWidth = await field.evaluate(control => control.getBoundingClientRect().width)
+            const restingBorder = await field.evaluate(control => getComputedStyle(control).borderColor)
+            await field.hover()
+            const hoverBorder = await field.evaluate(control => getComputedStyle(control).borderColor)
+            assert.notEqual(hoverBorder, restingBorder, `${theme}: ${label} needs a themed hover border.`)
+            await page.mouse.move(0, 0)
+            await page.keyboard.press("Tab")
+            await field.focus()
+            const focused = await field.evaluate(control => {
+              const css = getComputedStyle(control)
+              return { border: css.borderColor, thickness: css.borderTopWidth, shadow: css.boxShadow, outline: css.outlineStyle, width: control.getBoundingClientRect().width }
+            })
+            assert.equal(focused.border, hoverBorder)
+            assert.equal(focused.thickness, "1px", `${theme}: ${label} must keep a thin focused border.`)
+            assert.equal(focused.shadow, "none", `${theme}: ${label} must not add an outer glow.`)
+            assert.equal(focused.outline, "none", "Bordered fields must not stack an outline over their focus border.")
+            assert.equal(focused.width, fieldWidth, `Focus styling must not change the ${label} field's width.`)
+          }
+          await page.keyboard.press("Tab")
+          for (const control of await page.locator("#main button:enabled, #main input:enabled, #main select:enabled, #main textarea:enabled").all()) {
+            if (!await control.isVisible()) continue
+            await control.focus()
+            const focus = await control.evaluate(element => {
+              const layers = []
+              for (let node = element, depth = 0; node && depth < 3; node = node.parentElement, depth++) {
+                for (const pseudo of [null, "::before", "::after"]) {
+                  const css = getComputedStyle(node, pseudo)
+                  if (pseudo && ["none", "normal"].includes(css.content)) continue
+                  layers.push({
+                    part: `${node.localName}.${node.className}${pseudo ?? ""}`,
+                    numberFrame: node.matches(".m-input-number") && !pseudo,
+                    shadow: css.boxShadow, outline: css.outlineStyle, thickness: css.outlineWidth,
+                  })
+                }
+              }
+              return {
+                focused: element.matches(":focus"), visible: element.matches(":focus-visible"),
+                action: element.matches("button, [type=checkbox], [type=radio], [type=file]"), layers,
+              }
+            })
+            assert.equal(focus.focused, true, "The actual native control must retain focus.")
+            for (const layer of focus.layers) {
+              if (layer.outline !== "none") assert.equal(layer.thickness, "1px", `${theme}: thick outline on ${layer.part}`)
+              if (layer.numberFrame) assert.match(layer.shadow, / 0px 0px 0px 1px inset$/, "InputNumber keeps only its 1px inset border.")
+              else assert.equal(layer.shadow, "none", `${theme}: stacked focus shadow on ${layer.part}`)
+            }
+            if (focus.action) {
+              assert.equal(focus.visible, true)
+              assert.equal(focus.layers[0].outline, "solid", "Actions and native toggles need a visible keyboard indicator.")
+              assert.equal(focus.layers[0].thickness, "1px")
+            }
+          }
+        }
+        await page.evaluate(() => document.documentElement.dataset.mTheme = "light")
+        const form = page.locator("#settings-form")
+        const originalStyle = await form.evaluate(element => {
+          const previous = element.style.cssText
+          element.style.setProperty("--m-color-primary", "#804080")
+          element.style.setProperty("--m-color-primary-hover", "#804080")
+          return previous
+        })
+        for (const [label, field] of fields) {
+          await field.focus()
+          assert.equal(await field.evaluate(control => getComputedStyle(control).borderColor), "rgb(128, 64, 128)",
+            `${label} must follow the supplied theme instead of a hardcoded green or blue.`)
+        }
+        for (const selector of ["#weekly-summary input", "#review-cadence input:checked", "#studio-assets input[type=file]", "#workspace-color [data-color-apply]"]) {
+          const action = page.locator(selector)
+          await action.focus()
+          assert.equal(await action.evaluate(control => getComputedStyle(control).outlineColor), "rgb(128, 64, 128)")
+        }
+        await form.evaluate((element, style) => element.style.cssText = style, originalStyle)
+        await page.emulateMedia({ forcedColors: "active" })
+        for (const [label, field] of fields) {
+          await field.focus()
+          assert.equal(await field.evaluate(control => getComputedStyle(control).outlineStyle), "solid", `${label}: forced-colors focus`)
+          assert.equal(await field.evaluate(control => getComputedStyle(control).outlineWidth), "2px", `${label}: forced-colors width`)
+          assert.equal(await field.evaluate(control => getComputedStyle(control).boxShadow), "none", `${label}: forced-colors shadow`)
+        }
+        for (const [selector, surface, pseudo] of [
+          ["#workspace-name input", "#workspace-name", "::before"],
+          ["#workspace-seats input", "#workspace-seats", null],
+          ["#save-settings button", "#save-settings button", null],
+          ["#weekly-summary input", "#weekly-summary input", null],
+          ["#review-cadence input:checked", "#review-cadence input:checked", null],
+          ["#studio-assets input[type=file]", "#studio-assets input[type=file]", null],
+          ["#workspace-color [data-color-apply]", "#workspace-color [data-color-apply]", null],
+        ]) {
+          await page.locator(selector).focus()
+          assert.deepEqual(await page.locator(surface).evaluate((element, pseudo) => {
+            const css = getComputedStyle(element, pseudo)
+            return { outline: css.outlineStyle, thickness: css.outlineWidth, shadow: css.boxShadow }
+          }, pseudo), { outline: "solid", thickness: "2px", shadow: "none" },
+          `${selector} must retain an unstacked system focus indicator in forced colors.`)
+        }
+        await page.emulateMedia({ forcedColors: "none" })
+        await language.focus()
+        const normalBorder = await language.evaluate(select => getComputedStyle(select).borderColor)
+        await page.locator("#workspace-language").evaluate(element => element.status = "error")
+        assert.notEqual(await language.evaluate(select => getComputedStyle(select).borderColor), normalBorder,
+          "Select's focus border must follow its status color.")
+        await page.locator("#workspace-language").evaluate(element => { element.status = null; element.borderless = true })
+        assert.equal(await language.evaluate(select => getComputedStyle(select).borderColor), "rgba(0, 0, 0, 0)")
+        assert.equal(await language.evaluate(select => getComputedStyle(select).outlineStyle), "solid",
+          "A borderless select must still have a visible focus indicator.")
+        assert.equal(await language.evaluate(select => getComputedStyle(select).outlineWidth), "1px")
+        assert.equal(await language.evaluate(select => getComputedStyle(select).outlineOffset), "-1px")
+        assert.equal(await language.evaluate(select => getComputedStyle(select).boxShadow), "none")
+        await page.locator("#workspace-language").evaluate(element => element.borderless = false)
+        await page.locator("#workspace-language").evaluate(element => element.disabled = true)
+        assert.equal(await language.isDisabled(), true)
+        assert.equal(await language.evaluate(select => getComputedStyle(select).cursor), "not-allowed")
+        assert.equal(await language.evaluate(select => getComputedStyle(select).boxShadow), "none")
+        await page.locator("#workspace-language").evaluate(element => element.disabled = false)
+        await language.selectOption("fr")
+        assert.equal(await page.locator("#workspace-language").evaluate(element => element.value), "fr")
+        await language.selectOption("en")
+        const seats = page.locator("#workspace-seats")
+        for (const status of [null, "warning", "error"]) {
+          await seats.evaluate((element, status) => { element.status = status; element.borderless = status === null }, status)
+          await seats.locator("input").evaluate(input => input.blur())
+          await page.mouse.move(0, 0)
+          const resting = await seats.evaluate(element => getComputedStyle(element).boxShadow)
+          await seats.locator("input").focus()
+          const focused = await seats.evaluate(element => getComputedStyle(element).boxShadow)
+          assert.notEqual(focused, resting, `InputNumber must show focus with ${status ?? "borderless"} styling.`)
+          assert.match(focused, / 0px 0px 0px 1px inset$/, "InputNumber must retain only a thin inset border.")
+          assert.doesNotMatch(focused, /rgba\(0, 0, 0, 0\)/, "The borderless focused boundary must not be transparent.")
+        }
+        await seats.evaluate(element => { element.status = null; element.borderless = false })
+        await color.evaluate(element => { element.showAlpha = true; element.value = "rgba(255, 128, 64, 0.333)" })
+        for (const viewportWidth of new Set([width, 1016])) {
+          await page.setViewportSize({ width: viewportWidth, height: 1000 })
+          for (const value of ["hex", "rgb", "hsl"]) {
+            await mode.selectOption(value)
+            const overflow = await color.evaluate(element => {
+              const bounds = element.closest("m-form-item").getBoundingClientRect()
+              return [...element.querySelectorAll("input, button, select, [data-color-output]")].filter(control => control.checkVisibility())
+                .filter(control => {
+                  const rect = control.getBoundingClientRect()
+                  return rect.left < bounds.left - 1 || rect.right > bounds.right + 1
+                    || control.matches("[data-color-output]") && control.scrollWidth > control.clientWidth + 1
+                }).map(control => control.localName)
+            })
+            assert.deepEqual(overflow, [], `ColorPicker ${value} controls overflow their Settings column at ${viewportWidth}px.`)
+          }
+        }
+        await page.setViewportSize({ width, height: 1000 })
+        await mode.selectOption("hex")
+        await color.evaluate(element => { element.showAlpha = false; element.value = "#226b57"; element.restoreDraft() })
+        await draft.fill("#112233")
+        await apply.press("Enter")
+        await page.waitForFunction(() => document.getElementById("workspace-color").value === "#112233")
+        assert.equal(await apply.evaluate(button => getComputedStyle(button).outlineStyle), "solid")
+        await draft.fill("#445566")
+        await color.locator("[data-color-revert]").press("Enter")
+        await page.waitForFunction(() => document.getElementById("workspace-color").draft === "#112233")
+        await color.locator("[data-color-clear]").press("Enter")
+        await page.waitForFunction(() => document.getElementById("workspace-color").value === "")
+        await color.evaluate(element => element.disabled = true)
+        assert.equal(await apply.isDisabled(), true)
+        assert.equal(await mode.isDisabled(), true)
+        assert.equal(await apply.evaluate(button => getComputedStyle(button).opacity), "0.5")
+        assert.equal(await draft.evaluate(input => getComputedStyle(input).cursor), "not-allowed")
+        assert.equal(await draft.evaluate(input => getComputedStyle(input).backgroundColor),
+          await color.locator("[data-color-control]").evaluate(input => getComputedStyle(input).backgroundColor))
+        assert.equal(await mode.evaluate(select => getComputedStyle(select).backgroundColor),
+          await draft.evaluate(input => getComputedStyle(input).backgroundColor))
+        assert.equal(await mode.evaluate(select => getComputedStyle(select).opacity), "1")
+        await page.emulateMedia({ forcedColors: "active" })
+        assert.equal(await apply.evaluate(button => getComputedStyle(button).opacity), "1")
+        await page.emulateMedia({ forcedColors: "none" })
+        await color.evaluate((element, value) => { element.disabled = false; element.value = value; element.restoreDraft() }, originalColor)
         await page.locator("#workspace-name input").fill("Browser test studio")
         await click("#save-settings button")
         assert.match(await text("#toast-region"), /saved/)

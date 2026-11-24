@@ -1,3 +1,5 @@
+:where([data-m-theme="light"]) { --_m-marquee-scheme: light; }
+:where([data-m-theme="dark"]) { --_m-marquee-scheme: dark; }
 m-marquee,
 .m-marquee { display: block; min-inline-size: 0; }
 .m-marquee [hidden] { display: none !important; }
@@ -25,8 +27,47 @@ m-marquee,
 }
 .m-marquee[data-marquee-running] > [data-marquee-viewport] { overflow-x: hidden; }
 .m-marquee [data-marquee-controls] { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-block: .5rem; }
-.m-marquee [data-marquee-toggle] { min-block-size: 2.75rem; font: inherit; }
+.m-marquee [data-marquee-controls] [data-marquee-toggle] {
+  color-scheme: var(--_m-marquee-scheme, light);
+  appearance: none;
+  box-sizing: border-box;
+  min-block-size: 2.75rem;
+  padding: 0 14px;
+  border: 1px solid var(--m-marquee-control-border, light-dark(#e0e0e6, rgba(255, 255, 255, .24)));
+  border-radius: 3px;
+  color: var(--m-marquee-control-color, light-dark(#333639, rgba(255, 255, 255, .82)));
+  background: var(--m-marquee-control-background, transparent);
+  font: inherit;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.m-marquee [data-marquee-controls] [data-marquee-toggle]:enabled:is(:hover, :focus-visible) {
+  color: var(--m-color-primary-hover, light-dark(#36ad6a, #7fe7c4));
+  border-color: currentColor;
+}
+.m-marquee [data-marquee-controls] [data-marquee-toggle]:enabled:active {
+  color: var(--m-color-primary-pressed, light-dark(#0c7a43, #5acea7));
+  border-color: currentColor;
+}
+.m-marquee [data-marquee-controls] [data-marquee-toggle]:disabled { opacity: .5; cursor: not-allowed; }
+.m-marquee [data-marquee-controls] [data-marquee-toggle]:focus-visible {
+  outline: 3px solid var(--m-marquee-focus, var(--m-color-primary, light-dark(#18a058, #63e2b7)));
+  outline-offset: 2px;
+}
 .m-marquee :focus-visible { outline: 3px solid var(--m-marquee-focus, #175cd3); outline-offset: -3px; }
+@media (forced-colors: active) {
+  .m-marquee [data-marquee-controls] [data-marquee-toggle] {
+    color: ButtonText;
+    background: ButtonFace;
+    border-color: ButtonText;
+  }
+  .m-marquee [data-marquee-controls] [data-marquee-toggle]:disabled {
+    color: GrayText;
+    border-color: GrayText;
+    opacity: 1;
+  }
+  .m-marquee [data-marquee-controls] [data-marquee-toggle]:focus-visible { outline-color: Highlight; }
+}
 @media (prefers-reduced-motion: reduce), (forced-colors: active), print {
   .m-marquee > [data-marquee-viewport] { overflow: visible !important; }
   .m-marquee > [data-marquee-viewport] > [data-marquee-content] {

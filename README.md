@@ -153,8 +153,8 @@ Insights similarly authors the Popselect's native button and choice panel so own
 survives container reconnection, and creates its chart with options before connecting it. Its engine remains
 the local `demo/vendor/echarts.global.js` build.
 
-The shared classic library assets measure **349,142 JavaScript + 66,816 CSS gzip bytes**
-(415,958 combined), excluding page assets and ECharts. Insights adds 203,838 gzip bytes
+The shared classic library assets measure **349,142 JavaScript + 67,311 CSS gzip bytes**
+(416,453 combined), excluding page assets and ECharts. Insights adds 203,838 gzip bytes
 for ECharts. These are individual-file gzip level-9 sums, not dev-server transfer sizes.
 The existing full-catalog classic runtime remains above its advisory recommendation
 (331,554 vs. 315,000 bytes); no limits or frozen S0 baseline were changed.
@@ -163,6 +163,21 @@ Data Table's themed native pager adds 314 gzip bytes to its selected stylesheet:
 2,502 bytes versus the 2,500-byte advisory recommendation. Its JavaScript and
 dependencies are unchanged; the 2-byte CSS overage is reported rather than removing
 control states or changing the frozen baseline.
+Marquee's themed native Play/Pause button adds 388 gzip bytes to its selected stylesheet
+(961 bytes total), without changing JavaScript or dependencies. Its stylesheet remains
+within its advisory recommendation.
+ColorPicker's themed actions, mode selector and draft-input states, with narrow-column layout fixes, add
+266 gzip bytes to its selected stylesheet: 1,225 bytes versus the 1,000-byte advisory
+recommendation. JavaScript and dependencies are unchanged; the 225-byte CSS overage
+is reported without dropping control states or changing the frozen baseline.
+Settings fields use 1px themed focus boundaries without stacked shadows/outlines;
+buttons and toggles retain thin keyboard outlines and forced-colors keeps 2px system indicators.
+InputNumber preserves visible borderless and status focus boundaries at 1,017 CSS gzip
+bytes, 17 above its 1,000-byte recommendation. Select's thin focus treatment adds 104
+gzip bytes: its stylesheet is 1,080 bytes against the 1,000-byte recommendation.
+Popselect's composed stylesheet remains within its 2,500-byte recommendation at 2,184 bytes.
+Aggregate component CSS is now 64,037 bytes, 37 above its 64,000-byte recommendation;
+no runtime dependencies or recommendations changed.
 
 The separate `/demo/ui-api.html` playground continues to demonstrate optional fluent
 builders and A2UI using their ESM entries. Those are alternative authoring examples,

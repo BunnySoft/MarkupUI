@@ -20,7 +20,7 @@
 .m-upload progress::-moz-progress-bar{background:var(--m-upload-progress, var(--m-color-info, #2080f0))}
 .m-upload [data-upload-drop]{display:block;box-sizing:border-box;padding:var(--m-upload-drop-padding, 24px);text-align:center;background:var(--m-upload-drop-background, var(--_m-upload-drop, #fafafc));border:1px dashed var(--m-upload-border, var(--_m-upload-border, #e0e0e6));border-radius:var(--m-upload-radius, 3px)}
 .m-upload:not(:has(input:disabled)) [data-upload-drop]:is(:hover,[data-upload-dragover]){border-color:var(--m-upload-action-color, var(--m-color-primary, #18a058))}
-.m-upload [data-upload-dragover],.m-upload :focus-visible{outline:3px solid var(--m-upload-focus, #175cd3);outline-offset:2px}
+.m-upload [data-upload-dragover],.m-upload :focus-visible{outline:1px solid var(--m-upload-focus, var(--m-color-primary, #18a058));outline-offset:2px}
 .m-upload :is([aria-disabled=true],button:disabled,input:disabled),.m-upload:has(input:disabled) [data-upload-drop]{opacity:.5}
 .m-upload [data-upload-state=error] [data-upload-name]{color:var(--m-upload-error, var(--_m-upload-error, #d03050))}
 @media(max-width:40rem){.m-upload [data-upload-list]>li{grid-template-columns:minmax(0,1fr)}
@@ -29,7 +29,7 @@
 .m-upload button,.m-upload input::file-selector-button{color:ButtonText!important;border-color:ButtonText!important}
 .m-upload [data-upload-drop]{border-color:CanvasText!important}
 .m-upload :is([aria-disabled=true],button:disabled,input:disabled),.m-upload:has(input:disabled) [data-upload-drop],.m-upload input:is(:disabled,[aria-disabled=true])::file-selector-button{opacity:1;color:GrayText!important;border-color:GrayText!important}
-.m-upload :focus-visible{outline-color:Highlight}
+.m-upload :focus-visible{outline:2px solid Highlight}
 .m-upload progress{accent-color:auto;appearance:auto!important;block-size:1em!important}
 }
 @media print{.m-upload [data-upload-actions],.m-upload [data-upload-row-actions],.m-upload [data-upload-drop]{display:none}

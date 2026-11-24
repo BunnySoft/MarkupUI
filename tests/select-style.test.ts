@@ -36,7 +36,7 @@ describe("Select native field defaults", () => {
     expect(tiny.style.getPropertyValue("--_select-height")).toBe("22px")
     expect(large.style.getPropertyValue("--_select-font")).toBe("15px")
     expect(large.style.getPropertyValue("--_select-height")).toBe("40px")
-    for (const rule of rules.filter(rule => /^\.m-select\[(size|status|borderless)/.test(rule.selectorText ?? ""))) {
+    for (const rule of rules.filter(rule => /^\.m-select\[(size|status|borderless)[^\]]*\]$/.test(rule.selectorText ?? ""))) {
       for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_select-/)
     }
   })

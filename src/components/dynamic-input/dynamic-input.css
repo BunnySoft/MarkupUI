@@ -13,8 +13,10 @@ m-dynamic-input-template { display: none !important; }
 .m-dynamic-input button { min-block-size: 34px; padding: 0 10px; font: inherit; color: inherit; background: var(--m-dynamic-input-action-background, light-dark(#fff, rgba(255,255,255,.1))); border: 1px solid var(--m-dynamic-input-border, light-dark(#e0e0e6, rgba(255,255,255,.24))); border-radius: var(--m-dynamic-input-radius, 3px); }
 .m-dynamic-input button:enabled:hover { color: var(--m-dynamic-input-focus, light-dark(#36ad6a, #7fe7c4)); border-color: currentColor; }
 .m-dynamic-input button:disabled { color: var(--m-dynamic-input-disabled, light-dark(#c2c2c2, rgba(255,255,255,.38))); cursor: not-allowed; }
-.m-dynamic-input :focus-visible { outline: 2px solid Highlight; outline-offset: 3px; }
+.m-dynamic-input :focus-visible:not([data-input-control]) { outline: 1px solid var(--m-dynamic-input-focus, var(--m-color-primary, light-dark(#18a058, #63e2b7))); outline-offset: 2px; }
+.m-dynamic-input__fields :is(input:not([type=checkbox], [type=radio], [type=range], [type=file], [type=color]), select, textarea):not([data-input-control]):enabled:is(:hover, :focus) { border-color: var(--m-dynamic-input-focus, var(--m-color-primary-hover, light-dark(#36ad6a, #7fe7c4))); }
+.m-dynamic-input__fields :is(input:not([type=checkbox], [type=radio], [type=range], [type=file], [type=color]), select, textarea):not([data-input-control]):enabled:focus { outline: none; }
 .m-dynamic-input [hidden] { display: none !important; }
 @media (max-width: 30rem) { .m-dynamic-input__fields { grid-template-columns: minmax(0, 1fr); } }
-@media (forced-colors: active) { .m-dynamic-input :is(input, select, textarea, button) { color: CanvasText; background: Canvas; border-color: CanvasText; } .m-dynamic-input :disabled { color: GrayText; border-color: GrayText; } }
+@media (forced-colors: active) { .m-dynamic-input :is(input, select, textarea, button) { color: CanvasText; background: Canvas; border-color: CanvasText; } .m-dynamic-input :disabled { color: GrayText; border-color: GrayText; } .m-dynamic-input .m-dynamic-input__fields :is(input, select, textarea):focus:not([data-input-control]):enabled, .m-dynamic-input button:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; } }
 @media print { .m-dynamic-input { --_m-dynamic-input-scheme: light; } .m-dynamic-input button { display: none; } }

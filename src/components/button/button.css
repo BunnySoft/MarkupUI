@@ -135,7 +135,7 @@ m-button[data-part=button][shape="round"] > [data-part=control] { border-radius:
 m-button[data-part=button][shape="circle"]:not([appearance="text"]) > [data-part=control] { width: var(--m-button-height, 34px); padding: 0; border-radius: var(--m-button-radius, var(--m-button-height, 34px)); }
 m-button[data-part=button][block] > [data-part=control] { width: 100%; }
 m-button[data-part=button]:is([appearance="text"]) > [data-part=control] { height: auto; padding: 0; border-radius: 0; }
-m-button[data-part=button] > [data-part=control]:focus-visible { outline: 3px solid var(--m-button-focus-color, rgb(24 160 88 / .3)); outline-offset: 2px; }
+m-button[data-part=button] > [data-part=control]:focus-visible { outline: 1px solid var(--m-button-focus-color, var(--_m-button-hover)); outline-offset: 2px; }
 m-button[data-part=button] > [data-part=control]:is(:disabled, [aria-disabled="true"]) {
   opacity: var(--m-button-disabled-opacity, var(--_m-button-opacity, .5));
   cursor: not-allowed;

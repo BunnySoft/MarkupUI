@@ -26,8 +26,12 @@
   line-height: 1.5;
 }
 
-.m-time-picker input:hover {
-  border-color: var(--m-time-picker-hover, light-dark(#36ad6a, #7fe7c4));
+.m-time-picker input:enabled:is(:hover, :focus) {
+  border-color: var(--m-time-picker-focus, var(--m-time-picker-hover, var(--m-color-primary-hover, light-dark(#36ad6a, #7fe7c4))));
+}
+
+.m-time-picker input:enabled:focus {
+  outline: none;
 }
 
 .m-time-picker button {
@@ -56,8 +60,8 @@
   overflow-wrap: anywhere;
 }
 
-.m-time-picker :focus-visible {
-  outline: 2px solid Highlight;
+.m-time-picker button:focus-visible {
+  outline: 1px solid var(--m-time-picker-focus, var(--m-color-primary, light-dark(#18a058, #63e2b7)));
   outline-offset: 2px;
 }
 
@@ -81,6 +85,12 @@
 }
 
 @media (forced-colors: active) {
+  .m-time-picker input:enabled:focus,
+  .m-time-picker button:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+
   .m-time-picker input,
   .m-time-picker button {
     border-color: ButtonText;

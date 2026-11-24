@@ -42,7 +42,8 @@ m-heading :is(h1,h2,h3) { margin: 0; font: inherit; }
 a { color: var(--green); text-decoration: none; }
 a:hover { text-decoration: underline; }
 button, input, select, textarea { font: inherit; }
-:focus-visible { outline: 3px solid #78a895; outline-offset: 3px; }
+:focus-visible { outline: 1px solid var(--m-color-primary, #226b57); outline-offset: 2px; }
+@media (forced-colors: active) { :focus-visible { outline: 2px solid Highlight; } }
 m-button { --m-button-border-radius: 7px; }
 m-button[type="primary"] { --m-button-color: #226b57; }
 m-button svg { width: 18px; height: 18px; }

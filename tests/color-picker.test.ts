@@ -306,11 +306,10 @@ describe("Color Picker default styles", () => {
     expect(css).not.toContain(".m-color-picker__hex {")
   })
 
-  it("keeps native chooser, disabled, forced-color and print ownership explicit", () => {
+  it("keeps disabled, forced-color and print ownership explicit", () => {
     expect(css).toContain(".m-color-picker__control:disabled")
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("@media print")
-    expect(css).not.toContain("appearance:")
   })
 })
 

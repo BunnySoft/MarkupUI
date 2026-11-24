@@ -26,6 +26,16 @@
   <main data-demo-page class="component-docs">
     <h1>Color Picker</h1>
     <p>Bounded sRGB colors, real HEX/RGB/HSL editing modes and cross-browser alpha controls, coordinated by one native owner.</p>
+    <p>ColorPicker's own stylesheet themes Apply, Restore draft, Clear and the mode selector, including hover, pressed,
+      disabled, keyboard-focus and forced-colors states; no Button component dependency is needed.
+      The draft field, readout and actions fit narrow columns, wrapping as needed.
+      The RGB chooser, standalone draft input and native mode selector keep a 1px themed focus border without an outer glow or stacked outline;
+      the draft also has a themed caret.
+      Buttons and the alpha slider retain a thin themed keyboard outline. High-contrast mode uses a 2px system focus outline;
+      drafts composed with Input keep Input's own styling and disabled states.
+      Existing <code>--m-color-picker-border</code>, <code>--m-color-picker-radius</code>,
+      <code>--m-color-picker-color</code>, <code>--m-color-picker-background</code> and <code>--m-color-picker-focus</code>
+      tokens customize these controls. The RGB chooser and select popup retain native browser behavior.</p>
     <nav class="component-docs-nav" aria-label="Color Picker documentation">
       <a href="#basic-title">Examples</a>
       <a href="#required-files">Setup</a>
